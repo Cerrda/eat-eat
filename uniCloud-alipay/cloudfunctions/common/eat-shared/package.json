@@ -1,0 +1,6 @@
+{
+  "name": "eat-shared",
+  "version": "1.0.0",
+  "description": "EatEat 云函数公共模块",
+  "main": "index.js"
+}

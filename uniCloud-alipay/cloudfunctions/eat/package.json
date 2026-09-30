@@ -1,0 +1,17 @@
+{
+  "name": "eat",
+  "version": "1.0.0",
+  "description": "EatEat 云对象",
+  "main": "index.obj.js",
+  "dependencies": {
+    "eat-shared": "file:../common/eat-shared"
+  },
+  "extensions": {
+    "uni-cloud-jql": {}
+  },
+  "cloudfunction-config": {
+    "memorySize": 256,
+    "timeout": 60,
+    "runtime": "Nodejs18"
+  }
+}

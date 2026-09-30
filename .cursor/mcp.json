@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "uni-doc": {
+      "command": "uni-mcp"
+    },
+    "pencil": {
+      "transport": "stdio",
+      "command": "C:\\software\\pen\\resources\\app.asar.unpacked\\out\\mcp-server-windows-x64.exe",
+      "args": [
+        "--app",
+        "desktop"
+      ],
+      "env": {}
+    },
+    "wechat-devtools": {
+      "command": "wechatide",
+      "args": [
+        "mcp",
+        "--token=Uuz5px4YV-0lwZQyhzYfOqycaxzRNZqU"
+      ]
+    }
+  }
+}

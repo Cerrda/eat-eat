@@ -1,0 +1,33 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+*.local
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# unh
+pages.json
+manifest.json
+
+# 本地应用标识（DCloud / 微信 AppID）
+manifest.config.ts
+
+# uniCloud 本地凭证与云函数依赖
+.env.unicloud.local
+uniCloud-*/cloudfunctions/**/secrets.json.local
+uniCloud-*/cloudfunctions/**/node_modules
