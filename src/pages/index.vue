@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Role } from '@/api/eat'
+import { createInvite, EatRequestError } from '@/api/eat'
+
 definePage({
   type: 'home',
   layout: false,
@@ -22,6 +25,34 @@ onLoad(() => {
   // #endif
   topPadding.value = `${anchor}px`
 })
+
+const pending = ref<'' | Role>('')
+
+function showMessage(title: string, content: string) {
+  uni.showModal({
+    title,
+    content,
+    showCancel: false,
+    confirmText: '知道了',
+  })
+}
+
+async function generate(role: Role) {
+  if (pending.value)
+    return
+  pending.value = role
+  try {
+    const data = await createInvite(role)
+    showMessage(data.inviteCode, '48 小时内有效。对方填上这 6 位，就会加入这间厨房。')
+  }
+  catch (err) {
+    const message = err instanceof EatRequestError ? err.message : '这次没有完成，再试一次'
+    showMessage('没有生成', message)
+  }
+  finally {
+    pending.value = ''
+  }
+}
 </script>
 
 <template>
@@ -62,9 +93,10 @@ onLoad(() => {
             class="relative box-border flex items-center justify-center border-4rpx border-#792b3e rounded-50rpx border-solid bg-#792b3e px-31rpx py-29rpx"
             hover-class="translate-x-6rpx translate-y-8rpx"
             :hover-stay-time="80"
+            @tap="generate('cooker')"
           >
             <text class="text-29rpx text-#fbf3ea font-medium leading-[1.2] font-body">
-              生成邀请，等对方来点餐
+              {{ pending === 'cooker' ? '正在生成邀请' : '生成邀请，等对方来点餐' }}
             </text>
           </view>
         </view>
@@ -83,9 +115,10 @@ onLoad(() => {
             class="relative box-border flex items-center justify-center border-4rpx border-#792b3e rounded-50rpx border-solid bg-#792b3e px-31rpx py-29rpx"
             hover-class="translate-x-6rpx translate-y-8rpx"
             :hover-stay-time="80"
+            @tap="generate('eater')"
           >
             <text class="text-29rpx text-#fbf3ea font-medium leading-[1.2] font-body">
-              生成邀请，等对方来做饭
+              {{ pending === 'eater' ? '正在生成邀请' : '生成邀请，等对方来做饭' }}
             </text>
           </view>
         </view>

@@ -1,0 +1,33 @@
+{
+  "bsonType": "object",
+  "required": ["openid"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "openid": {
+      "bsonType": "string",
+      "description": "微信小程序 openid，只存在服务端"
+    },
+    "unionid": {
+      "bsonType": "string"
+    },
+    "nickname": {
+      "bsonType": "string",
+      "description": "厨房称呼，2 到 8 个字"
+    },
+    "nicknameCustom": {
+      "bsonType": "bool"
+    },
+    "role": {
+      "bsonType": "string",
+      "description": "cooker、eater，或空字符串"
+    },
+    "kitchenId": {
+      "bsonType": "string"
+    }
+  }
+}

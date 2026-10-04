@@ -6,11 +6,14 @@ function ok(data) {
   }
 }
 
-function fail(errCode, errMsg) {
-  return {
+function fail(errCode, errMsg, data) {
+  const body = {
     errCode,
     errMsg,
   }
+  if (data !== undefined)
+    body.data = data
+  return body
 }
 
 module.exports = {

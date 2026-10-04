@@ -1,0 +1,36 @@
+{
+  "bsonType": "object",
+  "required": ["status"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "status": {
+      "bsonType": "string",
+      "description": "pending、active、dissolved"
+    },
+    "cookerOpenid": {
+      "bsonType": "string",
+      "description": "做饭的人的微信 openid"
+    },
+    "eaterOpenid": {
+      "bsonType": "string",
+      "description": "点餐的人的微信 openid"
+    },
+    "cookerUserId": {
+      "bsonType": "string"
+    },
+    "eaterUserId": {
+      "bsonType": "string"
+    },
+    "boundAt": {
+      "bsonType": "long"
+    },
+    "dissolvedAt": {
+      "bsonType": "long"
+    }
+  }
+}

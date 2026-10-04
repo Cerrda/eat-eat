@@ -1,0 +1,43 @@
+{
+  "bsonType": "object",
+  "required": ["kitchenId", "name"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "kitchenId": {
+      "bsonType": "string"
+    },
+    "name": {
+      "bsonType": "string"
+    },
+    "categoryId": {
+      "bsonType": "string"
+    },
+    "summary": {
+      "bsonType": "string"
+    },
+    "ingredients": {
+      "bsonType": "array"
+    },
+    "steps": {
+      "bsonType": "array"
+    },
+    "sourceUrl": {
+      "bsonType": "string"
+    },
+    "coverFileId": {
+      "bsonType": "string"
+    },
+    "status": {
+      "bsonType": "string",
+      "description": "on 已上架，off 已下架"
+    },
+    "deleted": {
+      "bsonType": "bool"
+    }
+  }
+}

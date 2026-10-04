@@ -29,5 +29,5 @@ manifest.config.ts
 
 # uniCloud 本地凭证与云函数依赖
 .env.unicloud.local
-uniCloud-*/cloudfunctions/**/secrets.json.local
+uniCloud-*/cloudfunctions/**/secrets.local.json
 uniCloud-*/cloudfunctions/**/node_modules

@@ -1,0 +1,14 @@
+[
+  {
+    "IndexName": "token_hash_unique",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "tokenHash",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": true
+    }
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "bsonType": "object",
+  "required": ["code", "kitchenId", "creatorOpenid"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "code": {
+      "bsonType": "string",
+      "description": "6 位邀请码"
+    },
+    "kitchenId": {
+      "bsonType": "string"
+    },
+    "creatorOpenid": {
+      "bsonType": "string"
+    },
+    "creatorRole": {
+      "bsonType": "string"
+    },
+    "status": {
+      "bsonType": "string",
+      "description": "active、revoked、used"
+    },
+    "expireAt": {
+      "bsonType": "long"
+    },
+    "usedByOpenid": {
+      "bsonType": "string",
+      "description": "使用这个邀请码的另一个微信 openid"
+    }
+  }
+}

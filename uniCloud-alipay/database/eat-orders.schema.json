@@ -1,0 +1,43 @@
+{
+  "bsonType": "object",
+  "required": ["kitchenId", "date", "slot", "status"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "kitchenId": {
+      "bsonType": "string"
+    },
+    "date": {
+      "bsonType": "string",
+      "description": "YYYY-MM-DD，按上海时区"
+    },
+    "slot": {
+      "bsonType": "string",
+      "description": "morning、noon、evening"
+    },
+    "status": {
+      "bsonType": "string",
+      "description": "pending、accepted、rejected、cancelled"
+    },
+    "note": {
+      "bsonType": "string"
+    },
+    "rejectNote": {
+      "bsonType": "string"
+    },
+    "cancelNote": {
+      "bsonType": "string"
+    },
+    "items": {
+      "bsonType": "array",
+      "description": "下单时复制的菜名和封面"
+    },
+    "eaterUnread": {
+      "bsonType": "bool"
+    }
+  }
+}

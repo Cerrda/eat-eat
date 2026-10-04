@@ -1,0 +1,19 @@
+{
+  "bsonType": "object",
+  "required": ["kitchenId", "name"],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "kitchenId": {
+      "bsonType": "string"
+    },
+    "name": {
+      "bsonType": "string",
+      "description": "1 到 6 个字"
+    }
+  }
+}

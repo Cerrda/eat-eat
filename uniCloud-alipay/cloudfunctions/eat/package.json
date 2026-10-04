@@ -2,6 +2,7 @@
   "name": "eat",
   "version": "1.0.0",
   "description": "EatEat 云对象",
+  "type": "commonjs",
   "main": "index.obj.js",
   "dependencies": {
     "eat-shared": "file:../common/eat-shared"
