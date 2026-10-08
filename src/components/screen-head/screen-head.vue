@@ -13,6 +13,6 @@ defineProps<{
     <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
       {{ title }}
     </text>
-    <image class="block w-150rpx" src="/static/underline.png" mode="widthFix" />
+    <ink-underline :width="150" />
   </view>
 </template>

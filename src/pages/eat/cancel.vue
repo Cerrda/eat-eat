@@ -71,7 +71,7 @@ async function submit() {
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
           留一句话
         </text>
-        <image class="mt-8rpx block w-140rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline class="mt-8rpx" :width="140" />
       </view>
       <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5] font-body">
         {{ headline }}

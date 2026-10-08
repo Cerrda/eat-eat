@@ -227,7 +227,7 @@ async function submit() {
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
           记下这餐
         </text>
-        <image class="mt-8rpx block w-140rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline class="mt-8rpx" :width="140" />
       </view>
       <view class="flex gap-24rpx">
         <view class="flex flex-1 flex-col gap-8rpx">

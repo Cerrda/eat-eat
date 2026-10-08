@@ -128,7 +128,7 @@ async function backHome() {
         <text class="text-80rpx text-#3c2428 leading-[1.15] font-display">
           填上这 6 位
         </text>
-        <image class="block w-170rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline :width="170" />
       </view>
       <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" />
 

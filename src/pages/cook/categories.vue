@@ -96,9 +96,9 @@ async function add() {
       <template v-else>
         <view class="flex flex-col items-start">
           <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-            {{ categories.length ? '分类' : '还没有分类。' }}
+            {{ categories.length ? '分类' : '还没有分类' }}
           </text>
-          <image class="mt-8rpx block w-180rpx" src="/static/underline.png" mode="widthFix" />
+          <ink-underline class="mt-8rpx" :width="180" />
         </view>
         <view
           v-for="category in categories"
@@ -122,30 +122,30 @@ async function add() {
             删除
           </text>
         </view>
-      <text class="mt-8rpx text-28rpx text-#792b3e font-body">
-        新分类
-      </text>
-      <view class="flex items-center gap-16rpx">
-        <input
-          v-model="draft"
-          class="flex-1 rounded-full bg-#fff9f4 px-28rpx py-18rpx text-30rpx text-#3c2428 font-body"
-          :maxlength="6"
-          placeholder="1 到 6 个字"
-          placeholder-class="ph"
-          confirm-type="done"
-          @confirm="add"
-        >
-        <view
-          class="flex items-center gap-16rpx rounded-full px-28rpx py-16rpx"
-          :class="pending ? 'bg-#a24c5c' : 'bg-#792b3e'"
-          @tap="add"
-        >
-          <ink-spin v-if="pending" tone="paper" />
-          <text class="text-28rpx text-#fbf3ea font-body">
-            {{ pending ? '正在加上' : '加上' }}
-          </text>
+        <text class="mt-8rpx text-28rpx text-#792b3e font-body">
+          新分类
+        </text>
+        <view class="flex items-center gap-16rpx">
+          <input
+            v-model="draft"
+            class="flex-1 rounded-full bg-#fff9f4 px-28rpx py-18rpx text-30rpx text-#3c2428 font-body"
+            :maxlength="6"
+            placeholder="1 到 6 个字"
+            placeholder-class="ph"
+            confirm-type="done"
+            @confirm="add"
+          >
+          <view
+            class="flex items-center gap-16rpx rounded-full px-28rpx py-16rpx"
+            :class="pending ? 'bg-#a24c5c' : 'bg-#792b3e'"
+            @tap="add"
+          >
+            <ink-spin v-if="pending" tone="paper" />
+            <text class="text-28rpx text-#fbf3ea font-body">
+              {{ pending ? '正在加上' : '加上' }}
+            </text>
+          </view>
         </view>
-      </view>
       </template>
     </view>
   </paper-page>

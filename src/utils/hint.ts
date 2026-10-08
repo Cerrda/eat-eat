@@ -33,6 +33,8 @@ export function useHint() {
 }
 
 export function showHint(message: string, duration = 1800) {
+  if (!message)
+    return
   const state = hintState()
   state.text.value = message
   state.route.value = pageRoute(currentPage())

@@ -94,7 +94,7 @@ async function leave() {
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
           称呼
         </text>
-        <image class="mt-8rpx block w-140rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline class="mt-8rpx" :width="140" />
       </view>
       <view class="flex items-center rounded-28rpx bg-#fff9f4 px-28rpx py-24rpx">
         <input

@@ -6,7 +6,7 @@ const ownerRoute = ref(pageRoute(currentPage()))
 const visible = ref(false)
 let leaveTimer: ReturnType<typeof setTimeout> | undefined
 
-const active = computed(() => hintSeq.value > 0 && hintRoute.value !== '' && hintRoute.value === ownerRoute.value)
+const active = computed(() => hintSeq.value > 0 && hintText.value !== '' && hintRoute.value !== '' && hintRoute.value === ownerRoute.value)
 
 function syncOwner() {
   ownerRoute.value = pageRoute(currentPage())
@@ -45,11 +45,11 @@ watch(active, (on) => {
 </script>
 
 <template>
-  <view class="pointer-events-none fixed left-0 right-0 top-536rpx z-30 flex justify-center px-64rpx">
+  <view v-if="visible" class="pointer-events-none fixed left-0 right-0 top-536rpx z-30 flex justify-center px-64rpx">
     <view
       class="box-border max-w-full border-2rpx border-#792b3e rounded-44rpx border-solid bg-#fff9f4 px-32rpx py-22rpx"
       :class="active ? 'ink-toast-in' : 'ink-toast-out'"
-      :style="{ opacity: active ? 1 : 0, boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.35)' }"
+      :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.35)' }"
     >
       <text class="text-center text-30rpx text-#3c2428 font-medium leading-normal font-body">
         {{ hintText }}

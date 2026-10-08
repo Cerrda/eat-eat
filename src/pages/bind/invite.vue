@@ -66,7 +66,7 @@ function copyCode() {
         <text class="text-60rpx text-#3c2428 leading-[1.15] font-display">
           把这间厨房交给对方
         </text>
-        <image class="block w-170rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline :width="170" />
       </view>
       <code-cells :model-value="account.inviteCode" readonly />
       <text v-if="account.inviteExpired" class="text-26rpx text-#7a534c leading-[1.5] font-body">

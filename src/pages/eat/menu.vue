@@ -188,7 +188,7 @@ function viewOrdered() {
       <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
         还没有上架的菜。
       </text>
-      <image class="block w-180rpx" src="/static/underline.png" mode="widthFix" />
+      <ink-underline :width="180" />
       <view class="mt-36rpx w-full flex flex-col items-center">
         <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
         <view class="relative z-0 -mt-100rpx w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx">

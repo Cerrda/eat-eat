@@ -59,7 +59,7 @@ function when(order: OrderDetail) {
       <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
         还没有点过。
       </text>
-      <image class="block w-220rpx" src="/static/underline.png" mode="widthFix" />
+      <ink-underline :width="220" />
       <view class="mt-28rpx w-full flex flex-col items-center">
         <image class="relative z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
         <view class="relative z-0 -mt-156rpx w-616rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-180rpx" @tap="openMenu">

@@ -63,9 +63,9 @@ function when(record: RecordCard) {
     <ink-load v-if="!account" label="正在翻记下的" />
     <view v-else-if="!records.length" class="flex flex-col items-start gap-8rpx pt-36rpx">
       <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        还没有记下的一餐。
+        还没有记下的一餐
       </text>
-      <image class="block w-220rpx" src="/static/underline.png" mode="widthFix" />
+      <ink-underline :width="220" />
       <view class="mt-36rpx w-full flex flex-col items-center">
         <image class="relative z-1 h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
         <view class="relative z-0 -mt-84rpx w-456rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-40rpx pt-148rpx" @tap="createOne">

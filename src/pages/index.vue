@@ -94,7 +94,7 @@ function fillCode() {
       <text class="block text-77rpx text-#3c2428 font-normal leading-[1.15] font-display">
         谁来开这间厨房
       </text>
-      <image class="block w-170rpx self-start" src="/static/underline.png" mode="widthFix" />
+      <ink-underline class="self-start" :width="170" />
 
       <view class="flex justify-center">
         <image class="w-404rpx" src="/static/pot.png" mode="widthFix" />

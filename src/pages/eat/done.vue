@@ -48,7 +48,7 @@ function openOrder() {
         <text class="text-96rpx text-#3c2428 leading-[1.05] font-display">
           点好了
         </text>
-        <image class="mt-8rpx block w-160rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline class="mt-8rpx" :width="160" />
       </view>
       <text class="text-44rpx text-#3c2428 leading-[1.4] font-display">
         {{ order.items.map(item => item.name).join(' / ') }}

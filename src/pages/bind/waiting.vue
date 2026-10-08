@@ -41,7 +41,7 @@ onShareAppMessage(() => ({
         <text class="text-80rpx text-#3c2428 leading-[1.15] font-display">
           {{ title }}
         </text>
-        <image class="block w-170rpx" src="/static/underline.png" mode="widthFix" />
+        <ink-underline :width="170" />
       </view>
       <image class="w-376rpx self-center" src="/static/house.png" mode="widthFix" />
       <view class="flex flex-col gap-12rpx rounded-36rpx bg-#fff9f4 px-32rpx py-28rpx">
