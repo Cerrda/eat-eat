@@ -19,7 +19,7 @@ function onInput(event: { detail: { value: string } }) {
 </script>
 
 <template>
-  <view class="relative h-104rpx">
+  <view class="relative h-104rpx overflow-hidden">
     <view class="flex justify-between">
       <view
         v-for="index in 6"
@@ -33,10 +33,25 @@ function onInput(event: { detail: { value: string } }) {
     </view>
     <input
       v-if="!readonly"
-      class="absolute left-0 top-0 z-1 h-full w-full opacity-0"
+      class="code-cells-input"
       :value="modelValue"
       :maxlength="6"
       @input="onInput"
     >
   </view>
 </template>
+
+<style>
+/* 微信原生 input 不吃 opacity，文字会叠在格子上。颜色透明，并把光标和原文挪到可视区外。 */
+.code-cells-input {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  z-index: 1;
+  width: 200%;
+  height: 100%;
+  color: rgba(0, 0, 0, 0);
+  caret-color: transparent;
+  background: transparent;
+}
+</style>

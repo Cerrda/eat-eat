@@ -127,11 +127,13 @@ function fillCode() {
         </stamp-button>
       </view>
     </view>
+    <ink-toast />
   </view>
   <view v-else class="relative min-h-screen w-full bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
     <view class="relative z-1 px-44rpx" :style="{ paddingTop: topPadding }">
       <ink-load label="正在打开厨房" />
     </view>
+    <ink-toast />
   </view>
 </template>

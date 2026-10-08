@@ -1,4 +1,5 @@
 import { EatRequestError } from '@/api/eat'
+import { ask } from '@/utils/ui'
 
 const urlCache = new Map<string, string>()
 
@@ -35,6 +36,20 @@ export async function resolveFileUrl(fileId?: string) {
     return cached
   await primeFileUrls([fileId])
   return urlCache.get(fileId) || ''
+}
+
+export async function confirmPhotoUse(kind: 'cover' | 'record') {
+  const key = kind === 'cover' ? 'eat-photo-cover' : 'eat-photo-record'
+  if (uni.getStorageSync(key))
+    return true
+  const agreed = await ask(
+    '用一下照片',
+    kind === 'cover' ? '照片只用于这道菜的封面。' : '照片只用于记下这餐。',
+    '知道了',
+  )
+  if (agreed)
+    uni.setStorageSync(key, '1')
+  return agreed
 }
 
 export function chooseImage(source: 'album' | 'camera') {

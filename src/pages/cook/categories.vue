@@ -92,39 +92,37 @@ async function add() {
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar label="菜品" fallback="/pages/cook/dishes" />
-      <view class="flex flex-col items-start">
-        <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-          分类
-        </text>
-        <image class="mt-8rpx block w-140rpx" src="/static/underline.png" mode="widthFix" />
-      </view>
       <ink-load v-if="!ready" label="正在翻分类" />
       <template v-else>
-      <view v-for="category in categories" :key="category.categoryId" class="flex items-center justify-between gap-16rpx">
-        <view class="min-w-0 flex flex-1 flex-col gap-4rpx">
-          <text class="text-44rpx text-#3c2428 font-display">
+        <view class="flex flex-col items-start">
+          <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
+            {{ categories.length ? '分类' : '还没有分类。' }}
+          </text>
+          <image class="mt-8rpx block w-180rpx" src="/static/underline.png" mode="widthFix" />
+        </view>
+        <view
+          v-for="category in categories"
+          :key="category.categoryId"
+          class="flex items-center justify-between gap-16rpx rounded-36rpx bg-#fff9f4 px-28rpx py-24rpx"
+        >
+          <text class="min-w-0 flex-1 text-44rpx text-#3c2428 font-display">
             {{ category.name }}
           </text>
           <text class="text-26rpx text-#7a534c font-body">
             {{ counts[category.categoryId] ? `${counts[category.categoryId]} 道` : '还没有菜' }}
           </text>
+          <text class="text-28rpx text-#792b3e font-body" @tap="rename(category)">
+            改名
+          </text>
+          <text
+            v-if="!counts[category.categoryId]"
+            class="text-28rpx text-#9c342c font-body"
+            @tap="remove(category)"
+          >
+            删除
+          </text>
         </view>
-        <text class="text-28rpx text-#792b3e font-body" @tap="rename(category)">
-          改名
-        </text>
-        <text
-          v-if="!counts[category.categoryId]"
-          class="text-28rpx text-#9c342c font-body"
-          @tap="remove(category)"
-        >
-          删除
-        </text>
-      </view>
-      </template>
-      <text v-if="ready && !categories.length" class="text-30rpx text-#7a534c font-body">
-        还没有分类。
-      </text>
-      <text class="mt-8rpx text-28rpx text-#7a534c font-body">
+      <text class="mt-8rpx text-28rpx text-#792b3e font-body">
         新分类
       </text>
       <view class="flex items-center gap-16rpx">
@@ -148,6 +146,7 @@ async function add() {
           </text>
         </view>
       </view>
+      </template>
     </view>
   </paper-page>
 </template>

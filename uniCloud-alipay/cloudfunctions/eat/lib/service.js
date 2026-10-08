@@ -1195,7 +1195,6 @@ function createEatService(deps) {
     const body = input(params)
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    requireRole(user, 'cooker')
     const text = normalizeRecordText(body.text)
     const photoFileIds = normalizePhotos(body.photoFileIds)
     if (!text && photoFileIds.length === 0)
@@ -1229,8 +1228,8 @@ function createEatService(deps) {
       photoFileIds,
       dishes,
       orderId,
-      unreadCooker: false,
-      unreadEater: true,
+      unreadCooker: user.role !== 'cooker',
+      unreadEater: user.role !== 'eater',
       deleted: false,
       createdAt,
       updatedAt: createdAt,
@@ -1242,7 +1241,6 @@ function createEatService(deps) {
     const body = input(params)
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    requireRole(user, 'cooker')
     const record = await ownRecord(kitchen, body.recordId)
     const text = body.text === undefined ? record.text : normalizeRecordText(body.text)
     const photoFileIds = body.photoFileIds === undefined ? record.photoFileIds : normalizePhotos(body.photoFileIds)
@@ -1259,7 +1257,6 @@ function createEatService(deps) {
   async function deleteRecord(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    requireRole(user, 'cooker')
     const record = await ownRecord(kitchen, input(params).recordId)
     await store.update('eat-records', { _id: record._id, kitchenId: kitchen._id }, {
       deleted: true,

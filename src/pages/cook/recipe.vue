@@ -3,6 +3,7 @@ import type { CookDish } from '@/api/eat'
 import { getCookDish, getDish } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { primeFileUrls } from '@/utils/files'
+import { copyHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -44,7 +45,7 @@ onShow(async () => {
 function copyLink() {
   if (!dish.value?.sourceUrl)
     return
-  uni.setClipboardData({ data: dish.value.sourceUrl })
+  copyHint(dish.value.sourceUrl, '已复制抖音链接')
 }
 </script>
 
@@ -53,23 +54,26 @@ function copyLink() {
     <view class="flex flex-col gap-28rpx">
       <back-bar label="做法" fallback="/pages/cook/todo" />
       <template v-if="dish">
-      <dish-cover class="h-360rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
-      <text class="text-64rpx text-#3c2428 leading-[1.15] font-display">
-        {{ dish.name }}
-      </text>
-      <text v-if="categoryName" class="text-28rpx text-#7a534c font-body">
+      <view class="flex flex-col items-start">
+        <text class="text-64rpx text-#3c2428 leading-[1.15] font-display">
+          {{ dish.name }}
+        </text>
+        <image class="mt-8rpx block w-180rpx" src="/static/underline.png" mode="widthFix" />
+      </view>
+      <text v-if="categoryName" class="text-30rpx text-#7a534c font-body">
         {{ categoryName }}
       </text>
+      <dish-cover class="h-336rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
       <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx">
-        <text class="text-28rpx text-#7a534c font-body">
+        <text class="text-28rpx text-#792b3e font-body">
           食材
         </text>
-        <text class="text-32rpx text-#3c2428 leading-[1.5] font-body">
-          {{ dish.ingredients.join(' / ') }}
+        <text v-for="(line, index) in dish.ingredients" :key="index" class="text-32rpx text-#3c2428 leading-[1.5] font-body">
+          {{ line }}
         </text>
       </view>
       <view v-if="dish.steps.length" class="flex flex-col gap-16rpx">
-        <text class="text-28rpx text-#7a534c font-body">
+        <text class="text-28rpx text-#792b3e font-body">
           步骤
         </text>
         <view v-for="(step, index) in dish.steps" :key="index" class="flex gap-16rpx">
@@ -84,13 +88,15 @@ function copyLink() {
       <text v-if="!dish.ingredients.length && !dish.steps.length" class="text-30rpx text-#7a534c font-body">
         这道菜没有写下做法。
       </text>
-      <view v-if="dish.sourceUrl" class="flex items-center justify-between pt-8rpx">
-        <text class="text-28rpx text-#7a534c font-body">
+      <view v-if="dish.sourceUrl" class="flex flex-col items-start gap-16rpx pt-8rpx">
+        <text class="text-28rpx text-#792b3e font-body">
           来源
         </text>
-        <text class="text-28rpx text-#792b3e font-body" @tap="copyLink">
-          复制链接
-        </text>
+        <view class="rounded-full bg-#792b3e px-36rpx py-16rpx" @tap="copyLink">
+          <text class="text-28rpx text-#fbf3ea font-body">
+            复制链接
+          </text>
+        </view>
       </view>
       </template>
       <ink-load v-else label="正在打开做法" />

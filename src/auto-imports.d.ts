@@ -21,8 +21,10 @@ declare global {
   const computedEager: typeof import('@vueuse/core')['computedEager']
   const computedInject: typeof import('@vueuse/core')['computedInject']
   const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
+  const confirmPhotoUse: typeof import('./utils/files')['confirmPhotoUse']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
+  const copyHint: typeof import('./utils/hint')['copyHint']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
@@ -33,11 +35,13 @@ declare global {
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
+  const currentPage: typeof import('./utils/hint')['currentPage']
   const customRef: typeof import('vue')['customRef']
   const debouncedRef: typeof import('@vueuse/core')['debouncedRef']
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
+  const dismissHint: typeof import('./utils/hint')['dismissHint']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const eatCloud: typeof import('./utils/cloud')['eatCloud']
   const effectScope: typeof import('vue')['effectScope']
@@ -107,6 +111,7 @@ declare global {
   const onUpdated: typeof import('vue')['onUpdated']
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
   const orderDraft: typeof import('./utils/draft')['orderDraft']
+  const pageRoute: typeof import('./utils/hint')['pageRoute']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
   const peekAccount: typeof import('./utils/account')['peekAccount']
   const primeFileUrls: typeof import('./utils/files')['primeFileUrls']
@@ -137,6 +142,7 @@ declare global {
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
   const showError: typeof import('./utils/ui')['showError']
+  const showHint: typeof import('./utils/hint')['showHint']
   const slotKey: typeof import('./utils/format')['slotKey']
   const splitPieces: typeof import('./utils/format')['splitPieces']
   const syncRef: typeof import('@vueuse/core')['syncRef']
@@ -230,6 +236,7 @@ declare global {
   const useFullscreen: typeof import('@vueuse/core')['useFullscreen']
   const useGamepad: typeof import('@vueuse/core')['useGamepad']
   const useGeolocation: typeof import('@vueuse/core')['useGeolocation']
+  const useHint: typeof import('./utils/hint')['useHint']
   const useId: typeof import('vue')['useId']
   const useIdle: typeof import('@vueuse/core')['useIdle']
   const useImage: typeof import('@vueuse/core')['useImage']
@@ -375,8 +382,10 @@ declare module 'vue' {
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
     readonly computedInject: UnwrapRef<typeof import('@vueuse/core')['computedInject']>
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
+    readonly confirmPhotoUse: UnwrapRef<typeof import('./utils/files')['confirmPhotoUse']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
+    readonly copyHint: UnwrapRef<typeof import('./utils/hint')['copyHint']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
@@ -387,11 +396,13 @@ declare module 'vue' {
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
+    readonly currentPage: UnwrapRef<typeof import('./utils/hint')['currentPage']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly debouncedRef: UnwrapRef<typeof import('@vueuse/core')['debouncedRef']>
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
+    readonly dismissHint: UnwrapRef<typeof import('./utils/hint')['dismissHint']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly eatCloud: UnwrapRef<typeof import('./utils/cloud')['eatCloud']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
@@ -461,6 +472,7 @@ declare module 'vue' {
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly orderDraft: UnwrapRef<typeof import('./utils/draft')['orderDraft']>
+    readonly pageRoute: UnwrapRef<typeof import('./utils/hint')['pageRoute']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly peekAccount: UnwrapRef<typeof import('./utils/account')['peekAccount']>
     readonly primeFileUrls: UnwrapRef<typeof import('./utils/files')['primeFileUrls']>
@@ -491,6 +503,7 @@ declare module 'vue' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly showError: UnwrapRef<typeof import('./utils/ui')['showError']>
+    readonly showHint: UnwrapRef<typeof import('./utils/hint')['showHint']>
     readonly slotKey: UnwrapRef<typeof import('./utils/format')['slotKey']>
     readonly splitPieces: UnwrapRef<typeof import('./utils/format')['splitPieces']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
@@ -582,6 +595,7 @@ declare module 'vue' {
     readonly useFullscreen: UnwrapRef<typeof import('@vueuse/core')['useFullscreen']>
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
+    readonly useHint: UnwrapRef<typeof import('./utils/hint')['useHint']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIdle: UnwrapRef<typeof import('@vueuse/core')['useIdle']>
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>

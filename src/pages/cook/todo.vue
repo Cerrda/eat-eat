@@ -108,16 +108,24 @@ function openRecords() {
 
 <template>
   <paper-page dock>
-    <view class="flex flex-col gap-28rpx">
-      <screen-head
-        :kicker="account ? `${account.nickname || '厨神'}的厨房` : '正在看待做'"
-        title="待做"
-      />
-      <ink-load v-show="!ready" label="正在看待做" />
-      <view v-show="ready" class="flex flex-col gap-28rpx">
-        <text v-if="!groups.length" class="text-30rpx text-#7a534c leading-[1.5] font-body">
-          还没有待做的一餐。
-        </text>
+    <ink-load v-if="!ready" label="正在看待做" />
+    <view v-else-if="!groups.length" class="flex flex-col items-start gap-8rpx pt-36rpx">
+      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
+        还没有待做的一餐。
+      </text>
+      <image class="block w-220rpx" src="/static/underline.png" mode="widthFix" />
+      <view class="mt-28rpx w-full flex flex-col items-center">
+        <image class="relative z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
+        <view class="relative z-0 w-616rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-180rpx -mt-156rpx">
+          <text class="text-44rpx text-#3c2428 font-display">
+            等对方点一餐
+          </text>
+        </view>
+      </view>
+    </view>
+    <view v-else class="flex flex-col gap-28rpx">
+      <screen-head title="待做" />
+      <view class="flex flex-col gap-28rpx">
         <view
           v-for="(group, index) in groups"
           :key="group.date"
@@ -144,10 +152,11 @@ function openRecords() {
                 class="h-280rpx flex overflow-hidden rounded-36rpx"
               >
                 <dish-cover class="h-full flex-1" :file-id="item.coverFileId" :name="item.name" />
-                <view class="w-220rpx flex flex-col justify-end gap-8rpx bg-#fff9f4 px-24rpx py-24rpx">
+                <view class="w-220rpx flex flex-col justify-end gap-8rpx rounded-r-36rpx bg-#fff9f4 px-24rpx py-24rpx">
                   <text class="text-40rpx text-#3c2428 leading-[1.2] font-display">
                     {{ item.name }}
                   </text>
+                  <image class="block w-96rpx" src="/static/underline.png" mode="widthFix" />
                   <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
                     做法
                   </text>

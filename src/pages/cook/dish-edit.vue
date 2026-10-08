@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Category, DishDetail } from '@/api/eat'
-import { getDish, listCategories, publishDish, unpublishDish } from '@/api/eat'
+import { deleteDish, getDish, listCategories, publishDish, unpublishDish } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
-import { chooseImage, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
+import { chooseImage, confirmPhotoUse, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
 import { splitPieces } from '@/utils/format'
-import { showError } from '@/utils/ui'
+import { ask, showError } from '@/utils/ui'
 
 function stepLines(value: string) {
   return value.split(/\r?\n/).map(item => item.trim()).filter(Boolean)
@@ -27,8 +27,7 @@ const categoryId = ref('')
 const summary = ref('')
 const ingredients = ref('')
 const stepsText = ref('')
-const savedSteps = ref<string[]>([])
-const stepsOpen = ref(true)
+const stepsOpen = ref(false)
 const sourceUrl = ref('')
 const coverFileId = ref('')
 const localCover = ref('')
@@ -37,7 +36,6 @@ const booted = ref(false)
 
 onLoad((query) => {
   dishId.value = String(query?.id || '')
-  stepsOpen.value = !dishId.value
 })
 
 onShow(() => {
@@ -69,15 +67,17 @@ function fill(dish: DishDetail) {
   name.value = dish.name
   categoryId.value = dish.categoryId
   summary.value = dish.summary
-  ingredients.value = dish.ingredients.join(' / ')
-  savedSteps.value = dish.steps
+  ingredients.value = dish.ingredients.join('\n')
   stepsText.value = dish.steps.join('\n')
-  stepsOpen.value = dish.steps.length === 0
+  stepsOpen.value = false
   sourceUrl.value = dish.sourceUrl
   coverFileId.value = dish.coverFileId
 }
 
 async function pickCover(source: 'album' | 'camera') {
+  const allowed = await confirmPhotoUse('cover')
+  if (!allowed)
+    return
   try {
     const path = await chooseImage(source)
     localCover.value = path
@@ -102,7 +102,7 @@ async function publish() {
       categoryId: categoryId.value || undefined,
       summary: summary.value.trim(),
       ingredients: splitPieces(ingredients.value),
-      steps: stepsOpen.value ? stepLines(stepsText.value) : savedSteps.value,
+      steps: stepLines(stepsText.value),
       sourceUrl: sourceUrl.value.trim(),
       coverFileId: coverFileId.value,
     })
@@ -134,6 +134,29 @@ async function unpublish() {
 
 function openCategories() {
   uni.navigateTo({ url: '/pages/cook/categories' })
+}
+
+const stepCount = computed(() => stepLines(stepsText.value).length)
+const lackCover = computed(() => !coverFileId.value)
+const lackWords = computed(() => !summary.value.trim() && stepCount.value === 0)
+
+async function remove() {
+  if (!dishId.value || pending.value)
+    return
+  const agreed = await ask('删除这道菜', '删掉之后，列表里不会再看到。正在做的那一餐只能先下架。', '删除')
+  if (!agreed)
+    return
+  pending.value = 'delete'
+  try {
+    await deleteDish(dishId.value)
+    uni.navigateBack()
+  }
+  catch (err) {
+    showError(err)
+  }
+  finally {
+    pending.value = ''
+  }
 }
 </script>
 
@@ -193,22 +216,25 @@ function openCategories() {
       <text class="text-28rpx text-#7a534c font-body">
         食材
       </text>
-      <input
+      <textarea
         v-model="ingredients"
-        class="rounded-28rpx bg-#fff9f4 px-24rpx py-20rpx text-32rpx text-#3c2428 font-body"
-        placeholder="西兰花 / 蒜 / 盐"
+        class="h-160rpx rounded-28rpx bg-#fff9f4 px-24rpx py-20rpx text-32rpx text-#3c2428 font-body"
+        placeholder="一条一行"
         placeholder-class="ph"
-      >
+      />
       <view class="flex items-center justify-between">
         <text class="text-28rpx text-#7a534c font-body">
           步骤
         </text>
-        <text v-if="savedSteps.length && !stepsOpen" class="text-28rpx text-#792b3e font-body" @tap="stepsOpen = true">
+        <text v-if="!stepsOpen" class="text-28rpx text-#7a534c font-body" @tap="stepsOpen = true">
           展开
+        </text>
+        <text v-else class="text-28rpx text-#7a534c font-body" @tap="stepsOpen = false">
+          收起
         </text>
       </view>
       <text v-if="!stepsOpen" class="text-32rpx text-#3c2428 font-body">
-        {{ savedSteps.length }} 步
+        {{ stepCount }} 步
       </text>
       <textarea
         v-else
@@ -217,6 +243,9 @@ function openCategories() {
         placeholder="一步一行"
         placeholder-class="ph"
       />
+      <text v-if="lackWords" class="text-28rpx text-#9c342c font-body">
+        简介和步骤至少写一项
+      </text>
       <text class="text-28rpx text-#7a534c font-body">
         来源链接
       </text>
@@ -236,6 +265,14 @@ function openCategories() {
         :file-id="coverFileId"
         :name="name"
       />
+      <view v-else class="h-220rpx flex items-center justify-center rounded-36rpx bg-#fff9f4">
+        <text class="text-28rpx text-#7a534c font-body">
+          上传封面
+        </text>
+      </view>
+      <text v-if="lackCover" class="text-28rpx text-#9c342c font-body">
+        还缺封面
+      </text>
       <view class="flex gap-16rpx">
         <view class="flex-1 border-2rpx border-#c9a297 rounded-full border-solid py-16rpx text-center" @tap="pickCover('album')">
           <text class="text-28rpx text-#3c2428 font-body">
@@ -255,6 +292,12 @@ function openCategories() {
         <ink-spin v-if="pending === 'off'" tone="muted" />
         <text class="text-28rpx text-#7a534c font-body">
           {{ pending === 'off' ? '正在下架' : '下架' }}
+        </text>
+      </view>
+      <view v-if="dishId" class="flex items-center justify-center gap-16rpx py-8rpx" @tap="remove">
+        <ink-spin v-if="pending === 'delete'" tone="muted" />
+        <text class="text-28rpx text-#9c342c font-body">
+          {{ pending === 'delete' ? '正在删除' : '删除' }}
         </text>
       </view>
       </template>

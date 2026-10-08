@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { OrderDetail, RecordCard, Slot } from '@/api/eat'
 import type { DishCard } from '@/api/types'
-import { createRecord, dateLabel, getOrder, listDishes, listRecords, SLOT_LABEL, updateRecord } from '@/api/eat'
+import { createRecord, dateLabel, deleteRecord, getOrder, listDishes, listMenu, listRecords, SLOT_LABEL, updateRecord } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
-import { chooseImage, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
-import { showError } from '@/utils/ui'
+import { chooseImage, confirmPhotoUse, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
+import { showHint } from '@/utils/hint'
+import { ask, showError } from '@/utils/ui'
 
 definePage({
   style: {
@@ -28,6 +29,7 @@ const locked = ref(false)
 const pending = ref(false)
 const ready = ref(false)
 const hydrated = ref(false)
+const recordsHome = ref('/pages/cook/records')
 const slotLabels = ['早上', '中午', '晚上']
 
 const backLabel = computed(() => {
@@ -48,9 +50,10 @@ onShow(() => {
 
 async function load() {
   try {
-    const view = await ensureAccount({ next: 'home', role: 'cooker' })
+    const view = await ensureAccount({ next: 'home' })
     if (!view)
       return
+    recordsHome.value = view.role === 'eater' ? '/pages/eat/records' : '/pages/cook/records'
     today.value = view.today
     if (hydrated.value) {
       ready.value = true
@@ -67,15 +70,19 @@ async function load() {
       const listed = await listRecords()
       const found = listed.records.find(item => item.recordId === recordId.value)
       if (!found) {
-        uni.showToast({ title: '没有这一餐的记录', icon: 'none' })
+        showHint('没有这一餐的记录')
         return
       }
       applyRecord(found)
       locked.value = true
       await primeFileUrls(found.photoFileIds)
     }
+    else if (view.role === 'eater') {
+      const listed = await listMenu()
+      menu.value = listed.dishes.map(dish => ({ ...dish, status: 'on' }))
+    }
     else {
-      const listed = await listDishes({ status: 'on' })
+      const listed = await listDishes()
       menu.value = listed.dishes
     }
     hydrated.value = true
@@ -124,7 +131,7 @@ function toggleDish(dish: DishCard) {
 
 function addPhoto() {
   if (photos.value.length >= 9) {
-    uni.showToast({ title: '照片最多 9 张', icon: 'none' })
+    showHint('照片最多 9 张')
     return
   }
   uni.showActionSheet({
@@ -136,6 +143,9 @@ function addPhoto() {
 }
 
 async function storePhoto(source: 'album' | 'camera') {
+  const allowed = await confirmPhotoUse('record')
+  if (!allowed)
+    return
   try {
     const path = await chooseImage(source)
     const fileId = await uploadImage(path, 'records')
@@ -152,11 +162,30 @@ function removePhoto(fileId: string) {
   photos.value = photos.value.filter(item => item !== fileId)
 }
 
+async function remove() {
+  if (!recordId.value || pending.value)
+    return
+  const agreed = await ask('删除这餐', '删掉之后，对方那里也不会再看到。', '删除')
+  if (!agreed)
+    return
+  pending.value = true
+  try {
+    await deleteRecord(recordId.value)
+    uni.navigateBack()
+  }
+  catch (err) {
+    showError(err)
+  }
+  finally {
+    pending.value = false
+  }
+}
+
 async function submit() {
   if (pending.value)
     return
   if (!text.value.trim() && !photos.value.length) {
-    uni.showToast({ title: '照片和文字至少留一样', icon: 'none' })
+    showHint('照片和文字至少留一样')
     return
   }
   pending.value = true
@@ -192,7 +221,7 @@ async function submit() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar :label="backLabel" fallback="/pages/cook/records" />
+      <back-bar :label="backLabel" :fallback="recordsHome" />
       <template v-if="ready">
       <view class="flex flex-col items-start">
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
@@ -240,7 +269,7 @@ async function submit() {
           @tap="toggleDish(dish)"
         >
           <text class="text-26rpx font-body" :class="dishIds.includes(dish.dishId) ? 'text-#fff9f4' : 'text-#7a534c'">
-            {{ dish.name }}
+            {{ dish.name }}{{ dish.status === 'off' ? ' · 已下架' : '' }}
           </text>
         </view>
       </view>
@@ -279,6 +308,9 @@ async function submit() {
       <stamp-button :disabled="pending" :busy="pending" @tap="submit">
         {{ pending ? '正在记下' : '记下' }}
       </stamp-button>
+      <text v-if="recordId" class="py-8rpx text-center text-28rpx text-#9c342c font-body" @tap="remove">
+        删除这餐
+      </text>
       </template>
       <ink-load v-else label="正在摊开记录" />
     </view>

@@ -8,6 +8,7 @@ type _LocationUrl =
   "/pages/bind/invite" |
   "/pages/bind/join" |
   "/pages/bind/waiting" |
+  "/pages/cook/cancel" |
   "/pages/cook/categories" |
   "/pages/cook/dish-edit" |
   "/pages/cook/dishes" |

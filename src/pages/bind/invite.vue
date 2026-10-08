@@ -2,6 +2,7 @@
 import type { AccountView } from '@/api/eat'
 import { refreshInvite } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
+import { copyHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -51,7 +52,7 @@ async function refresh() {
 function copyCode() {
   if (!account.value?.inviteCode)
     return
-  uni.setClipboardData({ data: account.value.inviteCode })
+  copyHint(account.value.inviteCode, '已复制邀请码')
 }
 </script>
 

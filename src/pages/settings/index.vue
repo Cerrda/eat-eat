@@ -3,6 +3,7 @@ import type { AccountView, Role } from '@/api/eat'
 import { ROLE_LABEL, unbind, updateNickname } from '@/api/eat'
 import { ensureAccount, peekAccount, rememberAccount, routeAccount } from '@/utils/account'
 import { textLength } from '@/utils/format'
+import { showHint } from '@/utils/hint'
 import { ask, showError } from '@/utils/ui'
 
 definePage({
@@ -45,7 +46,7 @@ async function saveNickname() {
   if (next === account.value.nickname)
     return
   if (textLength(next) < 2 || textLength(next) > 8) {
-    uni.showToast({ title: '称呼要 2 到 8 个字', icon: 'none' })
+    showHint('称呼要 2 到 8 个字')
     nickname.value = account.value.nickname
     return
   }
@@ -114,9 +115,15 @@ async function leave() {
       <text class="text-48rpx text-#3c2428 leading-[1.3] font-display">
         {{ partnerLine }}
       </text>
-      <stamp-button :variant="account.role === 'eater' ? 'ghost' : 'solid'" :disabled="pending" :busy="pending" @tap="leave">
-        {{ pending ? '正在解除' : '解除绑定' }}
-      </stamp-button>
+      <view
+        class="flex items-center justify-center gap-16rpx border-4rpx border-#9c342c rounded-full border-solid px-32rpx py-28rpx"
+        @tap="leave"
+      >
+        <ink-spin v-if="pending" tone="muted" />
+        <text class="text-30rpx text-#9c342c font-medium font-body">
+          {{ pending ? '正在解除' : '解除绑定' }}
+        </text>
+      </view>
       </template>
       <ink-load v-else label="正在打开设置" />
     </view>

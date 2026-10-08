@@ -5,6 +5,7 @@ import { ensureAccount, rememberAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { monthDay } from '@/utils/format'
+import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -156,7 +157,7 @@ function toggle(dish: MenuDish) {
     return
   }
   if (picked.value.length >= 6) {
-    uni.showToast({ title: '这一餐最多 6 道菜', icon: 'none' })
+    showHint('这一餐最多 6 道菜')
     return
   }
   picked.value.push(dish)
@@ -164,7 +165,7 @@ function toggle(dish: MenuDish) {
 
 function goConfirm() {
   if (!picked.value.length || !slot.value) {
-    uni.showToast({ title: '先加上一道菜', icon: 'none' })
+    showHint('先加上一道菜')
     return
   }
   orderDraft.date = date.value
@@ -183,17 +184,26 @@ function viewOrdered() {
 
 <template>
   <paper-page dock>
-    <view class="flex flex-col gap-28rpx">
+    <view v-if="emptyMenu" class="flex flex-col items-start gap-8rpx pt-36rpx">
+      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
+        还没有上架的菜。
+      </text>
+      <image class="block w-180rpx" src="/static/underline.png" mode="widthFix" />
+      <view class="mt-36rpx w-full flex flex-col items-center">
+        <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
+        <view class="relative z-0 -mt-100rpx w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx">
+          <text class="text-44rpx text-#3c2428 font-display">
+            等对方上架
+          </text>
+        </view>
+      </view>
+    </view>
+    <view v-else class="flex flex-col gap-28rpx">
       <screen-head
-        :kicker="board && !emptyMenu && !selectedBusy ? `${account?.partnerNickname || '厨神'}的菜` : ''"
+        :kicker="board && !selectedBusy ? `${account?.partnerNickname || '厨神'}的菜` : ''"
         title="菜单"
       />
-      <template v-if="emptyMenu">
-        <text class="text-72rpx text-#3c2428 leading-[1.2] font-display">
-          还没有上架的菜。
-        </text>
-      </template>
-      <template v-else-if="board">
+      <template v-if="board">
         <view class="flex gap-12rpx">
           <view
             v-for="day in board.dates"

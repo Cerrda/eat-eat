@@ -284,12 +284,15 @@ describe('绑定后的厨房', () => {
       orderId: order.orderId,
       dishId: dish.dishId,
     })).rejects.toMatchObject({ errCode: 'FORBIDDEN' })
-    await expect(ctx.eat.createRecord({
-      orderId: order.orderId,
-      text: '吃完了',
-    })).rejects.toMatchObject({ errCode: 'FORBIDDEN' })
+    const noted = await ctx.eat.createRecord({
+      date: board.today,
+      slot: 'noon',
+      text: '我也记下',
+    })
+    expect(noted.text).toBe('我也记下')
 
     await ctx.use('openid-cooker')
+    expect((await ctx.eat.badges()).records).toBe(1)
     await expect(ctx.eat.createRecord({
       date: board.today,
       slot: 'evening',
@@ -309,7 +312,7 @@ describe('绑定后的厨房', () => {
     await ctx.use('openid-eater')
     expect((await ctx.eat.badges()).records).toBe(1)
     const records = await ctx.eat.listRecords()
-    expect(records.records).toHaveLength(1)
+    expect(records.records).toHaveLength(2)
     expect((await ctx.eat.badges()).records).toBe(0)
 
     await ctx.use('openid-cooker')

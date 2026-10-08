@@ -99,6 +99,12 @@ function writeRecord() {
     return
   uni.navigateTo({ url: `/pages/cook/record-edit?orderId=${order.value.orderId}` })
 }
+
+function cancel() {
+  if (!order.value)
+    return
+  uni.navigateTo({ url: `/pages/cook/cancel?id=${order.value.orderId}` })
+}
 </script>
 
 <template>
@@ -149,6 +155,13 @@ function writeRecord() {
       <stamp-button v-else-if="statusText === '已完成' && !order.recorded" @tap="writeRecord">
         补上
       </stamp-button>
+      <text
+        v-if="order.status === 'pending' || order.status === 'accepted'"
+        class="py-8rpx text-center text-28rpx text-#7a534c font-body"
+        @tap="cancel"
+      >
+        取消这一餐
+      </text>
       </template>
       <ink-load v-else label="正在打开这一餐" />
     </view>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { OrderDetail } from '@/api/eat'
-import { dateLabel, getOrder, rejectOrder, SLOT_LABEL } from '@/api/eat'
+import { cancelOrder, dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
@@ -52,7 +52,7 @@ async function submit() {
   }
   pending.value = true
   try {
-    await rejectOrder(orderId.value, note.value.trim())
+    await cancelOrder(orderId.value, note.value.trim())
     uni.navigateBack()
   }
   catch (err) {
@@ -67,7 +67,7 @@ async function submit() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar label="拒绝" fallback="/pages/cook/todo" />
+      <back-bar label="取消" fallback="/pages/cook/todo" />
       <view class="flex flex-col items-start">
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
           留一句话
@@ -83,7 +83,7 @@ async function submit() {
           v-model="note"
           class="h-180rpx w-full text-36rpx text-#3c2428 font-body"
           :maxlength="40"
-          placeholder="今晚来不及，明天中午可以。"
+          placeholder="这餐先不用了。"
           placeholder-class="ph"
         />
         <text class="block text-right text-26rpx text-#7a534c font-body">
@@ -91,7 +91,7 @@ async function submit() {
         </text>
       </view>
       <stamp-button :disabled="pending" :busy="pending" @tap="submit">
-        {{ pending ? '正在拒绝' : '拒绝这一餐' }}
+        {{ pending ? '正在取消' : '取消这一餐' }}
       </stamp-button>
     </view>
   </paper-page>

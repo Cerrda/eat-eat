@@ -1,4 +1,5 @@
 import { EatRequestError } from '@/api/eat'
+import { showHint } from '@/utils/hint'
 
 export function errorMessage(err: unknown) {
   return err instanceof EatRequestError ? err.message : '这次没有完成，再试一次'
@@ -15,7 +16,7 @@ export function showError(err: unknown) {
     })
     return
   }
-  uni.showToast({ title: message, icon: 'none' })
+  showHint(message)
 }
 
 export function ask(title: string, content: string, confirmText = '确定') {

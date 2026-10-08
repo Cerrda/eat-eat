@@ -19,6 +19,11 @@ const shift = ref(props.dock ? readTabShift() : '')
 let shiftTimer: ReturnType<typeof setTimeout> | undefined
 
 onMounted(() => {
+  const route = getCurrentPages().slice(-1)[0]?.route || ''
+  if (route === 'pages/bind/invite' || route === 'pages/bind/waiting')
+    uni.showShareMenu({ menus: ['shareAppMessage'] })
+  else
+    uni.hideShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] })
   if (!shift.value)
     return
   shiftTimer = setTimeout(() => {
@@ -51,6 +56,7 @@ onUnmounted(() => {
       <slot />
     </view>
     <slot name="dock" />
+    <ink-toast />
   </view>
 </template>
 

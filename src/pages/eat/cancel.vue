@@ -2,6 +2,7 @@
 import type { OrderDetail } from '@/api/eat'
 import { cancelOrder, dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -45,7 +46,7 @@ async function submit() {
   if (pending.value)
     return
   if (!note.value.trim()) {
-    uni.showToast({ title: '请留下一句话', icon: 'none' })
+    showHint('请留下一句话')
     return
   }
   pending.value = true
