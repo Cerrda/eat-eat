@@ -17157,7 +17157,7 @@
                             {
                               "type": "frame",
                               "id": "G1URGp",
-                              "name": "自己写",
+                              "name": "新增菜品",
                               "width": "fill_container",
                               "stroke": {
                                 "type": "color",
@@ -17176,7 +17176,7 @@
                                   "id": "nJcIe",
                                   "name": "入口",
                                   "fill": "$ink",
-                                  "content": "自己写",
+                                  "content": "新增菜品",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
                                   "fontSize": 18,
@@ -19476,26 +19476,94 @@
                           "name": "空状态",
                           "width": "fill_container",
                           "layout": "vertical",
-                          "gap": 18,
                           "padding": [
-                            28,
-                            0,
                             16,
+                            0,
+                            8,
                             0
                           ],
+                          "alignItems": "center",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "IhGw3",
-                              "name": "番茄插画位",
-                              "width": "fill_container",
-                              "layout": "vertical",
-                              "justifyContent": "center",
-                              "alignItems": "center",
+                              "id": "FFAuH",
+                              "name": "静物",
+                              "width": 228,
+                              "height": 214,
+                              "layout": "none",
                               "children": [
                                 {
                                   "type": "frame",
+                                  "id": "AnIqo",
+                                  "x": 0,
+                                  "y": 50,
+                                  "name": "菜单纸",
+                                  "width": 228,
+                                  "height": 160,
+                                  "fill": "$cream",
+                                  "cornerRadius": 20,
+                                  "stroke": "$line",
+                                  "strokeWidth": 1,
+                                  "layout": "vertical",
+                                  "gap": 6,
+                                  "padding": [
+                                    82,
+                                    16,
+                                    16,
+                                    16
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "qEP4d",
+                                      "name": "新增菜品",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "i1WkyX",
+                                          "name": "入口",
+                                          "fill": "$ink",
+                                          "content": "新增菜品",
+                                          "lineHeight": 1,
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 22,
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "ufCwT",
+                                          "name": "箭头",
+                                          "fill": "$burgundy",
+                                          "content": "›",
+                                          "lineHeight": 1,
+                                          "fontFamily": "$font-sans",
+                                          "fontSize": 22,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "V6wxM",
+                                      "name": "手绘下划线",
+                                      "rotation": 5,
+                                      "fill": "#792B3E",
+                                      "width": 96,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
                                   "id": "dgyeS",
+                                  "layoutPosition": "absolute",
+                                  "x": 48,
+                                  "y": 0,
                                   "name": "番茄插画",
                                   "clip": true,
                                   "width": 132,
@@ -19776,31 +19844,6 @@
                                       "strokeLinecap": "round"
                                     }
                                   ]
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "itcIq",
-                              "name": "自己写",
-                              "fill": "$burgundy",
-                              "cornerRadius": 26,
-                              "padding": [
-                                12,
-                                18
-                              ],
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "E1FLD",
-                                  "name": "按钮字",
-                                  "fill": "$paper",
-                                  "content": "自己写",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 15,
-                                  "fontWeight": "normal"
                                 }
                               ]
                             }

@@ -115,95 +115,95 @@ function openRecords() {
       />
       <ink-load v-show="!ready" label="正在看待做" />
       <view v-show="ready" class="flex flex-col gap-28rpx">
-      <text v-if="!groups.length" class="text-30rpx text-#7a534c leading-[1.5] font-body">
-        还没有待做的一餐。
-      </text>
-      <view
-        v-for="(group, index) in groups"
-        :key="group.date"
-        class="flex flex-col gap-24rpx"
-        :class="index ? 'border-0 border-t-2rpx border-#c9a297 border-solid pt-28rpx' : ''"
-      >
-        <text class="text-60rpx text-#3c2428 font-display">
-          {{ dayTitle(group.date) }}
+        <text v-if="!groups.length" class="text-30rpx text-#7a534c leading-[1.5] font-body">
+          还没有待做的一餐。
         </text>
-        <view v-for="order in group.list" :key="order.orderId" class="flex flex-col gap-16rpx" @tap="openOrder(order)">
-          <view class="flex items-center justify-between">
-            <text class="text-32rpx text-#3c2428 font-body">
-              {{ SLOT_LABEL[order.slot] }}
-            </text>
-            <text class="text-28rpx text-#792b3e font-body">
-              {{ statusText(order) }}
-            </text>
-          </view>
+        <view
+          v-for="(group, index) in groups"
+          :key="group.date"
+          class="flex flex-col gap-24rpx"
+          :class="index ? 'border-0 border-t-2rpx border-#c9a297 border-solid pt-28rpx' : ''"
+        >
+          <text class="text-60rpx text-#3c2428 font-display">
+            {{ dayTitle(group.date) }}
+          </text>
+          <view v-for="order in group.list" :key="order.orderId" class="flex flex-col gap-16rpx" @tap="openOrder(order)">
+            <view class="flex items-center justify-between">
+              <text class="text-32rpx text-#3c2428 font-body">
+                {{ SLOT_LABEL[order.slot] }}
+              </text>
+              <text class="text-28rpx text-#792b3e font-body">
+                {{ statusText(order) }}
+              </text>
+            </view>
 
-          <template v-if="!settled(order)">
-            <view
-              v-for="item in order.items"
-              :key="item.dishId"
-              class="h-280rpx flex overflow-hidden rounded-36rpx"
-            >
-              <dish-cover class="h-full flex-1" :file-id="item.coverFileId" :name="item.name" />
-              <view class="w-220rpx flex flex-col justify-end gap-8rpx bg-#fff9f4 px-24rpx py-24rpx">
-                <text class="text-40rpx text-#3c2428 leading-[1.2] font-display">
+            <template v-if="!settled(order)">
+              <view
+                v-for="item in order.items"
+                :key="item.dishId"
+                class="h-280rpx flex overflow-hidden rounded-36rpx"
+              >
+                <dish-cover class="h-full flex-1" :file-id="item.coverFileId" :name="item.name" />
+                <view class="w-220rpx flex flex-col justify-end gap-8rpx bg-#fff9f4 px-24rpx py-24rpx">
+                  <text class="text-40rpx text-#3c2428 leading-[1.2] font-display">
+                    {{ item.name }}
+                  </text>
+                  <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
+                    做法
+                  </text>
+                </view>
+              </view>
+            </template>
+            <template v-else>
+              <view v-for="item in order.items" :key="item.dishId" class="flex items-center justify-between">
+                <text class="text-32rpx text-#3c2428 font-body">
                   {{ item.name }}
                 </text>
                 <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
                   做法
                 </text>
               </view>
-            </view>
-          </template>
-          <template v-else>
-            <view v-for="item in order.items" :key="item.dishId" class="flex items-center justify-between">
-              <text class="text-32rpx text-#3c2428 font-body">
-                {{ item.name }}
-              </text>
-              <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
-                做法
-              </text>
-            </view>
-          </template>
+            </template>
 
-          <text v-if="order.note" class="text-28rpx text-#7a534c font-body">
-            {{ account?.partnerNickname || '食神' }}：{{ order.note }}
-          </text>
+            <text v-if="order.note" class="text-28rpx text-#7a534c font-body">
+              {{ account?.partnerNickname || '食神' }}：{{ order.note }}
+            </text>
 
-          <view v-if="order.status === 'pending'" class="flex items-center gap-16rpx">
-            <view class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx" @tap.stop="reject(order)">
-              <text class="text-28rpx text-#3c2428 font-body">
-                拒绝
-              </text>
+            <view v-if="order.status === 'pending'" class="flex items-center gap-16rpx">
+              <view class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx" @tap.stop="reject(order)">
+                <text class="text-28rpx text-#3c2428 font-body">
+                  拒绝
+                </text>
+              </view>
+              <view
+                class="flex items-center gap-16rpx rounded-full px-36rpx py-16rpx"
+                :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
+                @tap.stop="accept(order)"
+              >
+                <ink-spin v-if="acting === order.orderId" tone="paper" />
+                <text class="text-28rpx text-#fbf3ea font-body">
+                  {{ acting === order.orderId ? '正在接单' : '接单' }}
+                </text>
+              </view>
             </view>
-            <view
-              class="flex items-center gap-16rpx rounded-full px-36rpx py-16rpx"
-              :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
-              @tap.stop="accept(order)"
-            >
-              <ink-spin v-if="acting === order.orderId" tone="paper" />
-              <text class="text-28rpx text-#fbf3ea font-body">
-                {{ acting === order.orderId ? '正在接单' : '接单' }}
-              </text>
-            </view>
-          </view>
-          <view v-else-if="settled(order)" class="flex">
-            <view
-              v-if="order.recorded"
-              class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx"
-              @tap.stop="openRecords"
-            >
-              <text class="text-28rpx text-#3c2428 font-body">
-                已记下
-              </text>
-            </view>
-            <view v-else class="rounded-full bg-#792b3e px-36rpx py-16rpx" @tap.stop="writeRecord(order)">
-              <text class="text-28rpx text-#fbf3ea font-body">
-                补上
-              </text>
+            <view v-else-if="settled(order)" class="flex">
+              <view
+                v-if="order.recorded"
+                class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx"
+                @tap.stop="openRecords"
+              >
+                <text class="text-28rpx text-#3c2428 font-body">
+                  已记下
+                </text>
+              </view>
+              <view v-else class="rounded-full bg-#792b3e px-36rpx py-16rpx" @tap.stop="writeRecord(order)">
+                <text class="text-28rpx text-#fbf3ea font-body">
+                  补上
+                </text>
+              </view>
             </view>
           </view>
         </view>
-      </view>
       </view>
     </view>
     <template #dock>

@@ -178,17 +178,18 @@ function mountCanvas(attempt = 0) {
         ctx.globalAlpha = 0.46
         paint(ctx)
         ctx.restore()
-        const t = ((Date.now() - started) % 1400) / 1400
+        const t = ((Date.now() - started) % 2200) / 2200
         const eased = t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2
-        const band = cssW * 0.46
+        const band = cssW * 0.62
         const x = -band + eased * (cssW + band)
+        const shine = ctx.createLinearGradient(x, 0, x + band, cssH)
+        shine.addColorStop(0, 'rgba(255,246,238,0.02)')
+        shine.addColorStop(0.5, 'rgba(255,246,238,0.5)')
+        shine.addColorStop(1, 'rgba(255,246,238,0.02)')
         ctx.save()
         ctx.globalCompositeOperation = 'source-atop'
-        ctx.fillStyle = '#fffaf4'
-        ctx.globalAlpha = 0.42
-        ctx.fillRect(x, 0, band, cssH)
-        ctx.globalAlpha = 0.92
-        ctx.fillRect(x + band * 0.38, 0, band * 0.22, cssH)
+        ctx.fillStyle = shine
+        ctx.fillRect(0, 0, cssW, cssH)
         ctx.restore()
         frameId = setTimeout(draw, 32) as unknown as number
       }

@@ -13,7 +13,9 @@ declare global {
   const askText: typeof import('./utils/ui')['askText']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const beginTabSwitch: typeof import('./utils/tab-motion')['beginTabSwitch']
   const chooseImage: typeof import('./utils/files')['chooseImage']
+  const clearTabMotion: typeof import('./utils/tab-motion')['clearTabMotion']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -116,6 +118,8 @@ declare global {
   const reactiveComputed: typeof import('@vueuse/core')['reactiveComputed']
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
+  const readTabOrigin: typeof import('./utils/tab-motion')['readTabOrigin']
+  const readTabShift: typeof import('./utils/tab-motion')['readTabShift']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
   const refAutoReset: typeof import('@vueuse/core')['refAutoReset']
@@ -137,6 +141,8 @@ declare global {
   const splitPieces: typeof import('./utils/format')['splitPieces']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
+  const takeTabOrigin: typeof import('./utils/tab-motion')['takeTabOrigin']
+  const takeTabShift: typeof import('./utils/tab-motion')['takeTabShift']
   const templateRef: typeof import('@vueuse/core')['templateRef']
   const textLength: typeof import('./utils/format')['textLength']
   const throttledRef: typeof import('@vueuse/core')['throttledRef']
@@ -344,6 +350,9 @@ declare global {
   // @ts-ignore
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { TabShift } from './utils/tab-motion'
+  import('./utils/tab-motion')
 }
 
 // for vue template auto import
@@ -358,7 +367,9 @@ declare module 'vue' {
     readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly beginTabSwitch: UnwrapRef<typeof import('./utils/tab-motion')['beginTabSwitch']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
+    readonly clearTabMotion: UnwrapRef<typeof import('./utils/tab-motion')['clearTabMotion']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -461,6 +472,8 @@ declare module 'vue' {
     readonly reactiveComputed: UnwrapRef<typeof import('@vueuse/core')['reactiveComputed']>
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
+    readonly readTabOrigin: UnwrapRef<typeof import('./utils/tab-motion')['readTabOrigin']>
+    readonly readTabShift: UnwrapRef<typeof import('./utils/tab-motion')['readTabShift']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
