@@ -6,5 +6,15 @@
 export {}
 
 declare module 'vue' {
-  export interface GlobalComponents {}
+  export interface GlobalComponents {
+    BackBar: typeof import('./components/back-bar/back-bar.vue')['default']
+    CodeCells: typeof import('./components/code-cells/code-cells.vue')['default']
+    DishCover: typeof import('./components/dish-cover/dish-cover.vue')['default']
+    InkLoad: typeof import('./components/ink-load/ink-load.vue')['default']
+    InkSpin: typeof import('./components/ink-spin/ink-spin.vue')['default']
+    PaperPage: typeof import('./components/paper-page/paper-page.vue')['default']
+    ScreenHead: typeof import('./components/screen-head/screen-head.vue')['default']
+    StampButton: typeof import('./components/stamp-button/stamp-button.vue')['default']
+    TabDock: typeof import('./components/tab-dock/tab-dock.vue')['default']
+  }
 }

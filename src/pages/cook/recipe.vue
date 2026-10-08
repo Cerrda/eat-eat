@@ -1,0 +1,99 @@
+<script setup lang="ts">
+import type { CookDish } from '@/api/eat'
+import { getCookDish, getDish } from '@/api/eat'
+import { ensureAccount } from '@/utils/account'
+import { primeFileUrls } from '@/utils/files'
+import { showError } from '@/utils/ui'
+
+definePage({
+  style: {
+    navigationStyle: 'custom',
+    navigationBarTextStyle: 'black',
+    backgroundColor: '#FBF3EA',
+  },
+})
+
+const orderId = ref('')
+const dishId = ref('')
+const dish = ref<CookDish | null>(null)
+const categoryName = ref('')
+
+onLoad((query) => {
+  orderId.value = String(query?.orderId || '')
+  dishId.value = String(query?.dishId || '')
+})
+
+onShow(async () => {
+  try {
+    const view = await ensureAccount({ next: 'home', role: 'cooker' })
+    if (!view || !orderId.value || !dishId.value)
+      return
+    const [cooked, detail] = await Promise.all([
+      getCookDish(orderId.value, dishId.value),
+      getDish(dishId.value).catch(() => null),
+    ])
+    dish.value = cooked
+    categoryName.value = detail?.categoryName || ''
+    await primeFileUrls([cooked.coverFileId])
+  }
+  catch (err) {
+    showError(err)
+  }
+})
+
+function copyLink() {
+  if (!dish.value?.sourceUrl)
+    return
+  uni.setClipboardData({ data: dish.value.sourceUrl })
+}
+</script>
+
+<template>
+  <paper-page>
+    <view class="flex flex-col gap-28rpx">
+      <back-bar label="做法" fallback="/pages/cook/todo" />
+      <template v-if="dish">
+      <dish-cover class="h-360rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
+      <text class="text-64rpx text-#3c2428 leading-[1.15] font-display">
+        {{ dish.name }}
+      </text>
+      <text v-if="categoryName" class="text-28rpx text-#7a534c font-body">
+        {{ categoryName }}
+      </text>
+      <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx">
+        <text class="text-28rpx text-#7a534c font-body">
+          食材
+        </text>
+        <text class="text-32rpx text-#3c2428 leading-[1.5] font-body">
+          {{ dish.ingredients.join(' / ') }}
+        </text>
+      </view>
+      <view v-if="dish.steps.length" class="flex flex-col gap-16rpx">
+        <text class="text-28rpx text-#7a534c font-body">
+          步骤
+        </text>
+        <view v-for="(step, index) in dish.steps" :key="index" class="flex gap-16rpx">
+          <text class="text-32rpx text-#792b3e font-display">
+            {{ index + 1 }}
+          </text>
+          <text class="flex-1 text-32rpx text-#3c2428 leading-[1.5] font-body">
+            {{ step }}
+          </text>
+        </view>
+      </view>
+      <text v-if="!dish.ingredients.length && !dish.steps.length" class="text-30rpx text-#7a534c font-body">
+        这道菜没有写下做法。
+      </text>
+      <view v-if="dish.sourceUrl" class="flex items-center justify-between pt-8rpx">
+        <text class="text-28rpx text-#7a534c font-body">
+          来源
+        </text>
+        <text class="text-28rpx text-#792b3e font-body" @tap="copyLink">
+          复制链接
+        </text>
+      </view>
+      </template>
+      <ink-load v-else label="正在打开做法" />
+    </view>
+  </paper-page>
+</template>

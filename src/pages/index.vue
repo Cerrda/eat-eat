@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Role } from '@/api/eat'
 import { createInvite, EatRequestError } from '@/api/eat'
+import { useTopPadding } from '@/composables/useTopPadding'
+import { loadAccount, routeAccount } from '@/utils/account'
+import { normalizeCode } from '@/utils/format'
+import { showError } from '@/utils/ui'
 
 definePage({
   type: 'home',
@@ -12,30 +16,39 @@ definePage({
   },
 })
 
-const topPadding = ref('87px')
-
-onLoad(() => {
-  const info = uni.getWindowInfo()
-  const statusBar = info.statusBarHeight ?? 0
-  let anchor = statusBar + 35
-  // #ifdef MP-WEIXIN
-  const menu = uni.getMenuButtonBoundingClientRect()
-  if (menu.bottom)
-    anchor = menu.bottom + 4
-  // #endif
-  topPadding.value = `${anchor}px`
-})
-
+const topPadding = useTopPadding()
+const ready = ref(false)
 const pending = ref<'' | Role>('')
+let opened = false
 
-function showMessage(title: string, content: string) {
-  uni.showModal({
-    title,
-    content,
-    showCancel: false,
-    confirmText: '知道了',
-  })
+async function boot(query?: Record<string, string | undefined>) {
+  const code = normalizeCode(String(query?.code || query?.inviteCode || ''))
+  if (code) {
+    uni.redirectTo({ url: `/pages/bind/join?code=${code}` })
+    return
+  }
+  try {
+    const view = await loadAccount(true)
+    if (view.next !== 'choose') {
+      const left = await routeAccount(view)
+      if (left)
+        return
+    }
+  }
+  catch (err) {
+    showError(err)
+  }
+  ready.value = true
 }
+
+onLoad(query => boot(query))
+onShow(() => {
+  if (!opened) {
+    opened = true
+    return
+  }
+  boot()
+})
 
 async function generate(role: Role) {
   if (pending.value)
@@ -43,20 +56,30 @@ async function generate(role: Role) {
   pending.value = role
   try {
     const data = await createInvite(role)
-    showMessage(data.inviteCode, '48 小时内有效。对方填上这 6 位，就会加入这间厨房。')
+    routeAccount(data)
   }
   catch (err) {
-    const message = err instanceof EatRequestError ? err.message : '这次没有完成，再试一次'
-    showMessage('没有生成', message)
+    if (err instanceof EatRequestError && err.errCode === 'ALREADY_BOUND') {
+      const view = await loadAccount(true)
+      routeAccount(view)
+      return
+    }
+    showError(err)
   }
   finally {
     pending.value = ''
   }
 }
+
+function fillCode() {
+  uni.navigateTo({
+    url: '/pages/bind/join',
+  })
+}
 </script>
 
 <template>
-  <view class="relative box-border max-w-full min-h-screen w-full bg-#fbf3ea">
+  <view v-if="ready" class="relative min-h-screen w-full bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
     <view
       class="relative z-1 box-border flex flex-col gap-42rpx px-42rpx pb-[calc(54rpx+env(safe-area-inset-bottom))]"
@@ -72,9 +95,6 @@ async function generate(role: Role) {
         谁来开这间厨房
       </text>
       <image class="block w-170rpx self-start" src="/static/underline.png" mode="widthFix" />
-      <text class="block text-29rpx text-#7a534c font-normal leading-[1.5] font-body">
-        先打开的人选一边。另一个人加入后，自动成为另一边。
-      </text>
 
       <view class="flex justify-center">
         <image class="w-404rpx" src="/static/pot.png" mode="widthFix" />
@@ -84,74 +104,34 @@ async function generate(role: Role) {
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来做饭
         </text>
-        <text class="block text-29rpx text-#7a534c font-normal leading-[1.5] font-body">
-          我来上架菜、接下这一餐、记下做过的饭。
-        </text>
-        <view class="relative">
-          <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-50rpx bg-#4e222d/35" />
-          <view
-            class="relative box-border flex items-center justify-center border-4rpx border-#792b3e rounded-50rpx border-solid bg-#792b3e px-31rpx py-29rpx"
-            hover-class="translate-x-6rpx translate-y-8rpx"
-            :hover-stay-time="80"
-            @tap="generate('cooker')"
-          >
-            <text class="text-29rpx text-#fbf3ea font-medium leading-[1.2] font-body">
-              {{ pending === 'cooker' ? '正在生成邀请' : '生成邀请，等对方来点餐' }}
-            </text>
-          </view>
-        </view>
+        <stamp-button :disabled="pending !== ''" :busy="pending === 'cooker'" @tap="generate('cooker')">
+          {{ pending === 'cooker' ? '正在生成邀请' : '生成邀请，等对方来点餐' }}
+        </stamp-button>
       </view>
 
       <view class="box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来点餐
         </text>
-        <text class="block text-29rpx text-#7a534c font-normal leading-[1.5] font-body">
-          我来点早上、中午和晚上。
+        <stamp-button :disabled="pending !== ''" :busy="pending === 'eater'" @tap="generate('eater')">
+          {{ pending === 'eater' ? '正在生成邀请' : '生成邀请，等对方来做饭' }}
+        </stamp-button>
+      </view>
+
+      <view class="box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
+        <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+          我有邀请码
         </text>
-        <view class="relative">
-          <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-50rpx bg-#4e222d/35" />
-          <view
-            class="relative box-border flex items-center justify-center border-4rpx border-#792b3e rounded-50rpx border-solid bg-#792b3e px-31rpx py-29rpx"
-            hover-class="translate-x-6rpx translate-y-8rpx"
-            :hover-stay-time="80"
-            @tap="generate('eater')"
-          >
-            <text class="text-29rpx text-#fbf3ea font-medium leading-[1.2] font-body">
-              {{ pending === 'eater' ? '正在生成邀请' : '生成邀请，等对方来做饭' }}
-            </text>
-          </view>
-        </view>
+        <stamp-button :disabled="pending !== ''" @tap="fillCode">
+          填上邀请码
+        </stamp-button>
       </view>
     </view>
   </view>
+  <view v-else class="relative min-h-screen w-full bg-#fbf3ea">
+    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
+    <view class="relative z-1 px-44rpx" :style="{ paddingTop: topPadding }">
+      <ink-load label="正在打开厨房" />
+    </view>
+  </view>
 </template>
-
-<style>
-@font-face {
-  font-family: "Ma Shan Zheng";
-  src: url("@/static/fonts/ma-shan-zheng.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "LXGW WenKai";
-  src: url("@/static/fonts/lxgw-wenkai.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "LXGW WenKai";
-  src: url("@/static/fonts/lxgw-wenkai-medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-}
-
-page {
-  width: 100%;
-  overflow-x: hidden;
-  background-color: #fbf3ea;
-}
-</style>

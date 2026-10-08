@@ -7,8 +7,13 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const accountPath: typeof import('./utils/account')['accountPath']
+  const addDays: typeof import('./utils/format')['addDays']
+  const ask: typeof import('./utils/ui')['ask']
+  const askText: typeof import('./utils/ui')['askText']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const chooseImage: typeof import('./utils/files')['chooseImage']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -34,11 +39,14 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const eatCloud: typeof import('./utils/cloud')['eatCloud']
   const effectScope: typeof import('vue')['effectScope']
+  const ensureAccount: typeof import('./utils/account')['ensureAccount']
+  const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
+  const ignoredCancel: typeof import('./utils/files')['ignoredCancel']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const isDefined: typeof import('@vueuse/core')['isDefined']
@@ -46,9 +54,13 @@ declare global {
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
+  const loadAccount: typeof import('./utils/account')['loadAccount']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
+  const menuIntent: typeof import('./utils/draft')['menuIntent']
+  const monthDay: typeof import('./utils/format')['monthDay']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeCode: typeof import('./utils/format')['normalizeCode']
   const onActivated: typeof import('vue')['onActivated']
   const onAddToFavorites: typeof import('@dcloudio/uni-app')['onAddToFavorites']
   const onBackPress: typeof import('@dcloudio/uni-app')['onBackPress']
@@ -92,7 +104,10 @@ declare global {
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
+  const orderDraft: typeof import('./utils/draft')['orderDraft']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
+  const peekAccount: typeof import('./utils/account')['peekAccount']
+  const primeFileUrls: typeof import('./utils/files')['primeFileUrls']
   const provide: typeof import('vue')['provide']
   const provideLocal: typeof import('@vueuse/core')['provideLocal']
   const reactify: typeof import('@vueuse/core')['reactify']
@@ -108,15 +123,22 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
+  const rememberAccount: typeof import('./utils/account')['rememberAccount']
   const resolveComponent: typeof import('vue')['resolveComponent']
+  const resolveFileUrl: typeof import('./utils/files')['resolveFileUrl']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const routeAccount: typeof import('./utils/account')['routeAccount']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const showError: typeof import('./utils/ui')['showError']
+  const slotKey: typeof import('./utils/format')['slotKey']
+  const splitPieces: typeof import('./utils/format')['splitPieces']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const templateRef: typeof import('@vueuse/core')['templateRef']
+  const textLength: typeof import('./utils/format')['textLength']
   const throttledRef: typeof import('@vueuse/core')['throttledRef']
   const throttledWatch: typeof import('@vueuse/core')['throttledWatch']
   const toRaw: typeof import('vue')['toRaw']
@@ -133,6 +155,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
+  const uploadImage: typeof import('./utils/files')['uploadImage']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
@@ -282,6 +305,7 @@ declare global {
   const useToNumber: typeof import('@vueuse/core')['useToNumber']
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
+  const useTopPadding: typeof import('./composables/useTopPadding')['useTopPadding']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
@@ -313,6 +337,7 @@ declare global {
   const watchTriggerable: typeof import('@vueuse/core')['watchTriggerable']
   const watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
   const whenever: typeof import('@vueuse/core')['whenever']
+  const withinMenu: typeof import('./utils/format')['withinMenu']
 }
 // for type re-export
 declare global {
@@ -327,8 +352,13 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly accountPath: UnwrapRef<typeof import('./utils/account')['accountPath']>
+    readonly addDays: UnwrapRef<typeof import('./utils/format')['addDays']>
+    readonly ask: UnwrapRef<typeof import('./utils/ui')['ask']>
+    readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -354,11 +384,14 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly eatCloud: UnwrapRef<typeof import('./utils/cloud')['eatCloud']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
+    readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
+    readonly ignoredCancel: UnwrapRef<typeof import('./utils/files')['ignoredCancel']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
@@ -366,9 +399,13 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>
+    readonly monthDay: UnwrapRef<typeof import('./utils/format')['monthDay']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeCode: UnwrapRef<typeof import('./utils/format')['normalizeCode']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onAddToFavorites: UnwrapRef<typeof import('@dcloudio/uni-app')['onAddToFavorites']>
     readonly onBackPress: UnwrapRef<typeof import('@dcloudio/uni-app')['onBackPress']>
@@ -412,7 +449,10 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly orderDraft: UnwrapRef<typeof import('./utils/draft')['orderDraft']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
+    readonly peekAccount: UnwrapRef<typeof import('./utils/account')['peekAccount']>
+    readonly primeFileUrls: UnwrapRef<typeof import('./utils/files')['primeFileUrls']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -428,15 +468,22 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly rememberAccount: UnwrapRef<typeof import('./utils/account')['rememberAccount']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly resolveFileUrl: UnwrapRef<typeof import('./utils/files')['resolveFileUrl']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly routeAccount: UnwrapRef<typeof import('./utils/account')['routeAccount']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly showError: UnwrapRef<typeof import('./utils/ui')['showError']>
+    readonly slotKey: UnwrapRef<typeof import('./utils/format')['slotKey']>
+    readonly splitPieces: UnwrapRef<typeof import('./utils/format')['splitPieces']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
+    readonly textLength: UnwrapRef<typeof import('./utils/format')['textLength']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
     readonly throttledWatch: UnwrapRef<typeof import('@vueuse/core')['throttledWatch']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
@@ -453,6 +500,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
+    readonly uploadImage: UnwrapRef<typeof import('./utils/files')['uploadImage']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
@@ -602,6 +650,7 @@ declare module 'vue' {
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
+    readonly useTopPadding: UnwrapRef<typeof import('./composables/useTopPadding')['useTopPadding']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
@@ -633,5 +682,6 @@ declare module 'vue' {
     readonly watchTriggerable: UnwrapRef<typeof import('@vueuse/core')['watchTriggerable']>
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
+    readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
   }
 }

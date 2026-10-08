@@ -26,7 +26,6 @@ export default defineConfig({
     // https://uni-helper.js.org/vite-plugin-uni-components
     UniHelperComponents({
       dts: 'src/components.d.ts',
-      directoryAsNamespace: true,
     }),
     // https://uni-helper.js.org/plugin-uni
     Uni(),
