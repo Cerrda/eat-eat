@@ -132,9 +132,9 @@ def main() -> None:
     buckets["body-medium"].update(finite)
 
     loaded = {
-        "display": TTFont(SRC / "static/fonts/ma-shan-zheng.ttf").getBestCmap() or {},
-        "body": TTFont(SRC / "static/fonts/lxgw-wenkai.ttf").getBestCmap() or {},
-        "body-medium": TTFont(SRC / "static/fonts/lxgw-wenkai-medium.ttf").getBestCmap() or {},
+        "display": TTFont(ROOT / "fonts/ma-shan-zheng.ttf").getBestCmap() or {},
+        "body": TTFont(ROOT / "fonts/lxgw-wenkai.ttf").getBestCmap() or {},
+        "body-medium": TTFont(ROOT / "fonts/lxgw-wenkai-medium.ttf").getBestCmap() or {},
     }
     for name, chars in buckets.items():
         needed = {char for char in chars if keep(char)}

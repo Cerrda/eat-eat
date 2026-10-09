@@ -48,6 +48,7 @@ declare global {
   const ensureAccount: typeof import('./utils/account')['ensureAccount']
   const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
+  const faceOf: typeof import('./utils/face')['faceOf']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
@@ -61,6 +62,10 @@ declare global {
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
   const loadAccount: typeof import('./utils/account')['loadAccount']
+  const longCang: typeof import('./utils/font-sources')['longCang']
+  const lxgwWenKai: typeof import('./utils/font-sources')['lxgwWenKai']
+  const lxgwWenKaiMedium: typeof import('./utils/font-sources')['lxgwWenKaiMedium']
+  const maShanZheng: typeof import('./utils/font-sources')['maShanZheng']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
   const menuIntent: typeof import('./utils/draft')['menuIntent']
@@ -358,6 +363,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { FaceRole } from './utils/face'
+  import('./utils/face')
+  // @ts-ignore
   export type { TabShift } from './utils/tab-motion'
   import('./utils/tab-motion')
 }
@@ -409,6 +417,7 @@ declare module 'vue' {
     readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
@@ -422,6 +431,10 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
+    readonly longCang: UnwrapRef<typeof import('./utils/font-sources')['longCang']>
+    readonly lxgwWenKai: UnwrapRef<typeof import('./utils/font-sources')['lxgwWenKai']>
+    readonly lxgwWenKaiMedium: UnwrapRef<typeof import('./utils/font-sources')['lxgwWenKaiMedium']>
+    readonly maShanZheng: UnwrapRef<typeof import('./utils/font-sources')['maShanZheng']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>

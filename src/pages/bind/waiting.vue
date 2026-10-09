@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AccountView } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -37,12 +38,9 @@ onShareAppMessage(() => ({
       <text class="text-44rpx text-#3c2428 font-display italic">
         EatEat
       </text>
-      <view class="flex flex-col items-start gap-8rpx">
-        <text class="text-80rpx text-#3c2428 leading-[1.15] font-display">
-          {{ title }}
-        </text>
-        <ink-underline :width="170" />
-      </view>
+      <text class="text-40rpx text-#3c2428 leading-[1.45]" :class="faceOf(title, 'sans')">
+        {{ title }}
+      </text>
       <image class="w-376rpx self-center" src="/static/house.png" mode="widthFix" />
       <view class="flex flex-col gap-12rpx rounded-36rpx bg-#fff9f4 px-32rpx py-28rpx">
         <text class="text-28rpx text-#792b3e font-body">

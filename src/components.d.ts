@@ -15,6 +15,7 @@ declare module 'vue' {
     InkToast: typeof import('./components/ink-toast/ink-toast.vue')['default']
     InkUnderline: typeof import('./components/ink-underline/ink-underline.vue')['default']
     PaperPage: typeof import('./components/paper-page/paper-page.vue')['default']
+    PaperPin: typeof import('./components/paper-pin/paper-pin.vue')['default']
     ScreenHead: typeof import('./components/screen-head/screen-head.vue')['default']
     StampButton: typeof import('./components/stamp-button/stamp-button.vue')['default']
     TabDock: typeof import('./components/tab-dock/tab-dock.vue')['default']

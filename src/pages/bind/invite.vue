@@ -2,6 +2,7 @@
 import type { AccountView } from '@/api/eat'
 import { refreshInvite } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { copyHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
@@ -62,12 +63,9 @@ function copyCode() {
       <text class="text-44rpx text-#3c2428 font-display italic">
         EatEat
       </text>
-      <view class="flex flex-col items-start gap-8rpx">
-        <text class="text-60rpx text-#3c2428 leading-[1.15] font-display">
-          把这间厨房交给对方
-        </text>
-        <ink-underline :width="170" />
-      </view>
+      <text class="text-40rpx text-#3c2428 leading-[1.45]" :class="faceOf('把这间厨房交给对方', 'sans')">
+        把这间厨房交给对方
+      </text>
       <code-cells :model-value="account.inviteCode" readonly />
       <text v-if="account.inviteExpired" class="text-26rpx text-#7a534c leading-[1.5] font-body">
         这个码已经过期了。

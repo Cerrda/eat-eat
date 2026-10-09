@@ -63,6 +63,8 @@ function onTap() {
 </template>
 
 <style>
+@import "../../styles/font-util.css";
+
 .eat-stamp {
   margin: 0;
   line-height: 1.2;

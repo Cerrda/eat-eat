@@ -42,6 +42,8 @@ function onInput(event: { detail: { value: string } }) {
 </template>
 
 <style>
+@import "../../styles/font-util.css";
+
 /* 微信原生 input 不吃 opacity，文字会叠在格子上。颜色透明，并把光标和原文挪到可视区外。 */
 .code-cells-input {
   position: absolute;

@@ -2,6 +2,7 @@
 import type { OrderDetail } from '@/api/eat'
 import { getOrder } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -44,12 +45,9 @@ function openOrder() {
           ✓
         </text>
       </view>
-      <view class="flex flex-col items-start">
-        <text class="text-96rpx text-#3c2428 leading-[1.05] font-display">
-          点好了
-        </text>
-        <ink-underline class="mt-8rpx" :width="160" />
-      </view>
+      <text class="text-56rpx text-#792b3e leading-[1.3]" :class="faceOf('点好了', 'sans')">
+        点好了
+      </text>
       <text class="text-44rpx text-#3c2428 leading-[1.4] font-display">
         {{ order.items.map(item => item.name).join(' / ') }}
       </text>

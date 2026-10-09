@@ -3,6 +3,7 @@ import type { AccountView, Category } from '@/api/eat'
 import type { DishCard } from '@/api/types'
 import { listCategories, listDishes } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showError } from '@/utils/ui'
 
@@ -96,30 +97,27 @@ function openCategories() {
 <template>
   <paper-page dock>
     <ink-load v-if="!ready" label="正在翻菜" />
-    <view v-else-if="bareEmpty" class="flex flex-col items-start gap-8rpx pt-36rpx">
-      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        还没有菜
-      </text>
-      <ink-underline :width="180" />
-      <view class="mt-36rpx w-full flex flex-col items-center">
+    <view v-else-if="bareEmpty" class="flex flex-col gap-28rpx">
+      <screen-head title="菜品" note="还没有菜" />
+      <view class="w-full flex flex-col items-center">
         <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
         <view class="relative z-0 -mt-100rpx w-456rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx" @tap="createDish">
-          <text class="text-44rpx text-#792b3e font-display">
+          <text class="text-44rpx text-#792b3e" :class="faceOf('新增菜品', 'serif')">
             新增菜品
           </text>
-          <text class="text-44rpx text-#792b3e font-body">
+          <text class="text-44rpx text-#792b3e" :class="faceOf('›', 'sans')">
             ›
           </text>
         </view>
       </view>
     </view>
-    <view v-else class="flex flex-col gap-28rpx">
+    <view v-else class="flex flex-col gap-32rpx">
       <screen-head title="菜品" />
       <view class="flex items-center justify-between" @tap="createDish">
-        <text class="text-36rpx text-#3c2428 font-display">
+        <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
           新增菜品
         </text>
-        <text class="text-40rpx text-#792b3e font-body">
+        <text class="text-40rpx text-#792b3e" :class="faceOf('›', 'sans')">
           ›
         </text>
       </view>
@@ -127,13 +125,14 @@ function openCategories() {
         <view class="h-84rpx flex flex-1 items-center rounded-full bg-#fff9f4 px-28rpx">
           <input
             v-model="keyword"
-            class="flex-1 text-30rpx text-#3c2428 font-body"
+            class="h-84rpx flex-1 text-30rpx text-#3c2428 leading-84rpx"
+            :class="faceOf(keyword, 'sans')"
             placeholder="搜菜名"
-            placeholder-class="ph"
+            placeholder-class="ph-sans"
             confirm-type="search"
           >
         </view>
-        <text class="text-28rpx text-#792b3e font-body" @tap="openCategories">
+        <text class="text-28rpx text-#792b3e" :class="faceOf('管理分类', 'mono')" @tap="openCategories">
           管理分类
         </text>
       </view>
@@ -144,7 +143,7 @@ function openCategories() {
             :class="categoryId ? 'bg-#fff9f4' : 'bg-#792b3e'"
             @tap="pickCategory('')"
           >
-            <text class="text-28rpx font-body" :class="categoryId ? 'text-#3c2428' : 'text-#fff9f4'">
+            <text class="text-28rpx" :class="[categoryId ? 'text-#3c2428' : 'text-#fff9f4', faceOf('全部', 'sans')]">
               全部
             </text>
           </view>
@@ -156,8 +155,8 @@ function openCategories() {
             @tap="pickCategory(category.categoryId)"
           >
             <text
-              class="text-28rpx font-body"
-              :class="categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428'"
+              class="text-28rpx"
+              :class="[categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428', faceOf(category.name, 'sans')]"
             >
               {{ category.name }}
             </text>
@@ -165,44 +164,44 @@ function openCategories() {
         </view>
       </scroll-view>
       <view v-if="onShelf.length" class="flex flex-col gap-20rpx">
-        <text class="text-28rpx text-#792b3e font-body">
+        <text class="text-30rpx text-#792b3e" :class="faceOf('已上架', 'mono')">
           已上架
         </text>
-        <view v-for="dish in onShelf" :key="dish.dishId" class="flex items-center gap-20rpx" @tap="editDish(dish)">
-          <dish-cover class="h-112rpx w-112rpx rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
+        <view v-for="dish in onShelf" :key="dish.dishId" class="flex items-center gap-24rpx py-24rpx" @tap="editDish(dish)">
+          <dish-cover class="h-112rpx w-112rpx rounded-28rpx" :file-id="dish.coverFileId" :name="dish.name" />
           <view class="min-w-0 flex flex-1 flex-col gap-4rpx">
-            <text class="text-36rpx text-#3c2428 font-display">
+            <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
               {{ dish.name }}
             </text>
-            <text class="text-28rpx text-#7a534c font-body">
+            <text class="text-28rpx text-#7a534c" :class="faceOf(dish.categoryName || '未分类', 'sans')">
               {{ dish.categoryName || '未分类' }}
             </text>
           </view>
-          <text class="text-28rpx text-#792b3e font-body">
+          <text class="text-28rpx text-#792b3e" :class="faceOf('已上架', 'mono')">
             已上架
           </text>
         </view>
       </view>
       <view v-if="offShelf.length" class="flex flex-col gap-20rpx">
-        <text class="text-28rpx text-#7a534c font-body">
+        <text class="text-30rpx text-#792b3e" :class="faceOf('已下架', 'mono')">
           已下架
         </text>
-        <view v-for="dish in offShelf" :key="dish.dishId" class="flex items-center gap-20rpx" @tap="editDish(dish)">
-          <dish-cover class="h-112rpx w-112rpx rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
+        <view v-for="dish in offShelf" :key="dish.dishId" class="flex items-center gap-24rpx py-24rpx" @tap="editDish(dish)">
+          <dish-cover class="h-112rpx w-112rpx rounded-28rpx" :file-id="dish.coverFileId" :name="dish.name" />
           <view class="min-w-0 flex flex-1 flex-col gap-4rpx">
-            <text class="text-36rpx text-#3c2428 font-display">
+            <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
               {{ dish.name }}
             </text>
-            <text class="text-28rpx text-#7a534c font-body">
+            <text class="text-28rpx text-#7a534c" :class="faceOf(dish.categoryName || '未分类', 'sans')">
               {{ dish.categoryName || '未分类' }}
             </text>
           </view>
-          <text class="text-28rpx text-#7a534c font-body">
+          <text class="text-28rpx text-#7a534c" :class="faceOf('已下架', 'mono')">
             已下架
           </text>
         </view>
       </view>
-      <text v-if="emptyCopy && !onShelf.length && !offShelf.length" class="text-30rpx text-#7a534c leading-[1.5] font-body">
+      <text v-if="emptyCopy && !onShelf.length && !offShelf.length" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">
         {{ emptyCopy }}
       </text>
     </view>
@@ -212,8 +211,3 @@ function openCategories() {
   </paper-page>
 </template>
 
-<style>
-.ph {
-  color: #c9a297;
-}
-</style>

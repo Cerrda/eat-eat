@@ -40,7 +40,7 @@ def ui_text() -> str:
         for match in STRING_RE.finditer(text):
             literal = match.group(1) if match.group(1) is not None else match.group(2)
             chars.update(char for char in literal if keep(char))
-    for path in (STATIC / "fonts").glob("*.ttf"):
+    for path in (ROOT / "fonts").glob("*.ttf"):
         cmap = TTFont(path).getBestCmap() or {}
         chars.update(chr(code) for code in cmap if code >= 32 and keep(chr(code)))
     chars.update("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
@@ -75,7 +75,7 @@ def subset_font(source: Path, dest: Path, text: str) -> None:
 
 def download_font() -> None:
     text = ui_text()
-    font_dir = STATIC / "fonts"
+    font_dir = ROOT / "fonts"
     with tempfile.TemporaryDirectory() as temporary:
         cache = Path(temporary)
         for name, url in SOURCES.items():

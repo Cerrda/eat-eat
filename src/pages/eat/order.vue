@@ -73,9 +73,12 @@ function reorder() {
     <view class="flex flex-col gap-24rpx">
       <back-bar label="订单" fallback="/pages/eat/orders" />
       <template v-if="order && account">
-      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        {{ headline }}
-      </text>
+      <view class="flex flex-col items-start">
+        <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
+          {{ headline }}
+        </text>
+        <ink-underline class="mt-8rpx" :width="368" />
+      </view>
       <text
         v-for="item in order.items"
         :key="item.dishId"

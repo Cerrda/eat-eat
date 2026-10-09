@@ -2,6 +2,7 @@
 import type { AccountView } from '@/api/eat'
 import { acceptInvite, EatRequestError, previewInvite } from '@/api/eat'
 import { loadAccount, rememberAccount, routeAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { normalizeCode } from '@/utils/format'
 import { ask, showError } from '@/utils/ui'
 
@@ -124,12 +125,9 @@ async function backHome() {
       <text v-if="mode === 'invalid' || mode === 'taken'" class="text-28rpx text-#792b3e font-body">
         另一方
       </text>
-      <view class="flex flex-col items-start gap-8rpx">
-        <text class="text-80rpx text-#3c2428 leading-[1.15] font-display">
-          填上这 6 位
-        </text>
-        <ink-underline :width="170" />
-      </view>
+      <text class="text-40rpx text-#3c2428 leading-[1.45]" :class="faceOf('填上这 6 位', 'sans')">
+        填上这 6 位
+      </text>
       <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" />
 
       <view v-if="mode === 'confirm' && preview" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid pt-32rpx">

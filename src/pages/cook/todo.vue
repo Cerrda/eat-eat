@@ -2,6 +2,7 @@
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showError } from '@/utils/ui'
 
@@ -108,16 +109,16 @@ function openRecords() {
 
 <template>
   <paper-page dock>
-    <ink-load v-if="!ready" label="正在看待做" />
-    <view v-else-if="!groups.length" class="flex flex-col items-start gap-8rpx pt-36rpx">
-      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        还没有待做的一餐
-      </text>
-      <ink-underline :width="220" />
-      <view class="mt-28rpx w-full flex flex-col items-center">
+    <view v-if="!ready" class="flex flex-col">
+      <screen-head title="待做" />
+      <ink-load label="正在看待做" />
+    </view>
+    <view v-else-if="!groups.length" class="flex flex-col gap-28rpx">
+      <screen-head title="待做" note="还没有待做的一餐" />
+      <view class="w-full flex flex-col items-center">
         <image class="relative z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
         <view class="relative z-0 w-616rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-180rpx -mt-156rpx">
-          <text class="text-44rpx text-#3c2428 font-display">
+          <text class="text-44rpx text-#3c2428" :class="faceOf('等对方点一餐', 'serif')">
             等对方点一餐
           </text>
         </view>
@@ -132,15 +133,18 @@ function openRecords() {
           class="flex flex-col gap-24rpx"
           :class="index ? 'border-0 border-t-2rpx border-#c9a297 border-solid pt-28rpx' : ''"
         >
-          <text class="text-60rpx text-#3c2428 font-display">
+          <text class="text-60rpx text-#3c2428 leading-[1.15]" :class="faceOf(dayTitle(group.date), 'serif')">
             {{ dayTitle(group.date) }}
           </text>
           <view v-for="order in group.list" :key="order.orderId" class="flex flex-col gap-16rpx" @tap="openOrder(order)">
             <view class="flex items-center justify-between">
-              <text class="text-32rpx text-#3c2428 font-body">
+              <text class="text-32rpx text-#3c2428" :class="faceOf(SLOT_LABEL[order.slot], 'sans')">
                 {{ SLOT_LABEL[order.slot] }}
               </text>
-              <text class="text-28rpx text-#792b3e font-body">
+              <text
+                class="text-30rpx"
+                :class="[order.status === 'pending' ? 'text-#792b3e' : 'text-#7a534c', faceOf(statusText(order), 'mono')]"
+              >
                 {{ statusText(order) }}
               </text>
             </view>
@@ -149,15 +153,18 @@ function openRecords() {
               <view
                 v-for="item in order.items"
                 :key="item.dishId"
-                class="h-280rpx flex overflow-hidden rounded-36rpx"
+                class="relative h-296rpx overflow-hidden rounded-36rpx"
               >
-                <dish-cover class="h-full flex-1" :file-id="item.coverFileId" :name="item.name" />
-                <view class="w-220rpx flex flex-col justify-end gap-8rpx rounded-r-36rpx bg-#fff9f4 px-24rpx py-24rpx">
-                  <text class="text-40rpx text-#3c2428 leading-[1.2] font-display">
+                <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" />
+                <view class="absolute bottom-0 left-0 box-border w-274rpx flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-#fff9f4 px-32rpx pb-28rpx pt-24rpx">
+                  <text
+                    class="text-#3c2428 leading-[1.1]"
+                    :class="[order.status === 'pending' ? 'text-52rpx' : 'text-56rpx', faceOf(item.name, 'serif')]"
+                  >
                     {{ item.name }}
                   </text>
                   <ink-underline :width="96" />
-                  <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
+                  <text class="text-26rpx text-#792b3e" :class="faceOf('做法', 'mono')" @tap.stop="openRecipe(order, item.dishId)">
                     做法
                   </text>
                 </view>
@@ -165,22 +172,22 @@ function openRecords() {
             </template>
             <template v-else>
               <view v-for="item in order.items" :key="item.dishId" class="flex items-center justify-between">
-                <text class="text-32rpx text-#3c2428 font-body">
+                <text class="text-30rpx text-#3c2428 leading-[1.2]" :class="faceOf(item.name, 'sans')">
                   {{ item.name }}
                 </text>
-                <text class="text-26rpx text-#792b3e font-body" @tap.stop="openRecipe(order, item.dishId)">
+                <text class="text-28rpx text-#792b3e" :class="faceOf('做法', 'mono')" @tap.stop="openRecipe(order, item.dishId)">
                   做法
                 </text>
               </view>
             </template>
 
-            <text v-if="order.note" class="text-28rpx text-#7a534c font-body">
+            <text v-if="order.note" class="text-28rpx text-#7a534c" :class="faceOf(`${account?.partnerNickname || '食神'}：${order.note}`, 'sans')">
               {{ account?.partnerNickname || '食神' }}：{{ order.note }}
             </text>
 
             <view v-if="order.status === 'pending'" class="flex items-center gap-16rpx">
               <view class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx" @tap.stop="reject(order)">
-                <text class="text-28rpx text-#3c2428 font-body">
+                <text class="text-28rpx text-#3c2428 font-medium" :class="faceOf('拒绝', 'sans')">
                   拒绝
                 </text>
               </view>
@@ -190,7 +197,7 @@ function openRecords() {
                 @tap.stop="accept(order)"
               >
                 <ink-spin v-if="acting === order.orderId" tone="paper" />
-                <text class="text-28rpx text-#fbf3ea font-body">
+                <text class="text-28rpx text-#fbf3ea font-medium" :class="faceOf(acting === order.orderId ? '正在接单' : '接单', 'sans')">
                   {{ acting === order.orderId ? '正在接单' : '接单' }}
                 </text>
               </view>
@@ -201,12 +208,12 @@ function openRecords() {
                 class="border-2rpx border-#c9a297 rounded-full border-solid px-32rpx py-16rpx"
                 @tap.stop="openRecords"
               >
-                <text class="text-28rpx text-#3c2428 font-body">
+                <text class="text-28rpx text-#7a534c font-medium" :class="faceOf('已记下', 'sans')">
                   已记下
                 </text>
               </view>
               <view v-else class="rounded-full bg-#792b3e px-36rpx py-16rpx" @tap.stop="writeRecord(order)">
-                <text class="text-28rpx text-#fbf3ea font-body">
+                <text class="text-28rpx text-#fbf3ea font-medium" :class="faceOf('补上', 'sans')">
                   补上
                 </text>
               </view>

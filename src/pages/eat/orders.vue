@@ -55,12 +55,9 @@ function when(order: OrderDetail) {
 <template>
   <paper-page dock>
     <ink-load v-if="!account" label="正在翻点过的" />
-    <view v-else-if="!orders.length" class="flex flex-col items-start gap-8rpx pt-36rpx">
-      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        还没有点过。
-      </text>
-      <ink-underline :width="220" />
-      <view class="mt-28rpx w-full flex flex-col items-center">
+    <view v-else-if="!orders.length" class="flex flex-col gap-28rpx">
+      <screen-head :kicker="`${account?.nickname || '食神'}点过的`" title="订单" note="还没有点过。" />
+      <view class="w-full flex flex-col items-center">
         <image class="relative z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
         <view class="relative z-0 -mt-156rpx w-616rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-180rpx" @tap="openMenu">
           <text class="text-44rpx text-#792b3e font-display">

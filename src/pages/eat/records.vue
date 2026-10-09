@@ -2,6 +2,7 @@
 import type { AccountView, RecordCard } from '@/api/eat'
 import { badges, dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showError } from '@/utils/ui'
 
@@ -56,12 +57,9 @@ function when(record: RecordCard) {
 <template>
   <paper-page dock>
     <ink-load v-if="!account" label="正在翻记下的" />
-    <view v-else-if="!records.length" class="flex flex-col items-start gap-8rpx pt-36rpx">
-      <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
-        还没有记下的一餐。
-      </text>
-      <ink-underline :width="220" />
-      <view class="mt-36rpx w-full flex flex-col items-center">
+    <view v-else-if="!records.length" class="flex flex-col gap-28rpx">
+      <screen-head title="记录" note="还没有记下的一餐。" />
+      <view class="w-full flex flex-col items-center">
         <image class="relative z-1 h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
         <view class="relative z-0 -mt-84rpx w-456rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-40rpx pt-148rpx" @tap="createOne">
           <text class="text-44rpx text-#792b3e font-display">
@@ -74,14 +72,13 @@ function when(record: RecordCard) {
       </view>
     </view>
     <view v-else class="flex flex-col gap-28rpx">
-      <view class="flex items-start justify-between gap-16rpx">
-        <screen-head title="记录" />
-        <view class="mt-8rpx rounded-full bg-#792b3e px-28rpx py-14rpx" @tap="createOne">
-          <text class="text-26rpx text-#fbf3ea font-body">
+      <screen-head title="记录">
+        <view class="mb-4rpx shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" @tap="createOne">
+          <text class="text-26rpx text-#fbf3ea font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
             记下这餐
           </text>
         </view>
-      </view>
+      </screen-head>
       <view
         v-for="record in records"
         :key="record.recordId"

@@ -167,6 +167,8 @@ function open(url: string, key: string) {
 </template>
 
 <style>
+@import "../../styles/font-util.css";
+
 .tab-dock-slide {
   transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }

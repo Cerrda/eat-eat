@@ -2,6 +2,7 @@
 import type { OrderDetail } from '@/api/eat'
 import { cancelOrder, dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
@@ -67,16 +68,15 @@ async function submit() {
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar label="取消" fallback="/pages/eat/orders" />
-      <view class="flex flex-col items-start">
-        <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
+      <view class="flex flex-col items-start gap-12rpx">
+        <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('留一句话', 'mono')">
           留一句话
         </text>
-        <ink-underline class="mt-8rpx" :width="140" />
+        <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
+          {{ headline }}
+        </text>
       </view>
-      <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5] font-body">
-        {{ headline }}
-      </text>
-      <ink-load v-else label="正在打开这一餐" />
+      <ink-load v-if="!order" label="正在打开这一餐" />
       <view class="rounded-28rpx bg-#fff9f4 px-28rpx py-24rpx">
         <textarea
           v-model="note"

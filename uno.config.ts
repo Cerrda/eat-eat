@@ -7,9 +7,11 @@ import {
 } from 'unocss'
 
 export default defineConfig({
+  safelist: ['font-display', 'font-body', 'font-mono'],
   shortcuts: {
-    'font-display': 'font-["Ma_Shan_Zheng","KaiTi",serif]',
+    'font-display': 'font-["Ma_Shan_Zheng","PingFang_SC",serif]',
     'font-body': 'font-["LXGW_WenKai","PingFang_SC",sans-serif]',
+    'font-mono': 'font-["Long_Cang","PingFang_SC",serif]',
   },
   presets: [
     presetUni(),
