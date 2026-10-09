@@ -23,7 +23,7 @@ const markWidth = 176
 </style>
 
 <template>
-  <paper-pin :reserve="note ? (kicker ? '244rpx' : '208rpx') : (kicker ? '168rpx' : '132rpx')">
+  <paper-pin>
     <view class="flex items-end justify-between gap-24rpx">
       <view class="min-w-0 flex flex-col items-start">
         <view class="flex flex-col items-start gap-4rpx">

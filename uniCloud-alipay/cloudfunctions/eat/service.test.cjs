@@ -203,21 +203,21 @@ describe('绑定后的厨房', () => {
     return ctx
   }
 
-  it('没封面，或简介和步骤都空着，不能上架', async () => {
+  it('没封面不能上架', async () => {
     const ctx = await kitchen()
     await ctx.use('openid-cooker')
     await expect(ctx.eat.publishDish({
       name: '番茄炒蛋',
-      summary: '家常',
     })).rejects.toMatchObject({ errCode: 'VALIDATION' })
-    await expect(ctx.eat.publishDish({
+    const dish = await ctx.eat.publishDish({
       name: '番茄炒蛋',
       coverFileId: 'cloud://cover',
-    })).rejects.toMatchObject({ errCode: 'VALIDATION' })
+    })
+    expect(dish.name).toBe('番茄炒蛋')
+    expect(dish.summary).toBeUndefined()
     await ctx.use('openid-eater')
     await expect(ctx.eat.publishDish({
       name: '番茄炒蛋',
-      summary: '家常',
       coverFileId: 'cloud://cover',
     })).rejects.toMatchObject({ errCode: 'FORBIDDEN' })
   })
@@ -229,11 +229,10 @@ describe('绑定后的厨房', () => {
     const dish = await ctx.eat.publishDish({
       name: '番茄炒蛋',
       categoryId: category.categoryId,
-      summary: '家常',
       coverFileId: 'cloud://cover',
       ingredients: ['番茄', '蛋'],
       steps: ['先炒蛋'],
-      sourceUrl: 'https://example.com/tomato',
+      sourceUrl: '3.21 复制打开抖音，看看【番茄炒蛋】https://v.douyin.com/abc/',
     })
     const board = await ctx.eat.mealBoard()
     await ctx.use('openid-eater')
@@ -268,7 +267,7 @@ describe('绑定后的厨房', () => {
       errCode: 'VALIDATION',
     })
     const cookDish = await ctx.eat.getCookDish({ orderId: order.orderId, dishId: dish.dishId })
-    expect(cookDish.sourceUrl).toBe('https://example.com/tomato')
+    expect(cookDish.sourceUrl).toBe('3.21 复制打开抖音，看看【番茄炒蛋】https://v.douyin.com/abc/')
     expect(cookDish.ingredients).toEqual(['番茄', '蛋'])
     const accepted = await ctx.eat.acceptOrder({ orderId: order.orderId })
     expect(accepted.status).toBe('accepted')
@@ -330,7 +329,6 @@ describe('绑定后的厨房', () => {
     await ctx.eat.publishDish({
       name: '番茄炒蛋',
       categoryId: category.categoryId,
-      summary: '家常',
       coverFileId: 'cloud://cover',
     })
     await expect(ctx.eat.deleteCategory({ categoryId: category.categoryId })).rejects.toMatchObject({

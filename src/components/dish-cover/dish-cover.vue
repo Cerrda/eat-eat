@@ -9,13 +9,17 @@ const props = defineProps<{
 }>()
 
 const shown = ref('')
+let ticket = 0
 
 watch(() => [props.src, props.fileId] as const, async ([src, fileId]) => {
+  const current = ++ticket
   if (src) {
     shown.value = src
     return
   }
-  shown.value = await resolveFileUrl(fileId)
+  const url = await resolveFileUrl(fileId)
+  if (current === ticket)
+    shown.value = url
 }, { immediate: true })
 
 const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
@@ -23,12 +27,45 @@ const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
 
 <style>
 @import "../../styles/font-util.css";
+
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.dish-cover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  background: #f6e4de;
+}
+
+.dish-cover__img,
+.dish-cover__mark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dish-cover__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 
 <template>
-  <view class="relative overflow-hidden bg-#f6e4de">
-    <image v-if="shown" class="h-full w-full" :src="shown" mode="aspectFill" />
-    <view v-else class="h-full w-full flex items-center justify-center">
+  <view class="dish-cover">
+    <image v-if="shown" class="dish-cover__img" :src="shown" mode="aspectFill" />
+    <view v-else class="dish-cover__mark">
       <text class="text-40rpx text-#792b3e" :class="faceOf(mark, 'serif')">
         {{ mark }}
       </text>

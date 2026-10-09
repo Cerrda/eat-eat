@@ -199,6 +199,8 @@ function mountCanvas(attempt = 0) {
 
 onMounted(() => {
   nextTick(() => {
+    if (stop)
+      return
     placeBox()
     mountCanvas()
   })

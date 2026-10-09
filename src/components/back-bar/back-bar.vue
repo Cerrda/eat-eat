@@ -29,7 +29,7 @@ function back() {
 </style>
 
 <template>
-  <paper-pin reserve="56rpx">
+  <paper-pin>
     <view class="flex items-center gap-16rpx" @tap="back">
       <view class="h-40rpx w-40rpx flex shrink-0 items-center justify-center">
         <view style="width: 18rpx; height: 18rpx; border-left: 3rpx solid #3C2428; border-bottom: 3rpx solid #3C2428; transform: rotate(45deg);" />

@@ -70,9 +70,6 @@ async function submit() {
     <view class="flex flex-col gap-32rpx">
       <back-bar label="取消" fallback="/pages/cook/todo" />
       <view class="flex flex-col items-start gap-12rpx">
-        <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('留一句话', 'mono')">
-          留一句话
-        </text>
         <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
           {{ headline }}
         </text>
@@ -81,11 +78,13 @@ async function submit() {
       <view class="box-border h-300rpx flex flex-col justify-between rounded-28rpx bg-#fff9f4 px-28rpx py-28rpx">
         <textarea
           v-model="note"
-          class="box-border h-180rpx w-full text-44rpx text-#3c2428 leading-[1.8]"
+          disable-default-padding
+          class="box-border h-180rpx w-full text-44rpx text-#3c2428 leading-80rpx"
           :class="faceOf(note, 'serif')"
           :maxlength="40"
-          placeholder="这餐先不用了。"
+          placeholder="你怎么忍心取消的呀！！！"
           placeholder-class="ph-serif"
+          placeholder-style="font-size: 44rpx; line-height: 80rpx;"
           :show-confirm-bar="false"
         />
         <text class="block text-right text-30rpx text-#7a534c" :class="faceOf(`${note.length} / 40`, 'mono')">

@@ -69,23 +69,20 @@ async function submit() {
   <paper-page>
     <view class="flex flex-col gap-32rpx">
       <back-bar label="拒绝" fallback="/pages/cook/todo" />
-      <view class="flex flex-col items-start gap-12rpx">
-        <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('留一句话', 'mono')">
-          留一句话
-        </text>
-        <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
-          {{ headline }}
-        </text>
-      </view>
+      <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
+        {{ headline }}
+      </text>
       <ink-load v-if="!order" label="正在打开这一餐" />
       <view class="box-border h-300rpx flex flex-col justify-between rounded-28rpx bg-#fff9f4 px-28rpx py-28rpx">
         <textarea
           v-model="note"
-          class="box-border h-180rpx w-full text-44rpx text-#3c2428 leading-[1.8]"
+          disable-default-padding
+          class="box-border h-180rpx w-full text-44rpx text-#3c2428 leading-80rpx"
           :class="faceOf(note, 'serif')"
           :maxlength="40"
-          placeholder="今晚来不及，明天中午可以。"
+          placeholder="你怎么忍心拒绝的呀！！！"
           placeholder-class="ph-serif"
+          placeholder-style="font-size: 44rpx; line-height: 80rpx;"
           :show-confirm-bar="false"
         />
         <text class="block text-right text-30rpx text-#7a534c" :class="faceOf(`${note.length} / 40`, 'mono')">
@@ -98,4 +95,3 @@ async function submit() {
     </view>
   </paper-page>
 </template>
-

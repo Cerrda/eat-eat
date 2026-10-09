@@ -75,13 +75,56 @@ function keepSession(data: unknown) {
     saveSession(row.token, row.tokenExpired)
 }
 
+function cloudBody(value: unknown) {
+  if (!value || typeof value !== 'object' || value instanceof Error)
+    return null
+  const row = value as { errCode?: unknown, errMsg?: unknown, data?: unknown }
+  if (typeof row.errCode !== 'string' || row.errCode === 'SYSTEM_ERROR' || row.errCode === 'SYS_ERR')
+    return null
+  if (typeof row.errMsg !== 'string')
+    return null
+  const errMsg = row.errMsg.trim()
+  if (!errMsg || errMsg === 'unknown system error' || errMsg.startsWith('request:fail'))
+    return null
+  return {
+    errCode: row.errCode,
+    errMsg,
+    data: row.data,
+  }
+}
+
+function cloudError(err: unknown) {
+  if (!err || typeof err !== 'object')
+    return null
+  const row = err as { errCode?: unknown, errMsg?: unknown, detail?: unknown }
+  const fromDetail = cloudBody(row.detail)
+  if (fromDetail)
+    return fromDetail
+  if (typeof row.errCode !== 'string' || row.errCode === 'SYSTEM_ERROR' || row.errCode === 'SYS_ERR')
+    return null
+  if (typeof row.errMsg !== 'string')
+    return null
+  const errMsg = row.errMsg.trim()
+  if (!errMsg || errMsg === 'unknown system error' || errMsg.startsWith('request:fail'))
+    return null
+  const detail = row.detail
+  const data = detail && typeof detail === 'object' && !(detail instanceof Error)
+    ? (detail as { data?: unknown }).data
+    : undefined
+  return { errCode: row.errCode, errMsg, data }
+}
+
 export async function callEat<T>(run: (eat: EatCloud) => Promise<CloudResult<T>>): Promise<T> {
   let res: CloudResult<T>
   try {
     res = await run(eatCloud())
   }
-  catch {
-    throw new EatRequestError('NETWORK', '网络没连上，再试一次')
+  catch (err) {
+    const failed = cloudError(err)
+    if (!failed)
+      throw new EatRequestError('NETWORK', '网络没连上，再试一次')
+    keepSession(failed.data)
+    throw new EatRequestError(failed.errCode, failed.errMsg, failed.data)
   }
   if (!res || res.errCode !== 0) {
     keepSession(res?.data)

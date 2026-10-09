@@ -14,10 +14,15 @@ export async function primeFileUrls(ids: string[]) {
     return
   try {
     const result = await uniCloud.getTempFileURL({ fileList: missing }) as { fileList?: TempFileItem[] }
-    for (const item of result.fileList || []) {
-      if (item.tempFileURL)
-        urlCache.set(item.fileID, item.tempFileURL)
-    }
+    const list = result.fileList || []
+    list.forEach((item, index) => {
+      if (!item.tempFileURL)
+        return
+      urlCache.set(item.fileID, item.tempFileURL)
+      const asked = missing[index]
+      if (asked)
+        urlCache.set(asked, item.tempFileURL)
+    })
   }
   catch {
     // 封面暂时用菜名代替，不打断列表。
@@ -36,20 +41,6 @@ export async function resolveFileUrl(fileId?: string) {
     return cached
   await primeFileUrls([fileId])
   return urlCache.get(fileId) || ''
-}
-
-export async function confirmPhotoUse(kind: 'cover' | 'record') {
-  const key = kind === 'cover' ? 'eat-photo-cover' : 'eat-photo-record'
-  if (uni.getStorageSync(key))
-    return true
-  const agreed = await ask(
-    '用一下照片',
-    kind === 'cover' ? '照片只用于这道菜的封面。' : '照片只用于记下这餐。',
-    '知道了',
-  )
-  if (agreed)
-    uni.setStorageSync(key, '1')
-  return agreed
 }
 
 export function chooseImage(source: 'album' | 'camera') {

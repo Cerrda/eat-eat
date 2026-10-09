@@ -42,18 +42,44 @@ const activeIndex = computed(() => {
 const originIndex = items.value.findIndex(item => item.key === readTabOrigin())
 const slideIndex = ref(originIndex >= 0 && originIndex !== activeIndex.value ? originIndex : activeIndex.value)
 const moving = ref(false)
+const locked = ref(false)
+const shown = ref(items.value)
+const dock = getCurrentInstance()
 const timers: ReturnType<typeof setTimeout>[] = []
+const metrics = measure(Math.max(items.value.length, 1))
+
+watch(items, (next) => {
+  if (!locked.value)
+    shown.value = next
+})
 
 onMounted(() => {
   clearTabMotion()
   if (slideIndex.value === activeIndex.value)
     return
-  later(() => {
+  locked.value = true
+  let started = false
+  const start = () => {
+    if (started)
+      return
+    started = true
     moving.value = true
     later(() => {
       slideIndex.value = activeIndex.value
     }, 32)
-  }, 32)
+  }
+  nextTick(() => {
+    uni.createSelectorQuery()
+      .in(dock?.proxy)
+      .select('.tab-dock-pill')
+      .boundingClientRect()
+      .exec(() => start())
+  })
+  later(start, 120)
+  later(() => {
+    locked.value = false
+    shown.value = items.value
+  }, 700)
 })
 
 onUnmounted(() => {
@@ -61,33 +87,21 @@ onUnmounted(() => {
     clearTimeout(id)
 })
 
-const pillStyle = computed(() => {
-  const { pill } = track()
-  return {
-    width: `${pill}px`,
-    transform: `translate3d(${travel(slideIndex.value)}px, 0, 0)`,
-  }
-})
+const pillStyle = computed(() => ({
+  width: `${metrics.pill}px`,
+  transform: `translate3d(${metrics.step * slideIndex.value}px, 0, 0)`,
+}))
 
-const inkStyle = computed(() => {
-  const { width } = track()
-  return {
-    width: `${width}px`,
-    transform: `translate3d(${-travel(slideIndex.value)}px, 0, 0)`,
-  }
-})
+const inkStyle = computed(() => ({
+  width: `${metrics.width}px`,
+  transform: `translate3d(${-metrics.step * slideIndex.value}px, 0, 0)`,
+}))
 
-function track() {
-  const count = Math.max(items.value.length, 1)
+function measure(count: number) {
   const gap = uni.upx2px(8)
   const width = uni.getWindowInfo().windowWidth - uni.upx2px(32) * 2 - uni.upx2px(4) * 2 - uni.upx2px(10) * 2
   const pill = (width - gap * (count - 1)) / count
-  return { gap, width, pill }
-}
-
-function travel(index: number) {
-  const { pill, gap } = track()
-  return index * (pill + gap)
+  return { width, pill, step: pill + gap }
 }
 
 function later(fn: () => void, ms: number) {
@@ -124,40 +138,40 @@ function open(url: string, key: string) {
       <view class="relative h-full">
         <view class="h-full flex items-stretch gap-8rpx">
           <view
-            v-for="item in items"
+            v-for="item in shown"
             :key="item.key"
             class="flex flex-1 items-center justify-center gap-8rpx"
             @tap="open(item.url, item.key)"
           >
-            <text class="text-34rpx text-#3c2428 font-display leading-[1.15]">
+            <view class="text-34rpx text-#3c2428 font-display leading-[1.15]">
               {{ item.label }}
-            </text>
-            <text v-if="item.count" class="text-30rpx text-#792b3e font-display leading-[1.15]">
+            </view>
+            <view v-if="item.count" class="text-30rpx text-#792b3e font-display leading-[1.15]">
               {{ item.count }}
-            </text>
+            </view>
           </view>
         </view>
         <view
-          class="pointer-events-none absolute bottom-0 left-0 top-0 z-1 overflow-hidden rounded-48rpx bg-#792b3e"
+          class="tab-dock-pill pointer-events-none absolute bottom-0 left-0 top-0 z-1 overflow-hidden rounded-48rpx bg-#792b3e"
           :class="moving ? 'tab-dock-slide' : ''"
           :style="pillStyle"
         >
           <view
-            class="absolute left-0 top-0 h-full flex items-stretch gap-8rpx"
+            class="tab-dock-ink absolute left-0 top-0 h-full flex items-stretch gap-8rpx"
             :class="moving ? 'tab-dock-slide' : ''"
             :style="inkStyle"
           >
             <view
-              v-for="item in items"
+              v-for="item in shown"
               :key="item.key"
               class="flex flex-1 items-center justify-center gap-8rpx"
             >
-              <text class="text-40rpx text-#fff9f4 font-display leading-[1.15]">
+              <view class="text-40rpx text-#fff9f4 font-display leading-[1.15]">
                 {{ item.label }}
-              </text>
-              <text v-if="item.count" class="text-30rpx text-#f6e4de font-display leading-[1.15]">
+              </view>
+              <view v-if="item.count" class="text-30rpx text-#f6e4de font-display leading-[1.15]">
                 {{ item.count }}
-              </text>
+              </view>
             </view>
           </view>
         </view>
@@ -168,6 +182,11 @@ function open(url: string, key: string) {
 
 <style>
 @import "../../styles/font-util.css";
+
+.tab-dock-pill,
+.tab-dock-ink {
+  will-change: transform;
+}
 
 .tab-dock-slide {
   transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);

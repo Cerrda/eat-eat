@@ -17,9 +17,6 @@
     "categoryId": {
       "bsonType": "string"
     },
-    "summary": {
-      "bsonType": "string"
-    },
     "ingredients": {
       "bsonType": "array"
     },

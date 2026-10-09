@@ -82,7 +82,6 @@ export interface MenuDish {
 }
 
 export interface DishDetail extends DishCard {
-  summary: string
   ingredients: string[]
   steps: string[]
   sourceUrl: string
@@ -92,7 +91,6 @@ export interface PublishDishInput {
   dishId?: string
   name: string
   categoryId?: string
-  summary?: string
   ingredients?: string[] | string
   steps?: string[] | string
   sourceUrl?: string

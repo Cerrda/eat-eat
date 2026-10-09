@@ -16,8 +16,15 @@ definePage({
 const categories = ref<Category[]>([])
 const counts = ref<Record<string, number>>({})
 const draft = ref('')
+const boxKey = ref(0)
+const focused = ref(false)
 const pending = ref(false)
 const ready = ref(false)
+let lock = false
+
+interface FieldEvent {
+  detail?: { value?: string }
+}
 
 onShow(() => {
   void refresh()
@@ -71,13 +78,54 @@ async function remove(category: Category) {
   }
 }
 
-async function add() {
-  if (pending.value)
+function remember(event?: FieldEvent) {
+  if (typeof event?.detail?.value !== 'string')
     return
-  pending.value = true
+  draft.value = event.detail.value.replace(/[\r\n]/g, '')
+}
+
+function readName() {
+  return draft.value.replace(/[\r\n]/g, '').trim()
+}
+
+function onBlur(event: FieldEvent) {
+  remember(event)
+  focused.value = false
+}
+
+function waitName() {
+  if (!focused.value)
+    return Promise.resolve(readName())
+  return new Promise<string>((resolve) => {
+    let settled = false
+    let timer: ReturnType<typeof setTimeout>
+    const finish = () => {
+      if (settled)
+        return
+      settled = true
+      clearTimeout(timer)
+      stop()
+      resolve(readName())
+    }
+    const stop = watch(focused, (value) => {
+      if (!value)
+        finish()
+    })
+    timer = setTimeout(finish, 200)
+  })
+}
+
+async function add(event?: FieldEvent) {
+  if (lock)
+    return
+  lock = true
+  remember(event)
   try {
-    await createCategory(draft.value.trim())
+    const name = await waitName()
+    pending.value = true
+    await createCategory(name)
     draft.value = ''
+    boxKey.value += 1
     await refresh()
   }
   catch (err) {
@@ -85,6 +133,7 @@ async function add() {
   }
   finally {
     pending.value = false
+    lock = false
   }
 }
 </script>
@@ -131,16 +180,21 @@ async function add() {
           新分类
         </text>
         <view class="flex items-center gap-16rpx">
-          <input
-            v-model="draft"
+          <textarea
+            :key="boxKey"
+            disable-default-padding
             class="h-80rpx flex-1 rounded-full bg-#fff9f4 px-28rpx text-32rpx text-#3c2428 leading-80rpx"
-            :class="faceOf(draft, 'sans')"
-            :maxlength="6"
+            :class="faceOf('新分类', 'sans')"
             placeholder="1 到 6 个字"
             placeholder-class="ph-sans"
+            placeholder-style="font-size: 32rpx; line-height: 80rpx;"
             confirm-type="done"
+            :show-confirm-bar="false"
+            @input="remember"
+            @focus="focused = true"
+            @blur="onBlur"
             @confirm="add"
-          >
+          />
           <view
             class="flex items-center gap-16rpx rounded-full px-28rpx py-16rpx"
             :class="pending ? 'bg-#a24c5c' : 'bg-#792b3e'"
@@ -156,4 +210,3 @@ async function add() {
     </view>
   </paper-page>
 </template>
-

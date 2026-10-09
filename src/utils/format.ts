@@ -1,9 +1,19 @@
+import type { Ref } from 'vue'
 import type { Slot } from '@/api/types'
+import { watch } from 'vue'
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
 export function textLength(value: string) {
   return Array.from(value).length
+}
+
+export function keepOneLine(target: Ref<string>) {
+  watch(target, (value) => {
+    const next = value.replace(/[\r\n]/g, '')
+    if (next !== value)
+      target.value = next
+  })
 }
 
 export function normalizeCode(raw: string) {

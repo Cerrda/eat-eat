@@ -2,9 +2,10 @@
 import type { AccountView, Category, MealBoard, MenuDish, OrderDetail, Slot } from '@/api/eat'
 import { badges, dateLabel, getOrder, listCategories, listMenu, mealBoard, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
+import { whenTabIdle } from '@/utils/tab-motion'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
-import { monthDay } from '@/utils/format'
+import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
 
@@ -24,6 +25,7 @@ const board = ref<MealBoard | null>(null)
 const dishes = ref<MenuDish[]>([])
 const categories = ref<Category[]>([])
 const keyword = ref('')
+keepOneLine(keyword)
 const categoryId = ref('')
 const date = ref('')
 const slot = ref<Slot>('morning')
@@ -67,6 +69,9 @@ async function refresh() {
       mealBoard(),
       badges(),
     ])
+    if (id !== spin)
+      return
+    await whenTabIdle()
     if (id !== spin)
       return
     account.value = { ...view, badges: nextBadges }
@@ -239,13 +244,15 @@ function viewOrdered() {
           </view>
         </view>
         <view class="flex items-center rounded-full bg-#fff9f4 px-28rpx py-16rpx">
-          <input
+          <textarea
             v-model="keyword"
-            class="flex-1 text-30rpx text-#3c2428 font-body"
+            disable-default-padding
+            class="h-44rpx flex-1 text-30rpx text-#3c2428 leading-44rpx font-body"
             placeholder="搜菜名"
             placeholder-class="ph"
             confirm-type="search"
-          >
+            :show-confirm-bar="false"
+          />
         </view>
         <scroll-view scroll-x enhanced class="w-full whitespace-nowrap" :show-scrollbar="false">
           <view class="inline-flex gap-20rpx">

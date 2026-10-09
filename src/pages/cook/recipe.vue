@@ -70,13 +70,13 @@ function copyLink() {
           <text class="text-64rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
             {{ dish.name }}
           </text>
-          <ink-underline class="mt-8rpx" :width="288" />
+          <ink-underline class="mt-8rpx" :width="176" />
         </view>
         <text v-if="categoryName" class="text-30rpx text-#7a534c leading-[1.3]" :class="faceOf(categoryName, 'sans')">
           {{ categoryName }}
         </text>
         <dish-cover class="h-336rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
-        <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx">
+        <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
           <text class="text-28rpx text-#792b3e" :class="faceOf('食材', 'mono')">
             食材
           </text>
@@ -84,15 +84,17 @@ function copyLink() {
             {{ line }}
           </text>
         </view>
-        <view v-if="dish.steps.length" class="flex flex-col gap-16rpx">
-          <text class="text-28rpx text-#792b3e" :class="faceOf('步骤', 'mono')">
+        <view v-if="dish.steps.length" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
+          <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('步骤', 'mono')">
             步骤
           </text>
-          <view v-for="(step, index) in dish.steps" :key="index" class="flex gap-16rpx">
-            <text class="text-32rpx text-#792b3e" :class="faceOf(String(index + 1), 'mono')">
-              {{ index + 1 }}
-            </text>
-            <text class="flex-1 text-32rpx text-#3c2428 leading-[1.45]" :class="faceOf(step, 'sans')">
+          <view v-for="(step, index) in dish.steps" :key="index" class="flex items-start gap-20rpx">
+            <view class="h-46rpx flex shrink-0 items-center">
+              <text class="text-32rpx text-#792b3e leading-none" :class="faceOf(String(index + 1), 'mono')">
+                {{ index + 1 }}
+              </text>
+            </view>
+            <text class="min-w-0 flex-1 text-32rpx text-#3c2428 leading-[1.45]" :class="faceOf(step, 'sans')">
               {{ step }}
             </text>
           </view>
@@ -100,14 +102,22 @@ function copyLink() {
         <text v-if="!dish.ingredients.length && !dish.steps.length" class="text-30rpx text-#7a534c" :class="faceOf('这道菜没有写下做法。', 'sans')">
           这道菜没有写下做法。
         </text>
-        <view v-if="dish.sourceUrl" class="flex flex-col items-start gap-16rpx pt-8rpx">
-          <text class="text-28rpx text-#792b3e" :class="faceOf('来源', 'mono')">
+        <view v-if="dish.sourceUrl" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid pt-24rpx">
+          <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('来源', 'mono')">
             来源
           </text>
-          <view class="rounded-full bg-#792b3e px-36rpx py-16rpx" @tap="copyLink">
-            <text class="text-30rpx text-#fbf3ea font-medium" :class="faceOf('复制链接', 'sans')">
-              复制链接
-            </text>
+          <view class="relative w-full">
+            <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-52rpx bg-#4e222d/35" />
+            <view
+              class="relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
+              hover-class="translate-x-6rpx translate-y-8rpx"
+              :hover-stay-time="80"
+              @tap="copyLink"
+            >
+              <text class="text-30rpx text-#fbf3ea font-medium leading-none" :class="faceOf('复制链接', 'sans')">
+                复制链接
+              </text>
+            </view>
           </view>
         </view>
       </template>

@@ -68,14 +68,9 @@ async function submit() {
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar label="取消" fallback="/pages/eat/orders" />
-      <view class="flex flex-col items-start gap-12rpx">
-        <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('留一句话', 'mono')">
-          留一句话
-        </text>
-        <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
-          {{ headline }}
-        </text>
-      </view>
+      <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
+        {{ headline }}
+      </text>
       <ink-load v-if="!order" label="正在打开这一餐" />
       <view class="rounded-28rpx bg-#fff9f4 px-28rpx py-24rpx">
         <textarea

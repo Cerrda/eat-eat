@@ -14,6 +14,7 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const beginTabSwitch: typeof import('./utils/tab-motion')['beginTabSwitch']
+  const bootFonts: typeof import('./utils/fonts')['bootFonts']
   const chooseImage: typeof import('./utils/files')['chooseImage']
   const clearTabMotion: typeof import('./utils/tab-motion')['clearTabMotion']
   const computed: typeof import('vue')['computed']
@@ -21,7 +22,6 @@ declare global {
   const computedEager: typeof import('@vueuse/core')['computedEager']
   const computedInject: typeof import('@vueuse/core')['computedInject']
   const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
-  const confirmPhotoUse: typeof import('./utils/files')['confirmPhotoUse']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
   const copyHint: typeof import('./utils/hint')['copyHint']
@@ -52,6 +52,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
+  const holdTabMotion: typeof import('./utils/tab-motion')['holdTabMotion']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const ignoredCancel: typeof import('./utils/files')['ignoredCancel']
   const inject: typeof import('vue')['inject']
@@ -61,11 +62,8 @@ declare global {
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
+  const keepOneLine: typeof import('./utils/format')['keepOneLine']
   const loadAccount: typeof import('./utils/account')['loadAccount']
-  const longCang: typeof import('./utils/font-sources')['longCang']
-  const lxgwWenKai: typeof import('./utils/font-sources')['lxgwWenKai']
-  const lxgwWenKaiMedium: typeof import('./utils/font-sources')['lxgwWenKaiMedium']
-  const maShanZheng: typeof import('./utils/font-sources')['maShanZheng']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
   const menuIntent: typeof import('./utils/draft')['menuIntent']
@@ -120,6 +118,7 @@ declare global {
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
   const peekAccount: typeof import('./utils/account')['peekAccount']
   const primeFileUrls: typeof import('./utils/files')['primeFileUrls']
+  const primeTopPadding: typeof import('./composables/useTopPadding')['primeTopPadding']
   const provide: typeof import('vue')['provide']
   const provideLocal: typeof import('@vueuse/core')['provideLocal']
   const reactify: typeof import('@vueuse/core')['reactify']
@@ -270,6 +269,7 @@ declare global {
   const useObjectUrl: typeof import('@vueuse/core')['useObjectUrl']
   const useOffsetPagination: typeof import('@vueuse/core')['useOffsetPagination']
   const useOnline: typeof import('@vueuse/core')['useOnline']
+  const usePageFonts: typeof import('./utils/fonts')['usePageFonts']
   const usePageLeave: typeof import('@vueuse/core')['usePageLeave']
   const useParallax: typeof import('@vueuse/core')['useParallax']
   const useParentElement: typeof import('@vueuse/core')['useParentElement']
@@ -354,6 +354,8 @@ declare global {
   const watchThrottled: typeof import('@vueuse/core')['watchThrottled']
   const watchTriggerable: typeof import('@vueuse/core')['watchTriggerable']
   const watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
+  const whenPageFontsReady: typeof import('./utils/fonts')['whenPageFontsReady']
+  const whenTabIdle: typeof import('./utils/tab-motion')['whenTabIdle']
   const whenever: typeof import('@vueuse/core')['whenever']
   const withinMenu: typeof import('./utils/format')['withinMenu']
 }
@@ -383,6 +385,7 @@ declare module 'vue' {
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly beginTabSwitch: UnwrapRef<typeof import('./utils/tab-motion')['beginTabSwitch']>
+    readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
     readonly clearTabMotion: UnwrapRef<typeof import('./utils/tab-motion')['clearTabMotion']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -390,7 +393,6 @@ declare module 'vue' {
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
     readonly computedInject: UnwrapRef<typeof import('@vueuse/core')['computedInject']>
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
-    readonly confirmPhotoUse: UnwrapRef<typeof import('./utils/files')['confirmPhotoUse']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
     readonly copyHint: UnwrapRef<typeof import('./utils/hint')['copyHint']>
@@ -421,6 +423,7 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly holdTabMotion: UnwrapRef<typeof import('./utils/tab-motion')['holdTabMotion']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly ignoredCancel: UnwrapRef<typeof import('./utils/files')['ignoredCancel']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -430,11 +433,8 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly keepOneLine: UnwrapRef<typeof import('./utils/format')['keepOneLine']>
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
-    readonly longCang: UnwrapRef<typeof import('./utils/font-sources')['longCang']>
-    readonly lxgwWenKai: UnwrapRef<typeof import('./utils/font-sources')['lxgwWenKai']>
-    readonly lxgwWenKaiMedium: UnwrapRef<typeof import('./utils/font-sources')['lxgwWenKaiMedium']>
-    readonly maShanZheng: UnwrapRef<typeof import('./utils/font-sources')['maShanZheng']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>
@@ -489,6 +489,7 @@ declare module 'vue' {
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly peekAccount: UnwrapRef<typeof import('./utils/account')['peekAccount']>
     readonly primeFileUrls: UnwrapRef<typeof import('./utils/files')['primeFileUrls']>
+    readonly primeTopPadding: UnwrapRef<typeof import('./composables/useTopPadding')['primeTopPadding']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -721,6 +722,7 @@ declare module 'vue' {
     readonly watchThrottled: UnwrapRef<typeof import('@vueuse/core')['watchThrottled']>
     readonly watchTriggerable: UnwrapRef<typeof import('@vueuse/core')['watchTriggerable']>
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
+    readonly whenTabIdle: UnwrapRef<typeof import('./utils/tab-motion')['whenTabIdle']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
     readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
   }

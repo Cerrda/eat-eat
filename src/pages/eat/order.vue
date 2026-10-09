@@ -77,7 +77,7 @@ function reorder() {
         <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">
           {{ headline }}
         </text>
-        <ink-underline class="mt-8rpx" :width="368" />
+        <ink-underline class="mt-8rpx" :width="176" />
       </view>
       <text
         v-for="item in order.items"

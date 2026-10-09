@@ -3,8 +3,8 @@ import type { Category, DishDetail } from '@/api/eat'
 import { deleteDish, getDish, listCategories, publishDish, unpublishDish } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
-import { chooseImage, confirmPhotoUse, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
-import { splitPieces } from '@/utils/format'
+import { chooseImage, ignoredCancel, primeFileUrls, resolveFileUrl, uploadImage } from '@/utils/files'
+import { keepOneLine, splitPieces } from '@/utils/format'
 import { ask, showError } from '@/utils/ui'
 
 function stepLines(value: string) {
@@ -24,8 +24,8 @@ const categories = ref<Category[]>([])
 const loaded = ref(false)
 const status = ref<'on' | 'off' | ''>('')
 const name = ref('')
+keepOneLine(name)
 const categoryId = ref('')
-const summary = ref('')
 const ingredients = ref('')
 const stepsText = ref('')
 const stepsOpen = ref(true)
@@ -67,7 +67,6 @@ function fill(dish: DishDetail) {
   status.value = dish.status
   name.value = dish.name
   categoryId.value = dish.categoryId
-  summary.value = dish.summary
   ingredients.value = dish.ingredients.join('\n')
   stepsText.value = dish.steps.join('\n')
   sourceUrl.value = dish.sourceUrl
@@ -75,14 +74,14 @@ function fill(dish: DishDetail) {
 }
 
 async function pickCover(source: 'album' | 'camera') {
-  const allowed = await confirmPhotoUse('cover')
-  if (!allowed)
-    return
   try {
     const path = await chooseImage(source)
     localCover.value = path
-    coverFileId.value = await uploadImage(path, 'covers')
-    localCover.value = ''
+    const fileId = await uploadImage(path, 'covers')
+    coverFileId.value = fileId
+    await primeFileUrls([fileId])
+    if (await resolveFileUrl(fileId))
+      localCover.value = ''
   }
   catch (err) {
     localCover.value = ''
@@ -100,7 +99,6 @@ async function publish() {
       dishId: dishId.value || undefined,
       name: name.value.trim(),
       categoryId: categoryId.value || undefined,
-      summary: summary.value.trim(),
       ingredients: splitPieces(ingredients.value),
       steps: stepLines(stepsText.value),
       sourceUrl: sourceUrl.value.replace(/[\r\n]/g, '').trim(),
@@ -136,10 +134,6 @@ function openCategories() {
   uni.navigateTo({ url: '/pages/cook/categories' })
 }
 
-const stepCount = computed(() => stepLines(stepsText.value).length)
-const lackCover = computed(() => !coverFileId.value)
-const lackWords = computed(() => !summary.value.trim() && stepCount.value === 0)
-
 async function remove() {
   if (!dishId.value || pending.value)
     return
@@ -166,14 +160,17 @@ async function remove() {
       <back-bar label="编辑" fallback="/pages/cook/dishes" />
       <ink-load v-if="!booted" label="正在摊开这道菜" />
       <template v-else>
-        <input
+        <textarea
           v-model="name"
-          class="h-74rpx w-full text-64rpx text-#3c2428 leading-74rpx"
+          auto-height
+          disable-default-padding
+          class="min-h-74rpx w-full text-64rpx text-#3c2428 leading-74rpx"
           :class="faceOf(name, 'serif')"
           :maxlength="20"
           placeholder="写下这道菜"
           placeholder-class="ph-serif"
-        >
+          :show-confirm-bar="false"
+        />
         <view class="flex flex-col gap-16rpx py-24rpx">
           <view class="flex items-center justify-between">
             <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('分类', 'mono')">
@@ -207,22 +204,6 @@ async function remove() {
           </view>
         </view>
         <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
-          <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[1.6rpx]" :class="faceOf('简介', 'mono')">
-            简介
-          </text>
-          <textarea
-            v-model="summary"
-            auto-height
-            disable-default-padding
-            class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
-            :class="faceOf(summary, 'sans')"
-            :maxlength="80"
-            placeholder="蒜香，少盐。"
-            placeholder-class="ph-sans"
-            :show-confirm-bar="false"
-          />
-        </view>
-        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
           <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[1.6rpx]" :class="faceOf('食材', 'mono')">
             食材
           </text>
@@ -232,7 +213,7 @@ async function remove() {
             disable-default-padding
             class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
             :class="faceOf(ingredients, 'sans')"
-            placeholder="一条一行"
+            placeholder="请输入食材，一个食材一行"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
@@ -257,7 +238,7 @@ async function remove() {
             disable-default-padding
             class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
             :class="faceOf(stepsText, 'sans')"
-            placeholder="一步一行"
+            placeholder="请输入制作步骤，一步一行"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
@@ -272,7 +253,7 @@ async function remove() {
             disable-default-padding
             class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
             :class="faceOf(sourceUrl, 'sans')"
-            placeholder="https://"
+            placeholder="请输入小红书或抖音链接"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
@@ -309,9 +290,6 @@ async function remove() {
             </view>
           </view>
         </view>
-        <text v-if="lackCover" class="text-28rpx text-#9c342c" :class="faceOf('还缺封面', 'sans')">
-          还缺封面
-        </text>
         <stamp-button :disabled="pending !== ''" :busy="pending === 'publish'" @tap="publish">
           {{ pending === 'publish' ? '正在上架' : '上架' }}
         </stamp-button>
@@ -331,4 +309,3 @@ async function remove() {
     </view>
   </paper-page>
 </template>
-

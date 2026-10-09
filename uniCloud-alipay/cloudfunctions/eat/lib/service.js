@@ -96,8 +96,6 @@ function normalizeUrl(value) {
     return ''
   if (textLen(url) > 500)
     throw new EatError('VALIDATION', '来源链接太长了')
-  if (!/^https?:\/\/\S+$/i.test(url))
-    throw new EatError('VALIDATION', '来源链接不像一个链接')
   return url
 }
 
@@ -140,13 +138,6 @@ function normalizeDishName(value) {
   if (textLen(name) > 20)
     throw new EatError('VALIDATION', '菜名最多 20 个字')
   return name
-}
-
-function normalizeSummary(value) {
-  const summary = String(value || '').trim()
-  if (textLen(summary) > 80)
-    throw new EatError('VALIDATION', '简介最多 80 个字')
-  return summary
 }
 
 function normalizeRecordText(value) {
@@ -710,7 +701,6 @@ function createEatService(deps) {
   function dishDetail(dish, names) {
     return {
       ...dishCard(dish, names),
-      summary: dish.summary || '',
       ingredients: dish.ingredients || [],
       steps: dish.steps || [],
       sourceUrl: dish.sourceUrl || '',
@@ -821,16 +811,13 @@ function createEatService(deps) {
 
   function readDishInput(body) {
     const name = normalizeDishName(body.name)
-    const summary = normalizeSummary(body.summary)
     const ingredients = asLines(body.ingredients, 80, 200, '食材太长了', '食材太多了')
     const steps = asLines(body.steps, 30, 200, '每一步最多 200 个字', '步骤最多 30 步')
     const sourceUrl = normalizeUrl(body.sourceUrl)
     const coverFileId = body.coverFileId ? normalizeFileId(body.coverFileId, '还缺封面') : ''
     if (!coverFileId)
       throw new EatError('VALIDATION', '还缺封面')
-    if (!summary && steps.length === 0)
-      throw new EatError('VALIDATION', '简介和步骤至少写一项')
-    return { name, summary, ingredients, steps, sourceUrl, coverFileId }
+    return { name, ingredients, steps, sourceUrl, coverFileId }
   }
 
   async function publishDish(params) {

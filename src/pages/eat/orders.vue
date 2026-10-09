@@ -2,7 +2,7 @@
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
-import { beginTabSwitch } from '@/utils/tab-motion'
+import { beginTabSwitch, whenTabIdle } from '@/utils/tab-motion'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -27,6 +27,7 @@ async function refresh() {
       return
     const listed = await listOrders()
     const nextBadges = await badges()
+    await whenTabIdle()
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
     orders.value = listed.orders
