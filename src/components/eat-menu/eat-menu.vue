@@ -233,11 +233,11 @@ defineExpose({ refresh })
     <view v-else class="flex flex-col gap-28rpx" :class="showTray ? 'pb-140rpx' : ''">
       <screen-head title="菜单" />
       <template v-if="board">
-        <view class="flex items-center gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
+        <view class="box-border w-full min-w-0 flex items-stretch gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
           <view
             v-for="day in board.dates"
             :key="day.date"
-            class="flex flex-1 flex-col items-center gap-16rpx rounded-28rpx px-8rpx py-20rpx"
+            class="min-w-0 flex flex-1 flex-col items-center gap-16rpx overflow-hidden rounded-28rpx px-8rpx py-20rpx"
             :class="date === day.date ? 'bg-#f6e4de' : ''"
           >
             <text class="text-44rpx text-#3c2428 leading-none font-display">
@@ -246,21 +246,18 @@ defineExpose({ refresh })
             <text class="text-24rpx text-#7a534c leading-none font-body">
               {{ monthDay(day.date) }}
             </text>
-            <view class="flex items-center justify-center gap-8rpx">
+            <view class="w-full flex items-center justify-center gap-8rpx">
               <view
                 v-for="meal in slots"
                 :key="meal"
-                class="h-80rpx flex flex-col items-center justify-center gap-2rpx rounded-24rpx"
-                :class="[
-                  mealOn(day.date, meal) ? 'bg-#792b3e' : '',
-                  mealOn(day.date, meal) && !busyOf(day.date, meal) ? 'px-16rpx' : 'px-12rpx',
-                ]"
+                class="h-80rpx min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx overflow-hidden rounded-24rpx"
+                :class="mealOn(day.date, meal) ? 'bg-#792b3e' : ''"
                 @tap="selectSlot(day.date, meal)"
               >
                 <text class="text-32rpx leading-none font-display" :class="mealTone(day.date, meal)">
                   {{ slotShort[meal] }}
                 </text>
-                <text v-if="busyOf(day.date, meal)" class="text-22rpx leading-none font-body" :class="mealTone(day.date, meal)">
+                <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx leading-none font-body" :class="mealTone(day.date, meal)">
                   已点
                 </text>
               </view>

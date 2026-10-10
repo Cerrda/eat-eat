@@ -32,6 +32,8 @@ onShow(async () => {
   }
 })
 
+const dishLines = computed(() => order.value?.items.map(item => item.name).join('\n') ?? '')
+
 function openOrder() {
   uni.redirectTo({ url: `/pages/eat/order?id=${orderId.value}` })
 }
@@ -39,21 +41,21 @@ function openOrder() {
 
 <template>
   <paper-page>
-    <view v-if="order" class="flex flex-col items-start gap-28rpx pt-40rpx">
-      <view class="h-140rpx w-140rpx flex items-center justify-center border-6rpx border-#792b3e rounded-full border-solid">
-        <text class="text-64rpx text-#792b3e font-display">
-          ✓
-        </text>
-      </view>
+    <view v-if="order" class="flex flex-col gap-32rpx pt-24rpx">
       <text class="text-56rpx text-#792b3e leading-[1.3]" :class="faceOf('点好了', 'sans')">
         点好了
       </text>
-      <text class="text-44rpx text-#3c2428 leading-[1.4] font-display">
-        {{ order.items.map(item => item.name).join(' / ') }}
-      </text>
-      <text v-if="order.note" class="text-30rpx text-#7a534c font-body">
-        {{ order.note }}
-      </text>
+      <view class="flex justify-center">
+        <image class="h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
+      </view>
+      <view class="box-border flex flex-col gap-12rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-24rpx pr-4rpx">
+        <text class="whitespace-pre-line text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(dishLines, 'serif')">
+          {{ dishLines }}
+        </text>
+        <text v-if="order.note" class="text-28rpx text-#7a534c" :class="faceOf(order.note, 'sans')">
+          {{ order.note }}
+        </text>
+      </view>
       <stamp-button @button-tap="openOrder">
         看这一餐
       </stamp-button>

@@ -18,7 +18,7 @@ onMounted(() => {
 async function refresh() {
   const id = ++spin
   try {
-    const view = await ensureAccount({ next: 'home', role: 'cooker' })
+    const view = await ensureAccount({ next: 'home' })
     if (!view || id !== spin)
       return
     const listed = await listRecords()

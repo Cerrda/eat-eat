@@ -77,7 +77,7 @@ async function submit() {
           v-model="note"
           class="h-180rpx w-full text-36rpx text-#3c2428 font-body"
           :maxlength="40"
-          placeholder="早上改吃别的，这餐先不用了。"
+          placeholder="什么？不吃了？为什么？"
           placeholder-class="ph"
         />
         <text class="block text-right text-26rpx text-#7a534c font-body">

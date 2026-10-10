@@ -2,6 +2,7 @@
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
+import { faceOf } from '@/utils/face'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
@@ -45,58 +46,69 @@ function when(order: OrderDetail) {
     return order.date
   return `${dateLabel(order.date, account.value.today)} · ${SLOT_LABEL[order.slot]}`
 }
+
+function statusTone(order: OrderDetail) {
+  if (order.status === 'rejected' || order.status === 'cancelled')
+    return 'text-#7a534c'
+  return 'text-#792b3e'
+}
+
+function extra(order: OrderDetail) {
+  if (order.note && order.status === 'pending')
+    return order.note
+  if (order.rejectNote)
+    return `${account.value?.partnerNickname || '厨神'}：${order.rejectNote}`
+  if (order.cancelNote)
+    return order.cancelNote
+  return ''
+}
 </script>
 
 <template>
   <view>
     <ink-load v-if="!account" label="正在翻点过的" />
     <view v-else-if="!orders.length" class="flex flex-col gap-28rpx">
-      <screen-head :kicker="`${account?.nickname || '食神'}点过的`" title="订单" note="还没有点过。" />
-      <view class="w-full flex flex-col items-center">
-        <image class="relative z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
-        <view class="relative z-0 -mt-156rpx w-616rpx flex items-center justify-center gap-8rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-180rpx" @tap="openMenu">
-          <text class="text-44rpx text-#792b3e font-display">
-            去菜单里点一餐
-          </text>
-          <text class="text-44rpx text-#792b3e font-body">
-            ›
-          </text>
+      <screen-head title="订单" note="还没有点过。" />
+      <view class="w-full flex justify-center pb-16rpx pt-32rpx">
+        <view class="relative h-428rpx w-616rpx" @tap="openMenu">
+          <view class="absolute left-0 top-156rpx box-border h-264rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-48rpx">
+            <view class="flex items-center gap-12rpx">
+              <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('去菜单里点一餐', 'serif')">
+                去菜单里点一餐
+              </text>
+              <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+                ›
+              </text>
+            </view>
+          </view>
+          <image class="pointer-events-none absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
         </view>
       </view>
     </view>
-    <view v-else class="flex flex-col gap-28rpx">
-      <screen-head
-        :kicker="`${account?.nickname || '食神'}点过的`"
-        title="订单"
-      />
+    <view v-else class="flex flex-col gap-8rpx">
+      <screen-head title="订单" />
       <view
         v-for="order in orders"
         :key="order.orderId"
-        class="flex flex-col gap-8rpx border-0 border-t-2rpx border-#c9a297 border-solid pt-24rpx"
+        class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-28rpx"
         @tap="openOrder(order)"
       >
         <view class="flex items-center justify-between">
-          <text class="text-30rpx text-#3c2428 font-body">
+          <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
             {{ when(order) }}
           </text>
           <text
-            class="text-28rpx font-body"
-            :class="order.status === 'rejected' ? 'text-#9c342c' : 'text-#792b3e'"
+            class="text-30rpx leading-[1.15] tracking-[1.2rpx]"
+            :class="[statusTone(order), faceOf(STATUS_LABEL[order.status], 'mono')]"
           >
             {{ STATUS_LABEL[order.status] }}
           </text>
         </view>
-        <text class="text-32rpx text-#3c2428 font-body">
+        <text class="text-28rpx text-#3c2428" :class="faceOf(order.items.map(item => item.name).join('、'), 'sans')">
           {{ order.items.map(item => item.name).join('、') }}
         </text>
-        <text v-if="order.note && order.status === 'pending'" class="text-26rpx text-#7a534c font-body">
-          {{ order.note }}
-        </text>
-        <text v-if="order.rejectNote" class="text-26rpx text-#7a534c font-body">
-          {{ account?.partnerNickname || '厨神' }}：{{ order.rejectNote }}
-        </text>
-        <text v-else-if="order.cancelNote" class="text-26rpx text-#7a534c font-body">
-          {{ order.cancelNote }}
+        <text v-if="extra(order)" class="text-26rpx text-#7a534c" :class="faceOf(extra(order), 'sans')">
+          {{ extra(order) }}
         </text>
       </view>
     </view>
