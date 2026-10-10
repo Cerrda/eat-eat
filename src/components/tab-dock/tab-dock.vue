@@ -159,6 +159,6 @@ function open(key: string) {
 }
 
 .tab-dock-slide {
-  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.32s cubic-bezier(0.22, 1.12, 0.36, 1);
 }
 </style>

@@ -97,17 +97,17 @@ function fillCode() {
       class="relative z-1 box-border flex flex-col gap-42rpx px-42rpx pb-[calc(54rpx+env(safe-area-inset-bottom))]"
       :style="{ paddingTop: topPadding }"
     >
-      <view class="flex items-center">
+      <view class="eat-rise flex items-center">
         <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
           EatEat
         </text>
       </view>
 
-      <view class="flex justify-center">
+      <view class="eat-pop eat-delay-1 flex justify-center">
         <image class="w-404rpx" src="/static/pot.png" mode="widthFix" />
       </view>
 
-      <view class="box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
+      <view class="eat-rise eat-delay-2 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来做饭
         </text>
@@ -116,7 +116,7 @@ function fillCode() {
         </stamp-button>
       </view>
 
-      <view class="box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
+      <view class="eat-rise eat-delay-3 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来点餐
         </text>
@@ -125,7 +125,7 @@ function fillCode() {
         </stamp-button>
       </view>
 
-      <view class="box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
+      <view class="eat-rise eat-delay-4 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我有邀请码
         </text>

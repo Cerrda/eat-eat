@@ -42,10 +42,12 @@ onShareAppMessage(() => ({
   <paper-page>
     <view :style="{ paddingTop: clearance }">
       <view v-if="account" class="flex flex-col gap-42rpx">
-        <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
-          EatEat
-        </text>
-        <view class="flex flex-col gap-19rpx">
+        <view class="eat-rise">
+          <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+            EatEat
+          </text>
+        </view>
+        <view class="eat-rise eat-delay-1 flex flex-col gap-19rpx">
           <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
             {{ title }}
           </text>
@@ -53,10 +55,10 @@ onShareAppMessage(() => ({
             灯还亮着。对方点开，就能进来。
           </text>
         </view>
-        <view class="flex justify-center pt-4rpx">
+        <view class="eat-float flex justify-center pt-4rpx">
           <image class="w-362rpx" src="/static/house.png" mode="widthFix" />
         </view>
-        <view class="box-border flex flex-col gap-12rpx border-2rpx border-#c9a297 rounded-35rpx border-solid bg-#fff9f4 px-35rpx py-31rpx">
+        <view class="eat-rise eat-delay-3 box-border flex flex-col gap-12rpx border-2rpx border-#c9a297 rounded-35rpx border-solid bg-#fff9f4 px-35rpx py-31rpx">
           <text class="text-25rpx text-#792b3e leading-[1.45] font-body">
             邀请码
           </text>

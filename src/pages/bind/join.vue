@@ -162,7 +162,7 @@ async function backHome() {
       </text>
       <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" :invalid="mode === 'invalid'" />
 
-      <view v-if="showResult" class="flex flex-col gap-31rpx">
+      <view v-if="showResult" class="eat-rise flex flex-col gap-31rpx">
         <view class="box-border flex flex-col gap-12rpx border-0 border-b-4rpx border-t-4rpx border-#c9a297 border-solid py-31rpx">
           <text
             class="text-27rpx leading-[1.15] tracking-[2rpx] font-mono"

@@ -105,7 +105,7 @@ defineExpose({ refresh })
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
       <screen-head title="记录">
-        <view v-if="account" class="shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" @tap="createOne">
+        <view v-if="account" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
           <text class="text-26rpx text-#fbf3ea font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
             记下这餐
           </text>

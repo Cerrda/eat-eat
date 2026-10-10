@@ -9,6 +9,8 @@ onLaunch(() => {
 </script>
 
 <style>
+@import "./styles/motion.css";
+
 text.font-display,
 textarea.font-display,
 button.font-display {

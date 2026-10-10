@@ -47,7 +47,7 @@ function onTap() {
     />
     <button
       v-if="openType"
-      class="eat-stamp relative box-border w-full border-4rpx border-solid text-center font-body"
+      class="eat-stamp eat-stamp-face relative box-border w-full border-4rpx border-solid text-center font-body"
       :class="[
         shellClass,
         faceClass,
@@ -56,13 +56,13 @@ function onTap() {
       :open-type="openType"
       :disabled="disabled"
       :hover-class="pressClass"
-      :hover-stay-time="80"
+      :hover-stay-time="160"
     >
       <slot />
     </button>
     <view
       v-else
-      class="relative box-border w-full border-4rpx border-solid text-center"
+      class="eat-stamp-face relative box-border w-full border-4rpx border-solid text-center"
       :class="[
         shellClass,
         variant === 'solid'
@@ -71,7 +71,7 @@ function onTap() {
         disabled && !busy ? 'opacity-60' : '',
       ]"
       :hover-class="disabled || busy ? 'none' : pressClass"
-      :hover-stay-time="80"
+      :hover-stay-time="160"
       @tap="onTap"
     >
       <view class="flex items-center justify-center" :class="flat ? 'gap-15rpx' : 'gap-16rpx'">
@@ -92,6 +92,7 @@ function onTap() {
 
 <style>
 @import "../../styles/font-util.css";
+@import "../../styles/motion.css";
 
 .eat-stamp {
   margin: 0;
@@ -103,6 +104,6 @@ function onTap() {
 }
 
 .eat-flat-press {
-  opacity: 0.86;
+  transform: scale(0.97);
 }
 </style>

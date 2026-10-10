@@ -247,6 +247,7 @@ defineExpose({ refresh })
     <ink-load v-if="!board" label="正在摆这一餐" />
     <list-scroll
       v-else
+      :inset-top="64"
       :refreshing="pulling"
       :loading="loading"
       :finished="finished"
@@ -254,7 +255,7 @@ defineExpose({ refresh })
       @refresh="onPull"
       @more="more"
     >
-      <view class="flex flex-col gap-28rpx pt-28rpx" :class="showTray ? 'pb-140rpx' : ''">
+      <view class="flex flex-col gap-28rpx pt-64rpx" :class="showTray ? 'pb-156rpx' : 'pb-64rpx'">
         <view class="box-border min-w-0 w-full flex items-stretch gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
           <view
             v-for="day in board.dates"
@@ -381,10 +382,10 @@ defineExpose({ refresh })
           </text>
         </view>
         <view
-          class="inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e px-32rpx py-24rpx"
+          class="eat-press inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e px-32rpx py-24rpx"
           :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.35)' }"
-          hover-class="opacity-80"
-          :hover-stay-time="80"
+          hover-class="eat-press-on"
+          :hover-stay-time="140"
           @tap="onTrayTap"
         >
           <text class="whitespace-nowrap text-28rpx text-#fbf3ea font-medium leading-none font-body">

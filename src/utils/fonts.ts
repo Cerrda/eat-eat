@@ -37,6 +37,6 @@ function loadFace(family: string, url: string, weight: '400' | '500') {
 }
 
 export function bootFonts() {
-  for (const face of FACES)
-    loadFace(face.family, face.url, face.weight)
+  // for (const face of FACES)
+  //   loadFace(face.family, face.url, face.weight)
 }

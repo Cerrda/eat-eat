@@ -21,7 +21,7 @@ withDefaults(defineProps<{
 <style>
 .eat-notch {
   border-left-color: transparent;
-  animation: eat-notch 0.8s linear infinite;
+  animation: eat-notch 1.1s linear infinite;
 }
 
 .eat-notch-sm {

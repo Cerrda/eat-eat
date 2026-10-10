@@ -222,5 +222,23 @@ onBeforeUnmount(() => {
 .eat-pot {
   width: 156rpx;
   height: 124rpx;
+  animation: eat-pot-bob 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes eat-pot-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8rpx, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eat-pot {
+    animation: none;
+  }
 }
 </style>

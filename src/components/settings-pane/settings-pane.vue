@@ -133,8 +133,10 @@ async function leave() {
           </view>
         </view>
         <view
-          class="box-border h-100rpx flex items-center justify-center gap-16rpx rounded-36rpx border-solid"
+          class="eat-press box-border h-100rpx flex items-center justify-center gap-16rpx rounded-36rpx border-solid"
           :class="pending ? 'border-3rpx border-#c9a297' : 'border-4rpx border-#9c342c'"
+          :hover-class="pending ? 'none' : 'eat-press-on'"
+          :hover-stay-time="140"
           @tap="leave"
         >
           <ink-spin v-if="pending" tone="muted" />
@@ -149,3 +151,7 @@ async function leave() {
     </scroll-view>
   </view>
 </template>
+
+<style>
+@import "../../styles/motion.css";
+</style>

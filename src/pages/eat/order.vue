@@ -152,9 +152,9 @@ function reorder() {
       </view>
       <view
         v-if="canChange"
-        class="box-border w-full flex items-center justify-center rounded-36rpx border-4rpx border-#c9a297 border-solid bg-#fff9f4 px-32rpx py-30rpx"
-        hover-class="opacity-80"
-        :hover-stay-time="80"
+        class="eat-press box-border w-full flex items-center justify-center rounded-36rpx border-4rpx border-#c9a297 border-solid bg-#fff9f4 px-32rpx py-30rpx"
+        hover-class="eat-press-on"
+        :hover-stay-time="140"
         @tap="cancel"
       >
         <text class="text-30rpx text-#3c2428 font-medium" :class="faceOf('取消这一餐', 'sans')">
@@ -164,9 +164,9 @@ function reorder() {
       <view v-else-if="canReorder" class="relative">
         <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-52rpx bg-#4e222d/35" />
         <view
-          class="relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
+          class="eat-stamp-face relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
           hover-class="translate-x-6rpx translate-y-8rpx"
-          :hover-stay-time="80"
+          :hover-stay-time="160"
           @tap="reorder"
         >
           <text class="text-30rpx text-#fbf3ea font-medium" :class="faceOf('重新点这一餐', 'sans')">

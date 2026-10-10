@@ -26,17 +26,23 @@ function back() {
 
 <style>
 @import "../../styles/font-util.css";
+
+.eat-back-mark {
+  transition: transform 140ms cubic-bezier(0.22, 1.08, 0.36, 1);
+}
+
+.eat-back-on .eat-back-mark {
+  transform: translate3d(-6rpx, 0, 0);
+}
 </style>
 
 <template>
-  <paper-pin>
-    <view class="flex items-center gap-16rpx" @tap="back">
-      <view class="h-40rpx w-40rpx flex shrink-0 items-center justify-center">
-        <view style="width: 18rpx; height: 18rpx; border-left: 3rpx solid #3C2428; border-bottom: 3rpx solid #3C2428; transform: rotate(45deg);" />
-      </view>
-      <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(label, 'serif')">
-        {{ label }}
-      </text>
+  <view class="eat-back inline-flex items-center self-start gap-16rpx" hover-class="eat-back-on" :hover-stay-time="140" @tap="back">
+    <view class="eat-back-mark h-40rpx w-40rpx flex shrink-0 items-center justify-center">
+      <view style="width: 18rpx; height: 18rpx; border-left: 3rpx solid #3C2428; border-bottom: 3rpx solid #3C2428; transform: rotate(45deg);" />
     </view>
-  </paper-pin>
+    <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(label, 'serif')">
+      {{ label }}
+    </text>
+  </view>
 </template>

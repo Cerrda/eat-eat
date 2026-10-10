@@ -90,7 +90,7 @@ watch(dialogSeq, () => {
     return
   enterTimer = setTimeout(() => {
     fieldLive.value = true
-  }, 320)
+  }, 400)
 })
 
 watch(active, (on) => {
@@ -109,7 +109,7 @@ watch(active, (on) => {
     if (dialogEditable.value) {
       enterTimer = setTimeout(() => {
         fieldLive.value = true
-      }, 320)
+      }, 400)
     }
     return
   }
@@ -136,12 +136,16 @@ watch(active, (on) => {
       class="absolute bottom-0 left-0 right-0 top-0 bg-#3c2428/45"
       :class="shown ? 'ink-dialog-mask-in' : 'ink-dialog-mask-out'"
     />
-    <view
-      class="relative z-1 w-full border-4rpx border-#792b3e rounded-44rpx border-solid bg-#fff9f4 px-44rpx py-44rpx"
-      :class="shown ? 'ink-dialog-in' : 'ink-dialog-out'"
-      :style="{ boxShadow: '8rpx 10rpx 0 rgba(78, 34, 45, 0.35)' }"
-      @tap.stop="freeze"
-    >
+    <view class="relative z-1 w-full" @tap.stop="freeze">
+      <view
+        class="pointer-events-none absolute rounded-44rpx bg-#4e222d/35"
+        :class="shown ? 'ink-dialog-shadow-in' : 'ink-dialog-shadow-out'"
+        style="top: 10rpx; right: -8rpx; bottom: -10rpx; left: 8rpx;"
+      />
+      <view
+        class="relative border-4rpx border-#792b3e rounded-44rpx border-solid bg-#fff9f4 px-44rpx py-44rpx"
+        :class="shown ? 'ink-dialog-in' : 'ink-dialog-out'"
+      >
       <view class="flex flex-col gap-32rpx">
         <text class="block text-64rpx text-#3c2428 leading-[1.15] font-display">
           {{ dialogTitle }}
@@ -180,9 +184,9 @@ watch(active, (on) => {
         </view>
         <view v-if="dialogShowCancel" class="flex items-stretch gap-16rpx">
           <view
-            class="box-border flex flex-1 items-center justify-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx py-24rpx"
+            class="ink-dialog-btn box-border flex flex-1 items-center justify-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx py-24rpx"
             hover-class="ink-dialog-press"
-            :hover-stay-time="80"
+            :hover-stay-time="140"
             @tap.stop="cancel"
           >
             <text class="text-30rpx text-#3c2428 font-medium font-body">
@@ -190,9 +194,9 @@ watch(active, (on) => {
             </text>
           </view>
           <view
-            class="flex flex-1 items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
+            class="ink-dialog-btn flex flex-1 items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
             hover-class="ink-dialog-press"
-            :hover-stay-time="80"
+            :hover-stay-time="140"
             @tap.stop="confirm"
           >
             <text class="text-30rpx text-#fbf3ea font-medium font-body">
@@ -202,9 +206,9 @@ watch(active, (on) => {
         </view>
         <view
           v-else
-          class="flex items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
+          class="ink-dialog-btn flex items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
           hover-class="ink-dialog-press"
-          :hover-stay-time="80"
+          :hover-stay-time="140"
           @tap.stop="confirm"
         >
           <text class="text-30rpx text-#fbf3ea font-medium font-body">
@@ -212,29 +216,42 @@ watch(active, (on) => {
           </text>
         </view>
       </view>
+      </view>
     </view>
   </view>
 </template>
 
 <style>
+.ink-dialog-btn {
+  transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
+}
+
 .ink-dialog-press {
-  opacity: 0.86;
+  transform: scale(0.97);
 }
 
 .ink-dialog-mask-in {
-  animation: ink-dialog-mask-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: ink-dialog-mask-in 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ink-dialog-mask-out {
-  animation: ink-dialog-mask-out 0.24s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: ink-dialog-mask-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 .ink-dialog-in {
-  animation: ink-dialog-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: ink-dialog-in 0.36s cubic-bezier(0.22, 1.08, 0.36, 1);
 }
 
 .ink-dialog-out {
-  animation: ink-dialog-out 0.24s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: ink-dialog-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.ink-dialog-shadow-in {
+  animation: ink-dialog-shadow-in 0.36s cubic-bezier(0.22, 1.08, 0.36, 1) 50ms both;
+}
+
+.ink-dialog-shadow-out {
+  animation: ink-dialog-shadow-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 @keyframes ink-dialog-mask-in {
@@ -259,10 +276,12 @@ watch(active, (on) => {
 
 @keyframes ink-dialog-in {
   from {
-    transform: translate3d(0, 16rpx, 0) scale(0.96);
+    opacity: 0;
+    transform: translate3d(0, 28rpx, 0) scale(0.94);
   }
 
   to {
+    opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
 }
@@ -270,11 +289,35 @@ watch(active, (on) => {
 @keyframes ink-dialog-out {
   from {
     opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
   to {
     opacity: 0;
-    transform: translate3d(0, -12rpx, 0);
+    transform: translate3d(0, 16rpx, 0) scale(0.98);
+  }
+}
+
+@keyframes ink-dialog-shadow-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40rpx, 0) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes ink-dialog-shadow-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 20rpx, 0) scale(0.96);
   }
 }
 </style>

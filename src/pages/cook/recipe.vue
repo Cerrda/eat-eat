@@ -109,9 +109,9 @@ function copyLink() {
           <view class="relative w-full">
             <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-52rpx bg-#4e222d/35" />
             <view
-              class="relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
+              class="eat-stamp-face relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
               hover-class="translate-x-6rpx translate-y-8rpx"
-              :hover-stay-time="80"
+              :hover-stay-time="160"
               @tap="copyLink"
             >
               <text class="text-30rpx text-#fbf3ea font-medium leading-none" :class="faceOf('复制链接', 'sans')">

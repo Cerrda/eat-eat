@@ -14,6 +14,12 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 const chars = computed(() => Array.from(props.modelValue || ''))
+const shakeKey = ref(0)
+
+watch(() => props.invalid, (on, was) => {
+  if (on && !was)
+    shakeKey.value += 1
+})
 
 function onInput(event: { detail: { value: string } }) {
   emit('update:modelValue', normalizeCode(event.detail.value))
@@ -22,7 +28,7 @@ function onInput(event: { detail: { value: string } }) {
 
 <template>
   <view class="relative overflow-hidden">
-    <view class="flex gap-15rpx">
+    <view :key="shakeKey" class="flex gap-15rpx" :class="invalid ? 'eat-shake' : ''">
       <view
         v-for="index in 6"
         :key="index"
@@ -49,6 +55,7 @@ function onInput(event: { detail: { value: string } }) {
 
 <style>
 @import "../../styles/font-util.css";
+@import "../../styles/motion.css";
 
 /* 微信原生 textarea 不吃 opacity，文字会叠在格子上。颜色透明，并把光标和原文挪到可视区外。 */
 .code-cells-input {

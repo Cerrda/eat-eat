@@ -42,13 +42,15 @@ function openOrder() {
 <template>
   <paper-page>
     <view v-if="order" class="flex flex-col gap-32rpx pt-24rpx">
-      <text class="text-56rpx text-#792b3e leading-[1.3]" :class="faceOf('点好了', 'sans')">
-        点好了
-      </text>
-      <view class="flex justify-center">
+      <view class="eat-rise">
+        <text class="text-56rpx text-#792b3e leading-[1.3]" :class="faceOf('点好了', 'sans')">
+          点好了
+        </text>
+      </view>
+      <view class="eat-seal eat-delay-2 flex justify-center">
         <image class="h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
       </view>
-      <view class="box-border flex flex-col gap-12rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-24rpx pr-4rpx">
+      <view class="eat-rise eat-delay-4 box-border flex flex-col gap-12rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-24rpx pr-4rpx">
         <text class="whitespace-pre-line text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(dishLines, 'serif')">
           {{ dishLines }}
         </text>
@@ -56,9 +58,11 @@ function openOrder() {
           {{ order.note }}
         </text>
       </view>
-      <stamp-button @button-tap="openOrder">
+      <view class="eat-rise eat-delay-5">
+        <stamp-button @button-tap="openOrder">
         看这一餐
-      </stamp-button>
+        </stamp-button>
+      </view>
     </view>
     <ink-load v-else label="正在写下这一笔" />
   </paper-page>

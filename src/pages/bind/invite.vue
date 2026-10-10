@@ -69,10 +69,12 @@ function copyCode() {
   <paper-page>
     <view :style="{ paddingTop: clearance }">
       <view v-if="account" class="flex flex-col gap-38rpx">
-        <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
-          EatEat
-        </text>
-        <view class="flex flex-col gap-19rpx">
+        <view class="eat-rise">
+          <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+            EatEat
+          </text>
+        </view>
+        <view class="eat-rise eat-delay-1 flex flex-col gap-19rpx">
           <view class="flex flex-col">
             <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
               把这间厨房
@@ -85,18 +87,20 @@ function copyCode() {
             对方点开这条，就能进来。
           </text>
         </view>
-        <view class="flex flex-col gap-12rpx">
+        <view class="eat-pop eat-delay-2 flex flex-col gap-12rpx">
           <code-cells :model-value="account.inviteCode" readonly />
           <text v-if="account.inviteExpired" class="text-27rpx text-#7a534c leading-[1.55] font-body">
             这个码已经过期了。
           </text>
         </view>
-        <stamp-button flat open-type="share">
-          转发给微信好友
-        </stamp-button>
-        <stamp-button flat variant="ghost" @button-tap="copyCode">
-          复制邀请码
-        </stamp-button>
+        <view class="eat-rise eat-delay-4 flex flex-col gap-38rpx">
+          <stamp-button flat open-type="share">
+            转发给微信好友
+          </stamp-button>
+          <stamp-button flat variant="ghost" @button-tap="copyCode">
+            复制邀请码
+          </stamp-button>
+        </view>
         <view class="flex flex-col gap-31rpx pt-35rpx">
           <view class="h-2rpx w-full bg-#3c2428" />
           <view class="flex flex-col gap-4rpx">

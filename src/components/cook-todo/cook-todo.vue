@@ -232,14 +232,16 @@ defineExpose({ refresh })
                   {{ account?.partnerNickname || '食神' }}：{{ order.note }}
                 </text>
                 <view v-if="order.status === 'pending'" class="flex items-center justify-end gap-16rpx">
-                  <view class="box-border h-78rpx flex items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" @tap.stop="reject(order)">
+                  <view class="eat-press box-border h-78rpx flex items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="reject(order)">
                     <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('拒绝', 'sans')">
                       拒绝
                     </text>
                   </view>
                   <view
-                    class="box-border h-78rpx flex items-center gap-16rpx rounded-36rpx px-36rpx"
+                    class="eat-press box-border h-78rpx flex items-center gap-16rpx rounded-36rpx px-36rpx"
                     :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
+                    :hover-class="acting === order.orderId ? 'none' : 'eat-press-on'"
+                    :hover-stay-time="140"
                     @tap.stop="accept(order)"
                   >
                     <ink-spin v-if="acting === order.orderId" tone="paper" />
@@ -260,7 +262,7 @@ defineExpose({ refresh })
                     </text>
                   </view>
                 </view>
-                <view class="box-border h-78rpx flex shrink-0 items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" @tap.stop="openRecords">
+                <view class="eat-press box-border h-78rpx flex shrink-0 items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="openRecords">
                   <text class="text-28rpx text-#7a534c font-medium leading-none" :class="faceOf('已记下', 'sans')">
                     已记下
                   </text>
@@ -276,7 +278,7 @@ defineExpose({ refresh })
                   </text>
                 </view>
                 <view class="flex justify-end">
-                  <view class="box-border h-78rpx flex items-center rounded-36rpx bg-#792b3e px-36rpx" @tap.stop="writeRecord(order)">
+                  <view class="eat-press box-border h-78rpx flex items-center rounded-36rpx bg-#792b3e px-36rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="writeRecord(order)">
                     <text class="text-28rpx text-#fbf3ea font-medium leading-none" :class="faceOf('补上', 'sans')">
                       补上
                     </text>
