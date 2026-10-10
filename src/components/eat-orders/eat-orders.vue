@@ -1,13 +1,27 @@
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
+</script>
+
 <script setup lang="ts">
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
+import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
+import { showHint } from '@/utils/hint'
+import { fillOrders, isSample } from '@/utils/sample-feed'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
-const orders = ref<OrderDetail[]>([])
+const pool = ref<OrderDetail[]>([])
+const rows = computed(() => fillOrders(pool.value, account.value?.today || ''))
+const { shown, total, finished, loading, reset, more } = usePaged(rows)
+const pulling = ref(false)
 
 onMounted(() => {
   void refresh()
@@ -24,14 +38,31 @@ async function refresh() {
     rememberAccount(account.value)
     noteBadges(nextBadges)
     markTabFresh('orders')
-    orders.value = listed.orders
+    pool.value = listed.orders
+    reset()
   }
   catch (err) {
     showError(err)
   }
 }
 
+async function onPull() {
+  if (pulling.value)
+    return
+  pulling.value = true
+  try {
+    await refresh()
+  }
+  finally {
+    pulling.value = false
+  }
+}
+
 function openOrder(order: OrderDetail) {
+  if (isSample(order.orderId)) {
+    showHint('这是凑出来的示例')
+    return
+  }
   uni.navigateTo({ url: `/pages/eat/order?id=${order.orderId}` })
 }
 
@@ -65,11 +96,21 @@ function extra(order: OrderDetail) {
 </script>
 
 <template>
-  <view>
+  <view class="h-full min-h-0 flex flex-1 flex-col">
+    <view class="shrink-0">
+      <screen-head title="订单" />
+    </view>
     <ink-load v-if="!account" label="正在翻点过的" />
-    <view v-else-if="!orders.length" class="flex flex-col gap-28rpx">
-      <screen-head title="订单" note="还没有点过。" />
-      <view class="w-full flex justify-center pb-16rpx pt-32rpx">
+    <list-scroll
+      v-else
+      :refreshing="pulling"
+      :loading="loading"
+      :finished="finished"
+      :total="total"
+      @refresh="onPull"
+      @more="more"
+    >
+      <view v-if="!shown.length" class="w-full flex justify-center pb-16rpx pt-32rpx">
         <view class="relative h-428rpx w-616rpx" @tap="openMenu">
           <view class="absolute left-0 top-156rpx box-border h-264rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-48rpx">
             <view class="flex items-center gap-12rpx">
@@ -84,33 +125,32 @@ function extra(order: OrderDetail) {
           <image class="pointer-events-none absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
         </view>
       </view>
-    </view>
-    <view v-else class="flex flex-col gap-8rpx">
-      <screen-head title="订单" />
-      <view
-        v-for="order in orders"
-        :key="order.orderId"
-        class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-28rpx"
-        @tap="openOrder(order)"
-      >
-        <view class="flex items-center justify-between">
-          <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
-            {{ when(order) }}
+      <view v-else class="flex flex-col pt-8rpx">
+        <view
+          v-for="order in shown"
+          :key="order.orderId"
+          class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-28rpx"
+          @tap="openOrder(order)"
+        >
+          <view class="flex items-center justify-between">
+            <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
+              {{ when(order) }}
+            </text>
+            <text
+              class="text-30rpx leading-[1.15] tracking-[1.2rpx]"
+              :class="[statusTone(order), faceOf(STATUS_LABEL[order.status], 'mono')]"
+            >
+              {{ STATUS_LABEL[order.status] }}
+            </text>
+          </view>
+          <text class="text-28rpx text-#3c2428" :class="faceOf(order.items.map(item => item.name).join('、'), 'sans')">
+            {{ order.items.map(item => item.name).join('、') }}
           </text>
-          <text
-            class="text-30rpx leading-[1.15] tracking-[1.2rpx]"
-            :class="[statusTone(order), faceOf(STATUS_LABEL[order.status], 'mono')]"
-          >
-            {{ STATUS_LABEL[order.status] }}
+          <text v-if="extra(order)" class="text-26rpx text-#7a534c" :class="faceOf(extra(order), 'sans')">
+            {{ extra(order) }}
           </text>
         </view>
-        <text class="text-28rpx text-#3c2428" :class="faceOf(order.items.map(item => item.name).join('、'), 'sans')">
-          {{ order.items.map(item => item.name).join('、') }}
-        </text>
-        <text v-if="extra(order)" class="text-26rpx text-#7a534c" :class="faceOf(extra(order), 'sans')">
-          {{ extra(order) }}
-        </text>
       </view>
-    </view>
+    </list-scroll>
   </view>
 </template>

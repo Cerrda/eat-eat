@@ -1,11 +1,21 @@
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
+</script>
+
 <script setup lang="ts">
 import type { Category, MealBoard, MenuDish, OrderDetail, Slot } from '@/api/eat'
 import { badges, dateLabel, getOrder, listCategories, listMenu, mealBoard, SLOT_LABEL } from '@/api/eat'
+import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
+import { fillMenu, isSample } from '@/utils/sample-feed'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
@@ -19,7 +29,7 @@ const slots: Slot[] = ['morning', 'noon', 'evening']
 const slotShort: Record<Slot, string> = { morning: '早', noon: '中', evening: '晚' }
 
 const board = ref<MealBoard | null>(null)
-const dishes = ref<MenuDish[]>([])
+const pool = ref<MenuDish[]>([])
 const categories = ref<Category[]>([])
 const keyword = ref('')
 keepOneLine(keyword)
@@ -28,9 +38,19 @@ const date = ref('')
 const slot = ref<Slot>('morning')
 const picked = ref<MenuDish[]>([])
 const activeOrder = ref<OrderDetail | null>(null)
-const knownCount = ref(-1)
-let timer = 0
+const pulling = ref(false)
 let spin = 0
+
+const viewRows = computed(() => {
+  const word = keyword.value.trim()
+  let rows = pool.value
+  if (categoryId.value)
+    rows = rows.filter(dish => dish.categoryId === categoryId.value)
+  if (word)
+    return rows.filter(dish => dish.name.includes(word))
+  return fillMenu(rows, categories.value, categoryId.value, pool.value.map(dish => dish.name))
+})
+const { shown, total, finished, loading, reset, more } = usePaged(viewRows)
 
 const selectedBusy = computed(() => {
   if (!board.value)
@@ -38,21 +58,12 @@ const selectedBusy = computed(() => {
   return board.value.busy.find(item => item.date === date.value && item.slot === slot.value) || null
 })
 
-const emptyMenu = computed(() => knownCount.value === 0)
-
 onMounted(() => {
   void refresh()
 })
 
-onUnmounted(() => {
-  clearTimeout(timer)
-})
-
-watch(keyword, () => {
-  clearTimeout(timer)
-  timer = setTimeout(() => {
-    void refresh()
-  }, 250) as unknown as number
+watch([keyword, categoryId], () => {
+  reset()
 })
 
 async function refresh() {
@@ -62,10 +73,7 @@ async function refresh() {
     if (!view || id !== spin)
       return
     const [menu, cats, meal, nextBadges] = await Promise.all([
-      listMenu({
-        keyword: keyword.value.trim() || undefined,
-        categoryId: categoryId.value || undefined,
-      }),
+      listMenu(),
       listCategories(),
       mealBoard(),
       badges(),
@@ -74,11 +82,10 @@ async function refresh() {
       return
     rememberAccount({ ...view, badges: nextBadges })
     noteBadges(nextBadges)
-    dishes.value = menu.dishes
+    pool.value = menu.dishes
     categories.value = cats.categories
     board.value = meal
-    if (!keyword.value.trim() && !categoryId.value)
-      knownCount.value = menu.dishes.length
+    reset()
     await primeFileUrls(menu.dishes.map(dish => dish.coverFileId))
     if (id !== spin)
       return
@@ -88,6 +95,18 @@ async function refresh() {
   catch (err) {
     if (id === spin)
       showError(err)
+  }
+}
+
+async function onPull() {
+  if (pulling.value)
+    return
+  pulling.value = true
+  try {
+    await refresh()
+  }
+  finally {
+    pulling.value = false
   }
 }
 
@@ -143,7 +162,6 @@ async function selectSlot(day: string, meal: Slot) {
 
 function pickCategory(id: string) {
   categoryId.value = id
-  void refresh()
 }
 
 function chosen(id: string) {
@@ -155,6 +173,10 @@ function inOrder(id: string) {
 }
 
 function toggle(dish: MenuDish) {
+  if (isSample(dish.dishId)) {
+    showHint('这是凑出来的示例')
+    return
+  }
   if (selectedBusy.value)
     return
   const index = picked.value.findIndex(item => item.dishId === dish.dishId)
@@ -188,7 +210,7 @@ function viewOrdered() {
 }
 
 const showTray = computed(() => {
-  if (emptyMenu.value || !board.value)
+  if (!board.value)
     return false
   return Boolean(selectedBusy.value) || picked.value.length > 0
 })
@@ -218,22 +240,22 @@ defineExpose({ refresh })
 </script>
 
 <template>
-  <view>
-    <view v-if="emptyMenu" class="flex flex-col gap-28rpx">
-      <screen-head title="菜单" note="还没有上架的菜。" />
-      <view class="w-full flex flex-col items-center">
-        <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
-        <view class="relative z-0 w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx -mt-100rpx">
-          <text class="text-44rpx text-#3c2428 font-display">
-            等对方上架
-          </text>
-        </view>
-      </view>
-    </view>
-    <view v-else class="flex flex-col gap-28rpx" :class="showTray ? 'pb-140rpx' : ''">
+  <view class="h-full min-h-0 flex flex-1 flex-col">
+    <view class="shrink-0">
       <screen-head title="菜单" />
-      <template v-if="board">
-        <view class="box-border w-full min-w-0 flex items-stretch gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
+    </view>
+    <ink-load v-if="!board" label="正在摆这一餐" />
+    <list-scroll
+      v-else
+      :refreshing="pulling"
+      :loading="loading"
+      :finished="finished"
+      :total="total"
+      @refresh="onPull"
+      @more="more"
+    >
+      <view class="flex flex-col gap-28rpx pt-28rpx" :class="showTray ? 'pb-140rpx' : ''">
+        <view class="box-border min-w-0 w-full flex items-stretch gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
           <view
             v-for="day in board.dates"
             :key="day.date"
@@ -304,7 +326,7 @@ defineExpose({ refresh })
           </scroll-view>
         </view>
         <view
-          v-for="dish in dishes"
+          v-for="dish in shown"
           :key="dish.dishId"
           class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
         >
@@ -341,12 +363,11 @@ defineExpose({ refresh })
             {{ chosen(dish.dishId) ? '已加上' : '加上' }}
           </text>
         </view>
-        <text v-if="!dishes.length" class="text-30rpx text-#7a534c font-body">
+        <text v-if="!shown.length" class="text-30rpx text-#7a534c font-body">
           没有这道菜。
         </text>
-      </template>
-      <ink-load v-else label="正在摆这一餐" />
-    </view>
+      </view>
+    </list-scroll>
     <root-portal v-if="alive && showTray && board">
       <view
         class="fixed bottom-[calc(184rpx+env(safe-area-inset-bottom))] left-0 right-0 z-10 box-border flex items-center justify-between gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid bg-#fbf3ea px-44rpx py-24rpx"

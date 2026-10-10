@@ -20,6 +20,7 @@ declare module 'vue' {
     InkSpin: typeof import('./components/ink-spin/ink-spin.vue')['default']
     InkToast: typeof import('./components/ink-toast/ink-toast.vue')['default']
     InkUnderline: typeof import('./components/ink-underline/ink-underline.vue')['default']
+    ListScroll: typeof import('./components/list-scroll/list-scroll.vue')['default']
     PaperPage: typeof import('./components/paper-page/paper-page.vue')['default']
     PaperPin: typeof import('./components/paper-pin/paper-pin.vue')['default']
     ScreenHead: typeof import('./components/screen-head/screen-head.vue')['default']

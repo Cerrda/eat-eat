@@ -46,25 +46,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <scroll-view
-    scroll-y
-    :show-scrollbar="false"
-    class="fixed left-0 top-0 w-full"
+  <view
+    class="fixed left-0 top-0 box-border w-full flex flex-col overflow-hidden"
     :style="{
       height: '100vh',
+      paddingTop: topPadding,
+      paddingBottom: 'calc(184rpx + env(safe-area-inset-bottom))',
       visibility: active ? 'visible' : 'hidden',
       pointerEvents: active ? 'auto' : 'none',
       zIndex: active ? 1 : 0,
     }"
   >
-    <view
-      class="box-border px-44rpx pb-[calc(184rpx+env(safe-area-inset-bottom))]"
-      :class="shiftClass"
-      :style="{ paddingTop: topPadding }"
-    >
+    <view class="h-0 min-h-0 flex flex-1 flex-col px-44rpx" :class="shiftClass">
       <slot />
     </view>
-  </scroll-view>
+  </view>
 </template>
 
 <style>

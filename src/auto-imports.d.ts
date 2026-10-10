@@ -53,6 +53,11 @@ declare global {
   const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const faceOf: typeof import('./utils/face')['faceOf']
+  const fillDishes: typeof import('./utils/sample-feed')['fillDishes']
+  const fillMenu: typeof import('./utils/sample-feed')['fillMenu']
+  const fillOrders: typeof import('./utils/sample-feed')['fillOrders']
+  const fillRecords: typeof import('./utils/sample-feed')['fillRecords']
+  const fillTodo: typeof import('./utils/sample-feed')['fillTodo']
   const fitCloudImageUrl: typeof import('./utils/files')['fitCloudImageUrl']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -69,6 +74,7 @@ declare global {
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
+  const isSample: typeof import('./utils/sample-feed')['isSample']
   const isTabFresh: typeof import('./utils/tabs')['isTabFresh']
   const keepOneLine: typeof import('./utils/format')['keepOneLine']
   const loadAccount: typeof import('./utils/account')['loadAccount']
@@ -288,6 +294,7 @@ declare global {
   const useOnline: typeof import('@vueuse/core')['useOnline']
   const usePageFonts: typeof import('./utils/fonts')['usePageFonts']
   const usePageLeave: typeof import('@vueuse/core')['usePageLeave']
+  const usePaged: typeof import('./composables/usePaged')['usePaged']
   const useParallax: typeof import('@vueuse/core')['useParallax']
   const useParentElement: typeof import('@vueuse/core')['useParentElement']
   const usePerformanceObserver: typeof import('@vueuse/core')['usePerformanceObserver']
@@ -446,6 +453,11 @@ declare module 'vue' {
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
+    readonly fillDishes: UnwrapRef<typeof import('./utils/sample-feed')['fillDishes']>
+    readonly fillMenu: UnwrapRef<typeof import('./utils/sample-feed')['fillMenu']>
+    readonly fillOrders: UnwrapRef<typeof import('./utils/sample-feed')['fillOrders']>
+    readonly fillRecords: UnwrapRef<typeof import('./utils/sample-feed')['fillRecords']>
+    readonly fillTodo: UnwrapRef<typeof import('./utils/sample-feed')['fillTodo']>
     readonly fitCloudImageUrl: UnwrapRef<typeof import('./utils/files')['fitCloudImageUrl']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -462,6 +474,7 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly isSample: UnwrapRef<typeof import('./utils/sample-feed')['isSample']>
     readonly isTabFresh: UnwrapRef<typeof import('./utils/tabs')['isTabFresh']>
     readonly keepOneLine: UnwrapRef<typeof import('./utils/format')['keepOneLine']>
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
@@ -680,6 +693,7 @@ declare module 'vue' {
     readonly useOffsetPagination: UnwrapRef<typeof import('@vueuse/core')['useOffsetPagination']>
     readonly useOnline: UnwrapRef<typeof import('@vueuse/core')['useOnline']>
     readonly usePageLeave: UnwrapRef<typeof import('@vueuse/core')['usePageLeave']>
+    readonly usePaged: UnwrapRef<typeof import('./composables/usePaged')['usePaged']>
     readonly useParallax: UnwrapRef<typeof import('@vueuse/core')['useParallax']>
     readonly useParentElement: UnwrapRef<typeof import('@vueuse/core')['useParentElement']>
     readonly usePerformanceObserver: UnwrapRef<typeof import('@vueuse/core')['usePerformanceObserver']>
