@@ -94,7 +94,7 @@ function copyCode() {
         <stamp-button flat open-type="share">
           转发给微信好友
         </stamp-button>
-        <stamp-button flat variant="ghost" @tap="copyCode">
+        <stamp-button flat variant="ghost" @button-tap="copyCode">
           复制邀请码
         </stamp-button>
         <view class="flex flex-col gap-31rpx pt-35rpx">

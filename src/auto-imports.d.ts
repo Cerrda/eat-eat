@@ -14,6 +14,7 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const beginChoose: typeof import('./utils/account')['beginChoose']
+  const beginClose: typeof import('./utils/ui')['beginClose']
   const beginTabSwitch: typeof import('./utils/tab-motion')['beginTabSwitch']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
   const chooseImage: typeof import('./utils/files')['chooseImage']
@@ -42,6 +43,7 @@ declare global {
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
+  const dismissDialog: typeof import('./utils/ui')['dismissDialog']
   const dismissHint: typeof import('./utils/hint')['dismissHint']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const eatCloud: typeof import('./utils/cloud')['eatCloud']
@@ -146,6 +148,7 @@ declare global {
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const routeAccount: typeof import('./utils/account')['routeAccount']
+  const settleDialog: typeof import('./utils/ui')['settleDialog']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
@@ -157,6 +160,7 @@ declare global {
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const takeTabOrigin: typeof import('./utils/tab-motion')['takeTabOrigin']
   const takeTabShift: typeof import('./utils/tab-motion')['takeTabShift']
+  const tell: typeof import('./utils/ui')['tell']
   const templateRef: typeof import('@vueuse/core')['templateRef']
   const textLength: typeof import('./utils/format')['textLength']
   const throttledRef: typeof import('@vueuse/core')['throttledRef']
@@ -222,6 +226,7 @@ declare global {
   const useDeviceOrientation: typeof import('@vueuse/core')['useDeviceOrientation']
   const useDevicePixelRatio: typeof import('@vueuse/core')['useDevicePixelRatio']
   const useDevicesList: typeof import('@vueuse/core')['useDevicesList']
+  const useDialog: typeof import('./utils/ui')['useDialog']
   const useDisplayMedia: typeof import('@vueuse/core')['useDisplayMedia']
   const useDocumentVisibility: typeof import('@vueuse/core')['useDocumentVisibility']
   const useDraggable: typeof import('@vueuse/core')['useDraggable']
@@ -378,6 +383,9 @@ declare global {
   // @ts-ignore
   export type { TabShift } from './utils/tab-motion'
   import('./utils/tab-motion')
+  // @ts-ignore
+  export type { DialogResult } from './utils/ui'
+  import('./utils/ui')
 }
 
 // for vue template auto import
@@ -393,6 +401,7 @@ declare module 'vue' {
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly beginChoose: UnwrapRef<typeof import('./utils/account')['beginChoose']>
+    readonly beginClose: UnwrapRef<typeof import('./utils/ui')['beginClose']>
     readonly beginTabSwitch: UnwrapRef<typeof import('./utils/tab-motion')['beginTabSwitch']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
@@ -421,6 +430,7 @@ declare module 'vue' {
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
+    readonly dismissDialog: UnwrapRef<typeof import('./utils/ui')['dismissDialog']>
     readonly dismissHint: UnwrapRef<typeof import('./utils/hint')['dismissHint']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly eatCloud: UnwrapRef<typeof import('./utils/cloud')['eatCloud']>
@@ -525,6 +535,7 @@ declare module 'vue' {
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly routeAccount: UnwrapRef<typeof import('./utils/account')['routeAccount']>
+    readonly settleDialog: UnwrapRef<typeof import('./utils/ui')['settleDialog']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -534,6 +545,7 @@ declare module 'vue' {
     readonly splitPieces: UnwrapRef<typeof import('./utils/format')['splitPieces']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
+    readonly tell: UnwrapRef<typeof import('./utils/ui')['tell']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly textLength: UnwrapRef<typeof import('./utils/format')['textLength']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
@@ -599,6 +611,7 @@ declare module 'vue' {
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>
     readonly useDevicesList: UnwrapRef<typeof import('@vueuse/core')['useDevicesList']>
+    readonly useDialog: UnwrapRef<typeof import('./utils/ui')['useDialog']>
     readonly useDisplayMedia: UnwrapRef<typeof import('@vueuse/core')['useDisplayMedia']>
     readonly useDocumentVisibility: UnwrapRef<typeof import('@vueuse/core')['useDocumentVisibility']>
     readonly useDraggable: UnwrapRef<typeof import('@vueuse/core')['useDraggable']>

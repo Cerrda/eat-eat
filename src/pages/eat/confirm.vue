@@ -3,7 +3,7 @@ import type { AccountView } from '@/api/eat'
 import { createOrder, dateLabel, EatRequestError, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { orderDraft } from '@/utils/draft'
-import { showError } from '@/utils/ui'
+import { ask, showError, tell } from '@/utils/ui'
 
 definePage({
   style: {
@@ -55,16 +55,11 @@ async function submit() {
   catch (err) {
     if (err instanceof EatRequestError && err.errCode === 'SLOT_TAKEN') {
       const orderId = (err.data as { orderId?: string } | undefined)?.orderId
-      uni.showModal({
-        title: '这一餐已经点过了',
-        content: '同一天的同一餐，进行中只能有一笔。',
-        confirmText: orderId ? '去看' : '知道了',
-        showCancel: Boolean(orderId),
-        success(result) {
-          if (result.confirm && orderId)
-            uni.redirectTo({ url: `/pages/eat/order?id=${orderId}` })
-        },
-      })
+      const agreed = orderId
+        ? await ask('这一餐已经点过了', '同一天的同一餐，进行中只能有一笔。', '去看')
+        : await tell('这一餐已经点过了', '同一天的同一餐，进行中只能有一笔。')
+      if (agreed && orderId)
+        uni.redirectTo({ url: `/pages/eat/order?id=${orderId}` })
       return
     }
     showError(err)
@@ -108,7 +103,7 @@ async function submit() {
           placeholder-class="ph"
         />
       </view>
-      <stamp-button :disabled="pending" :busy="pending" @tap="submit">
+      <stamp-button :disabled="pending" :busy="pending" @button-tap="submit">
         {{ pending ? '正在点餐' : '点这餐' }}
       </stamp-button>
       </template>

@@ -54,7 +54,7 @@ function openOrder() {
       <text v-if="order.note" class="text-30rpx text-#7a534c font-body">
         {{ order.note }}
       </text>
-      <stamp-button @tap="openOrder">
+      <stamp-button @button-tap="openOrder">
         看这一餐
       </stamp-button>
     </view>

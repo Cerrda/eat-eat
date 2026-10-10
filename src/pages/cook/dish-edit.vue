@@ -291,7 +291,7 @@ async function remove() {
             </view>
           </view>
         </view>
-        <stamp-button :disabled="pending !== ''" :busy="pending === 'publish'" @tap="publish">
+        <stamp-button :disabled="pending !== ''" :busy="pending === 'publish'" @button-tap="publish">
           {{ pending === 'publish' ? '正在上架' : '上架' }}
         </stamp-button>
         <view v-if="dishId && status === 'on'" class="flex items-center justify-center gap-16rpx py-8rpx" @tap="unpublish">

@@ -14,6 +14,8 @@ const props = withDefaults(defineProps<{
   strong: false,
 })
 
+const emit = defineEmits<{ buttonTap: [] }>()
+
 const shellClass = computed(() => {
   if (!props.flat)
     return 'rounded-full px-32rpx py-28rpx'
@@ -30,12 +32,10 @@ const faceClass = computed(() => {
 
 const pressClass = computed(() => props.flat ? 'eat-flat-press' : 'translate-x-6rpx translate-y-8rpx')
 
-const emit = defineEmits<{ tap: [] }>()
-
 function onTap() {
   if (props.disabled || props.busy)
     return
-  emit('tap')
+  emit('buttonTap')
 }
 </script>
 

@@ -92,6 +92,7 @@ onUnmounted(() => {
     </view>
     <slot name="dock" />
     <ink-toast />
+    <ink-dialog />
   </view>
 </template>
 

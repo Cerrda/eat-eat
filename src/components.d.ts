@@ -10,6 +10,7 @@ declare module 'vue' {
     BackBar: typeof import('./components/back-bar/back-bar.vue')['default']
     CodeCells: typeof import('./components/code-cells/code-cells.vue')['default']
     DishCover: typeof import('./components/dish-cover/dish-cover.vue')['default']
+    InkDialog: typeof import('./components/ink-dialog/ink-dialog.vue')['default']
     InkLoad: typeof import('./components/ink-load/ink-load.vue')['default']
     InkSpin: typeof import('./components/ink-spin/ink-spin.vue')['default']
     InkToast: typeof import('./components/ink-toast/ink-toast.vue')['default']

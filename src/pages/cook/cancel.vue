@@ -91,7 +91,7 @@ async function submit() {
           {{ note.length }} / 40
         </text>
       </view>
-      <stamp-button :disabled="pending" :busy="pending" @tap="submit">
+      <stamp-button :disabled="pending" :busy="pending" @button-tap="submit">
         {{ pending ? '正在取消' : '取消这一餐' }}
       </stamp-button>
     </view>

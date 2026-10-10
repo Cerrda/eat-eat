@@ -269,7 +269,7 @@ async function submit() {
             {{ text.length }} / 300
           </text>
         </view>
-        <stamp-button :disabled="pending" :busy="pending" @tap="submit">
+        <stamp-button :disabled="pending" :busy="pending" @button-tap="submit">
           {{ pending ? '正在记下' : '记下' }}
         </stamp-button>
         <text v-if="recordId" class="py-8rpx text-center text-28rpx text-#9c342c" :class="faceOf('删除这餐', 'sans')" @tap="remove">

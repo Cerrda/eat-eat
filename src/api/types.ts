@@ -41,6 +41,7 @@ export interface AccountView {
   inviteExpired: boolean
   shareTitle: string
   badges: Badges
+  needsAbandon?: boolean
 }
 
 export interface SessionView extends AccountView {

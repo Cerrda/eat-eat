@@ -110,6 +110,7 @@ describe('邀请码绑定微信 openid', () => {
     expect(preview.role).toBe('eater')
     expect(preview.partnerRole).toBe('cooker')
     expect(preview.partnerNickname).toBe('厨神')
+    expect(preview.needsAbandon).toBe(false)
 
     const pending = await store.find('eat-kitchens', { status: 'pending' }, 10)
     expect(pending[0].eaterOpenid).toBe('')
@@ -175,6 +176,13 @@ describe('邀请码绑定微信 openid', () => {
     const fresh = setup()
     const host = await fresh.eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
     await fresh.eat.createInvite({ code: 'wx:openid-eater', role: 'eater' })
+    const preview = await fresh.eat.previewInvite({
+      code: 'wx:openid-eater',
+      inviteCode: host.inviteCode,
+    })
+    expect(preview.next).toBe('confirm')
+    expect(preview.role).toBe('eater')
+    expect(preview.needsAbandon).toBe(true)
     await expect(fresh.eat.acceptInvite({
       code: 'wx:openid-eater',
       inviteCode: host.inviteCode,
@@ -184,6 +192,7 @@ describe('邀请码绑定微信 openid', () => {
       inviteCode: host.inviteCode,
       abandonPending: true,
     })
+    expect(joined.next).toBe('home')
     expect(joined.role).toBe('eater')
     expect(joined.partnerNickname).toBe('厨神')
     const dissolved = await fresh.store.find('eat-kitchens', { status: 'dissolved' }, 10)

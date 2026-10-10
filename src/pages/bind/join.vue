@@ -18,6 +18,7 @@ const code = ref('')
 const looked = ref('')
 const mode = ref<'input' | 'confirm' | 'invalid' | 'taken' | 'loading'>('input')
 const preview = ref<AccountView | null>(null)
+const needsAbandon = ref(false)
 const pending = ref(false)
 const clearance = useCapsuleClearance()
 
@@ -55,6 +56,7 @@ watch(code, (value) => {
   if (value.length < 6) {
     looked.value = ''
     preview.value = null
+    needsAbandon.value = false
     if (mode.value !== 'taken')
       mode.value = 'input'
     return
@@ -72,17 +74,20 @@ async function look(value: string) {
     rememberAccount(view)
     if (view.next === 'confirm') {
       preview.value = view
+      needsAbandon.value = view.needsAbandon === true
       mode.value = 'confirm'
       return
     }
+    needsAbandon.value = false
     routeAccount(view.next === 'invite' ? { ...view, next: 'waiting' } : view)
   }
   catch (err) {
     preview.value = null
+    needsAbandon.value = false
     if (err instanceof EatRequestError && err.errCode === 'NEED_ABANDON') {
       mode.value = 'input'
       looked.value = ''
-      const agreed = await ask('先放下空厨房', err.message, '放弃并加入')
+      const agreed = await ask('先放下空厨房', err.message, '放弃加入')
       if (agreed)
         await join(true)
       return
@@ -96,13 +101,19 @@ async function join(abandon = false) {
     return
   pending.value = true
   try {
+    if (!abandon && needsAbandon.value) {
+      const agreed = await ask('先放下空厨房', '接受后，这间空厨房会被放弃。', '放弃加入')
+      if (!agreed)
+        return
+      abandon = true
+    }
     const view = await acceptInvite(code.value, { abandonPending: abandon })
     rememberAccount(view)
-    routeAccount(view)
+    await routeAccount(view)
   }
   catch (err) {
     if (err instanceof EatRequestError && err.errCode === 'NEED_ABANDON') {
-      const agreed = await ask('先放下空厨房', err.message, '放弃并加入')
+      const agreed = await ask('先放下空厨房', err.message, '放弃加入')
       if (agreed) {
         pending.value = false
         await join(true)
@@ -125,6 +136,7 @@ function reset() {
   code.value = ''
   looked.value = ''
   preview.value = null
+  needsAbandon.value = false
   mode.value = 'input'
 }
 
@@ -165,13 +177,13 @@ async function backHome() {
             {{ detail }}
           </text>
         </view>
-        <stamp-button v-if="mode === 'confirm'" flat strong :disabled="pending" :busy="pending" @tap="join(false)">
+        <stamp-button v-if="mode === 'confirm'" flat strong :disabled="pending" :busy="pending" @button-tap="join(false)">
           {{ pending ? '正在确认身份' : '确定身份' }}
         </stamp-button>
-        <stamp-button v-else-if="mode === 'invalid'" flat strong @tap="reset">
+        <stamp-button v-else-if="mode === 'invalid'" flat strong @button-tap="reset">
           再试一次
         </stamp-button>
-        <stamp-button v-else flat strong @tap="backHome">
+        <stamp-button v-else flat strong @button-tap="backHome">
           回到我的厨房
         </stamp-button>
         <view v-if="mode === 'confirm'" @tap="reset">

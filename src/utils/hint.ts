@@ -61,7 +61,10 @@ export function copyHint(data: string, message: string) {
     success() {
       uni.hideToast()
       showHint(message)
-      setTimeout(() => uni.hideToast(), 80)
+      setTimeout(() => {
+        uni.showToast({ title: '', duration: 0, icon: 'none' })
+        uni.hideToast()
+      }, 0)
     },
   })
 }

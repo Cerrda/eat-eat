@@ -583,6 +583,26 @@ function createEatService(deps) {
     return sessionPayload(logged, await accountView(await reload(user._id)))
   }
 
+  async function confirmView(user, invite, needsAbandon) {
+    const role = otherRole(invite.creatorRole)
+    const partner = await findOne('eat-users', { openid: invite.creatorOpenid })
+    return {
+      next: 'confirm',
+      today: todayString(),
+      role,
+      nickname: user.nicknameCustom ? user.nickname : DEFAULT_NICKNAME[role],
+      partnerNickname: partner?.nickname || DEFAULT_NICKNAME[invite.creatorRole],
+      partnerRole: invite.creatorRole,
+      kitchenStatus: 'none',
+      inviteCode: invite.code,
+      expiresAt: invite.expireAt,
+      inviteExpired: false,
+      shareTitle: SHARE_TITLE[invite.creatorRole],
+      badges: emptyBadges(),
+      needsAbandon,
+    }
+  }
+
   async function previewInvite(params) {
     const body = input(params)
     const logged = await login(body.code)
@@ -592,28 +612,7 @@ function createEatService(deps) {
       return sessionPayload(logged, { ...await accountView(user), next: 'waiting' })
     if (resolved.kind === 'home')
       return sessionPayload(logged, await accountView(user))
-    if (resolved.kind === 'abandon') {
-      throw new EatError('NEED_ABANDON', ABANDON_MSG, {
-        token: logged.token,
-        tokenExpired: logged.tokenExpired,
-      })
-    }
-    const role = otherRole(resolved.invite.creatorRole)
-    const partner = await findOne('eat-users', { openid: resolved.invite.creatorOpenid })
-    return sessionPayload(logged, {
-      next: 'confirm',
-      today: todayString(),
-      role,
-      nickname: user.nicknameCustom ? user.nickname : DEFAULT_NICKNAME[role],
-      partnerNickname: partner?.nickname || DEFAULT_NICKNAME[resolved.invite.creatorRole],
-      partnerRole: resolved.invite.creatorRole,
-      kitchenStatus: 'none',
-      inviteCode: resolved.invite.code,
-      expiresAt: resolved.invite.expireAt,
-      inviteExpired: false,
-      shareTitle: SHARE_TITLE[resolved.invite.creatorRole],
-      badges: emptyBadges(),
-    })
+    return sessionPayload(logged, await confirmView(user, resolved.invite, resolved.kind === 'abandon'))
   }
 
   async function acceptInvite(params) {

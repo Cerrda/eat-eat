@@ -111,7 +111,7 @@ function fillCode() {
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来做饭
         </text>
-        <stamp-button :disabled="pending !== ''" :busy="pending === 'cooker'" @tap="generate('cooker')">
+        <stamp-button :disabled="pending !== ''" :busy="pending === 'cooker'" @button-tap="generate('cooker')">
           {{ pending === 'cooker' ? '正在生成邀请' : '生成邀请，等对方来点餐' }}
         </stamp-button>
       </view>
@@ -120,7 +120,7 @@ function fillCode() {
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我来点餐
         </text>
-        <stamp-button :disabled="pending !== ''" :busy="pending === 'eater'" @tap="generate('eater')">
+        <stamp-button :disabled="pending !== ''" :busy="pending === 'eater'" @button-tap="generate('eater')">
           {{ pending === 'eater' ? '正在生成邀请' : '生成邀请，等对方来做饭' }}
         </stamp-button>
       </view>
@@ -129,12 +129,13 @@ function fillCode() {
         <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
           我有邀请码
         </text>
-        <stamp-button :disabled="pending !== ''" @tap="fillCode">
+        <stamp-button :disabled="pending !== ''" @button-tap="fillCode">
           填上邀请码
         </stamp-button>
       </view>
     </view>
     <ink-toast />
+    <ink-dialog />
   </view>
   <view v-else class="relative min-h-screen w-full bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
@@ -142,5 +143,6 @@ function fillCode() {
       <ink-load label="正在打开厨房" />
     </view>
     <ink-toast />
+    <ink-dialog />
   </view>
 </template>
