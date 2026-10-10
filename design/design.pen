@@ -1939,56 +1939,109 @@
                           "id": "DLEdG",
                           "name": "页脚",
                           "width": "fill_container",
-                          "stroke": "$line",
-                          "strokeWidth": {
-                            "top": 2
+                          "stroke": {
+                            "type": "color",
+                            "color": "$line",
+                            "enabled": false
                           },
                           "layout": "vertical",
+                          "gap": 16,
                           "padding": [
                             18,
                             0,
                             0,
                             0
                           ],
-                          "alignItems": "center",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "OXzB9",
-                              "name": "注脚",
-                              "gap": 14,
-                              "justifyContent": "center",
-                              "alignItems": "center",
+                              "id": "IzXZt",
+                              "name": "分隔",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ink"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SGa7Y",
+                              "name": "动作",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
                               "children": [
                                 {
-                                  "type": "text",
-                                  "id": "oQTNp",
-                                  "name": "换一个邀请码",
-                                  "fill": "$muted",
-                                  "content": "换一个邀请码",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "BAjHX",
+                                  "name": "换一个",
+                                  "padding": [
+                                    10,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "QLFkx",
+                                      "name": "换一个邀请码",
+                                      "fill": "$ink",
+                                      "content": "换一个邀请码",
+                                      "lineHeight": 1.45,
+                                      "fontFamily": "$font-sans",
+                                      "fontSize": 15,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 },
                                 {
-                                  "type": "text",
-                                  "id": "lxEaN",
-                                  "name": "点",
-                                  "fill": "$line",
-                                  "content": "·",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "XCEGQ",
-                                  "name": "回到选择",
-                                  "fill": "$muted",
-                                  "content": "回到选择",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "z0l4b",
+                                  "name": "回到",
+                                  "padding": [
+                                    10,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "rzqzG",
+                                      "name": "选错了",
+                                      "fill": "$muted",
+                                      "content": "选错了这边，",
+                                      "lineHeight": 1.45,
+                                      "fontFamily": "$font-sans",
+                                      "fontSize": 15,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "zMQaI",
+                                      "name": "回到选择组",
+                                      "layout": "vertical",
+                                      "gap": 3,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "w7sZ4o",
+                                          "name": "回到选择",
+                                          "fill": "$brass",
+                                          "content": "回到选择",
+                                          "lineHeight": 1.45,
+                                          "fontFamily": "$font-sans",
+                                          "fontSize": 15,
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "K6A9G",
+                                          "name": "下划",
+                                          "width": 61,
+                                          "height": 1,
+                                          "fill": "$brass",
+                                          "cornerRadius": 1
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -3256,45 +3309,86 @@
                           "id": "itPfR",
                           "name": "页脚",
                           "width": "fill_container",
-                          "stroke": "$line",
-                          "strokeWidth": {
-                            "top": 2
+                          "stroke": {
+                            "type": "color",
+                            "color": "$line",
+                            "enabled": false
                           },
                           "layout": "vertical",
+                          "gap": 16,
                           "padding": [
                             18,
                             0,
                             0,
                             0
                           ],
-                          "alignItems": "center",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "SRuqV",
-                              "name": "注脚",
-                              "justifyContent": "center",
-                              "alignItems": "center",
+                              "id": "kJfy1",
+                              "name": "分隔",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ink"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SRd0g",
+                              "name": "动作",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
                               "children": [
                                 {
-                                  "type": "text",
-                                  "id": "DhoBv",
-                                  "name": "前",
-                                  "fill": "$muted",
-                                  "content": "选错了这边，",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "sJRsP",
-                                  "name": "回到选择",
-                                  "fill": "$brass",
-                                  "content": "回到选择",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 13,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "O9d06v",
+                                  "name": "回到",
+                                  "padding": [
+                                    10,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "MuUKc",
+                                      "name": "选错了",
+                                      "fill": "$muted",
+                                      "content": "选错了这边，",
+                                      "lineHeight": 1.45,
+                                      "fontFamily": "$font-sans",
+                                      "fontSize": 15,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "pSTld",
+                                      "name": "回到选择组",
+                                      "layout": "vertical",
+                                      "gap": 3,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "A2U81",
+                                          "name": "回到选择",
+                                          "fill": "$brass",
+                                          "content": "回到选择",
+                                          "lineHeight": 1.45,
+                                          "fontFamily": "$font-sans",
+                                          "fontSize": 15,
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "TlrZd",
+                                          "name": "下划",
+                                          "width": 61,
+                                          "height": 1,
+                                          "fill": "$brass",
+                                          "cornerRadius": 1
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -3487,7 +3581,7 @@
                                   "id": "fX9yK",
                                   "name": "说明",
                                   "fill": "$ink",
-                                  "content": "填上这 6 位",
+                                  "content": "填写邀请码",
                                   "lineHeight": 1.45,
                                   "fontFamily": "$font-sans",
                                   "fontSize": 20,
@@ -3972,22 +4066,10 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "zoizF",
-                                  "name": "眉题",
-                                  "fill": "$brass",
-                                  "content": "另一方",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal",
-                                  "letterSpacing": 1.4
-                                },
-                                {
-                                  "type": "text",
                                   "id": "gGEgT",
                                   "name": "说明",
                                   "fill": "$ink",
-                                  "content": "填上这 6 位",
+                                  "content": "填写邀请码",
                                   "lineHeight": 1.45,
                                   "fontFamily": "$font-sans",
                                   "fontSize": 20,
@@ -4404,22 +4486,10 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "QF3iC",
-                                  "name": "眉题",
-                                  "fill": "$brass",
-                                  "content": "另一方",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal",
-                                  "letterSpacing": 1.4
-                                },
-                                {
-                                  "type": "text",
                                   "id": "Geect",
                                   "name": "说明",
                                   "fill": "$ink",
-                                  "content": "填上这 6 位",
+                                  "content": "填写邀请码",
                                   "lineHeight": 1.45,
                                   "fontFamily": "$font-sans",
                                   "fontSize": 20,
