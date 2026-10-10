@@ -11,21 +11,15 @@ type _LocationUrl =
   "/pages/cook/cancel" |
   "/pages/cook/categories" |
   "/pages/cook/dish-edit" |
-  "/pages/cook/dishes" |
   "/pages/cook/order" |
   "/pages/cook/recipe" |
   "/pages/cook/record-edit" |
-  "/pages/cook/records" |
   "/pages/cook/reject" |
-  "/pages/cook/todo" |
   "/pages/eat/cancel" |
   "/pages/eat/confirm" |
   "/pages/eat/done" |
-  "/pages/eat/menu" |
   "/pages/eat/order" |
-  "/pages/eat/orders" |
-  "/pages/eat/records" |
-  "/pages/settings/index";
+  "/pages/home/index";
 
 interface NavigateToOptions {
   url: _LocationUrl;

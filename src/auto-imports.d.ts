@@ -15,10 +15,8 @@ declare global {
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const beginChoose: typeof import('./utils/account')['beginChoose']
   const beginClose: typeof import('./utils/ui')['beginClose']
-  const beginTabSwitch: typeof import('./utils/tab-motion')['beginTabSwitch']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
   const chooseImage: typeof import('./utils/files')['chooseImage']
-  const clearTabMotion: typeof import('./utils/tab-motion')['clearTabMotion']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -26,6 +24,7 @@ declare global {
   const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
+  const cookerTabs: typeof import('./utils/tabs')['cookerTabs']
   const copyHint: typeof import('./utils/hint')['copyHint']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
@@ -47,6 +46,7 @@ declare global {
   const dismissHint: typeof import('./utils/hint')['dismissHint']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const eatCloud: typeof import('./utils/cloud')['eatCloud']
+  const eaterTabs: typeof import('./utils/tabs')['eaterTabs']
   const effectScope: typeof import('vue')['effectScope']
   const endChoose: typeof import('./utils/account')['endChoose']
   const ensureAccount: typeof import('./utils/account')['ensureAccount']
@@ -57,25 +57,29 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
-  const holdTabMotion: typeof import('./utils/tab-motion')['holdTabMotion']
+  const homePath: typeof import('./utils/tabs')['homePath']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const ignoredCancel: typeof import('./utils/files')['ignoredCancel']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
+  const invalidateTabs: typeof import('./utils/tabs')['invalidateTabs']
   const isChoosing: typeof import('./utils/account')['isChoosing']
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
+  const isTabFresh: typeof import('./utils/tabs')['isTabFresh']
   const keepOneLine: typeof import('./utils/format')['keepOneLine']
   const loadAccount: typeof import('./utils/account')['loadAccount']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
+  const markTabFresh: typeof import('./utils/tabs')['markTabFresh']
   const menuIntent: typeof import('./utils/draft')['menuIntent']
   const monthDay: typeof import('./utils/format')['monthDay']
   const nextTick: typeof import('vue')['nextTick']
   const normalizeCode: typeof import('./utils/format')['normalizeCode']
+  const noteBadges: typeof import('./utils/tabs')['noteBadges']
   const onActivated: typeof import('vue')['onActivated']
   const onAddToFavorites: typeof import('@dcloudio/uni-app')['onAddToFavorites']
   const onBackPress: typeof import('@dcloudio/uni-app')['onBackPress']
@@ -113,12 +117,14 @@ declare global {
   const onShow: typeof import('@dcloudio/uni-app')['onShow']
   const onStartTyping: typeof import('@vueuse/core')['onStartTyping']
   const onTabItemTap: typeof import('@dcloudio/uni-app')['onTabItemTap']
+  const onTabPick: typeof import('./utils/tabs')['onTabPick']
   const onThemeChange: typeof import('@dcloudio/uni-app')['onThemeChange']
   const onUnhandledRejection: typeof import('@dcloudio/uni-app')['onUnhandledRejection']
   const onUnload: typeof import('@dcloudio/uni-app')['onUnload']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
+  const openTab: typeof import('./utils/tabs')['openTab']
   const orderDraft: typeof import('./utils/draft')['orderDraft']
   const pageRoute: typeof import('./utils/hint')['pageRoute']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
@@ -133,8 +139,6 @@ declare global {
   const reactiveComputed: typeof import('@vueuse/core')['reactiveComputed']
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
-  const readTabOrigin: typeof import('./utils/tab-motion')['readTabOrigin']
-  const readTabShift: typeof import('./utils/tab-motion')['readTabShift']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
   const refAutoReset: typeof import('@vueuse/core')['refAutoReset']
@@ -143,10 +147,12 @@ declare global {
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const rememberAccount: typeof import('./utils/account')['rememberAccount']
+  const resetHomeTab: typeof import('./utils/tabs')['resetHomeTab']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveFileUrl: typeof import('./utils/files')['resolveFileUrl']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const returnHome: typeof import('./utils/tabs')['returnHome']
   const routeAccount: typeof import('./utils/account')['routeAccount']
   const settleDialog: typeof import('./utils/ui')['settleDialog']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -158,8 +164,9 @@ declare global {
   const splitPieces: typeof import('./utils/format')['splitPieces']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
-  const takeTabOrigin: typeof import('./utils/tab-motion')['takeTabOrigin']
-  const takeTabShift: typeof import('./utils/tab-motion')['takeTabShift']
+  const tabBadges: typeof import('./utils/tabs')['tabBadges']
+  const tabKey: typeof import('./utils/tabs')['tabKey']
+  const tabsOf: typeof import('./utils/tabs')['tabsOf']
   const tell: typeof import('./utils/ui')['tell']
   const templateRef: typeof import('@vueuse/core')['templateRef']
   const textLength: typeof import('./utils/format')['textLength']
@@ -365,7 +372,6 @@ declare global {
   const watchTriggerable: typeof import('@vueuse/core')['watchTriggerable']
   const watchWithFilter: typeof import('@vueuse/core')['watchWithFilter']
   const whenPageFontsReady: typeof import('./utils/fonts')['whenPageFontsReady']
-  const whenTabIdle: typeof import('./utils/tab-motion')['whenTabIdle']
   const whenever: typeof import('@vueuse/core')['whenever']
   const withinMenu: typeof import('./utils/format')['withinMenu']
 }
@@ -381,8 +387,8 @@ declare global {
   export type { CloudImageSize } from './utils/files'
   import('./utils/files')
   // @ts-ignore
-  export type { TabShift } from './utils/tab-motion'
-  import('./utils/tab-motion')
+  export type { TabKey } from './utils/tabs'
+  import('./utils/tabs')
   // @ts-ignore
   export type { DialogResult } from './utils/ui'
   import('./utils/ui')
@@ -402,10 +408,8 @@ declare module 'vue' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly beginChoose: UnwrapRef<typeof import('./utils/account')['beginChoose']>
     readonly beginClose: UnwrapRef<typeof import('./utils/ui')['beginClose']>
-    readonly beginTabSwitch: UnwrapRef<typeof import('./utils/tab-motion')['beginTabSwitch']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
-    readonly clearTabMotion: UnwrapRef<typeof import('./utils/tab-motion')['clearTabMotion']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -413,6 +417,7 @@ declare module 'vue' {
     readonly computedWithControl: UnwrapRef<typeof import('@vueuse/core')['computedWithControl']>
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
+    readonly cookerTabs: UnwrapRef<typeof import('./utils/tabs')['cookerTabs']>
     readonly copyHint: UnwrapRef<typeof import('./utils/hint')['copyHint']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
@@ -434,6 +439,7 @@ declare module 'vue' {
     readonly dismissHint: UnwrapRef<typeof import('./utils/hint')['dismissHint']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly eatCloud: UnwrapRef<typeof import('./utils/cloud')['eatCloud']>
+    readonly eaterTabs: UnwrapRef<typeof import('./utils/tabs')['eaterTabs']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly endChoose: UnwrapRef<typeof import('./utils/account')['endChoose']>
     readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
@@ -444,25 +450,29 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
-    readonly holdTabMotion: UnwrapRef<typeof import('./utils/tab-motion')['holdTabMotion']>
+    readonly homePath: UnwrapRef<typeof import('./utils/tabs')['homePath']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly ignoredCancel: UnwrapRef<typeof import('./utils/files')['ignoredCancel']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
+    readonly invalidateTabs: UnwrapRef<typeof import('./utils/tabs')['invalidateTabs']>
     readonly isChoosing: UnwrapRef<typeof import('./utils/account')['isChoosing']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly isTabFresh: UnwrapRef<typeof import('./utils/tabs')['isTabFresh']>
     readonly keepOneLine: UnwrapRef<typeof import('./utils/format')['keepOneLine']>
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly markTabFresh: UnwrapRef<typeof import('./utils/tabs')['markTabFresh']>
     readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>
     readonly monthDay: UnwrapRef<typeof import('./utils/format')['monthDay']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly normalizeCode: UnwrapRef<typeof import('./utils/format')['normalizeCode']>
+    readonly noteBadges: UnwrapRef<typeof import('./utils/tabs')['noteBadges']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onAddToFavorites: UnwrapRef<typeof import('@dcloudio/uni-app')['onAddToFavorites']>
     readonly onBackPress: UnwrapRef<typeof import('@dcloudio/uni-app')['onBackPress']>
@@ -500,12 +510,14 @@ declare module 'vue' {
     readonly onShow: UnwrapRef<typeof import('@dcloudio/uni-app')['onShow']>
     readonly onStartTyping: UnwrapRef<typeof import('@vueuse/core')['onStartTyping']>
     readonly onTabItemTap: UnwrapRef<typeof import('@dcloudio/uni-app')['onTabItemTap']>
+    readonly onTabPick: UnwrapRef<typeof import('./utils/tabs')['onTabPick']>
     readonly onThemeChange: UnwrapRef<typeof import('@dcloudio/uni-app')['onThemeChange']>
     readonly onUnhandledRejection: UnwrapRef<typeof import('@dcloudio/uni-app')['onUnhandledRejection']>
     readonly onUnload: UnwrapRef<typeof import('@dcloudio/uni-app')['onUnload']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly openTab: UnwrapRef<typeof import('./utils/tabs')['openTab']>
     readonly orderDraft: UnwrapRef<typeof import('./utils/draft')['orderDraft']>
     readonly pageRoute: UnwrapRef<typeof import('./utils/hint')['pageRoute']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
@@ -520,8 +532,6 @@ declare module 'vue' {
     readonly reactiveComputed: UnwrapRef<typeof import('@vueuse/core')['reactiveComputed']>
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
-    readonly readTabOrigin: UnwrapRef<typeof import('./utils/tab-motion')['readTabOrigin']>
-    readonly readTabShift: UnwrapRef<typeof import('./utils/tab-motion')['readTabShift']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
@@ -530,10 +540,12 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly rememberAccount: UnwrapRef<typeof import('./utils/account')['rememberAccount']>
+    readonly resetHomeTab: UnwrapRef<typeof import('./utils/tabs')['resetHomeTab']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveFileUrl: UnwrapRef<typeof import('./utils/files')['resolveFileUrl']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly returnHome: UnwrapRef<typeof import('./utils/tabs')['returnHome']>
     readonly routeAccount: UnwrapRef<typeof import('./utils/account')['routeAccount']>
     readonly settleDialog: UnwrapRef<typeof import('./utils/ui')['settleDialog']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
@@ -545,6 +557,9 @@ declare module 'vue' {
     readonly splitPieces: UnwrapRef<typeof import('./utils/format')['splitPieces']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
+    readonly tabBadges: UnwrapRef<typeof import('./utils/tabs')['tabBadges']>
+    readonly tabKey: UnwrapRef<typeof import('./utils/tabs')['tabKey']>
+    readonly tabsOf: UnwrapRef<typeof import('./utils/tabs')['tabsOf']>
     readonly tell: UnwrapRef<typeof import('./utils/ui')['tell']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly textLength: UnwrapRef<typeof import('./utils/format')['textLength']>
@@ -748,7 +763,6 @@ declare module 'vue' {
     readonly watchThrottled: UnwrapRef<typeof import('@vueuse/core')['watchThrottled']>
     readonly watchTriggerable: UnwrapRef<typeof import('@vueuse/core')['watchTriggerable']>
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
-    readonly whenTabIdle: UnwrapRef<typeof import('./utils/tab-motion')['whenTabIdle']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
     readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
   }

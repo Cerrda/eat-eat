@@ -4,21 +4,13 @@ import { badges, dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
-import { whenTabIdle } from '@/utils/tab-motion'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
-
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
 
 const account = ref<AccountView | null>(null)
 const records = ref<RecordCard[]>([])
 
-onShow(() => {
+onMounted(() => {
   void refresh()
 })
 
@@ -29,9 +21,10 @@ async function refresh() {
       return
     const listed = await listRecords()
     const nextBadges = await badges()
-    await whenTabIdle()
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
+    noteBadges(nextBadges)
+    markTabFresh('records')
     records.value = listed.records
     await primeFileUrls(listed.records.flatMap(record => record.photoFileIds))
   }
@@ -44,6 +37,8 @@ function createOne() {
   uni.navigateTo({ url: '/pages/cook/record-edit' })
 }
 
+defineExpose({ refresh })
+
 function when(record: RecordCard) {
   if (!account.value)
     return record.date
@@ -53,7 +48,7 @@ function when(record: RecordCard) {
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <ink-load v-if="!account" label="正在翻记下的" />
     <view v-else-if="!records.length" class="flex flex-col gap-28rpx">
       <screen-head title="记录" note="还没有记下的一餐。" />
@@ -103,8 +98,5 @@ function when(record: RecordCard) {
         </text>
       </view>
     </view>
-    <template #dock>
-      <tab-dock role="eater" current="records" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+  </view>
 </template>

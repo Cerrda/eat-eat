@@ -8,7 +8,6 @@ export default {
 
 <script setup lang="ts">
 import type { Badges, Role } from '@/api/eat'
-import { beginTabSwitch, clearTabMotion, readTabOrigin } from '@/utils/tab-motion'
 
 const props = defineProps<{
   role: Role
@@ -16,20 +15,24 @@ const props = defineProps<{
   badges: Badges
 }>()
 
+const emit = defineEmits<{
+  pick: [key: string]
+}>()
+
 const items = computed(() => {
-  const settings = { key: 'settings', label: '设置', url: '/pages/settings/index', count: 0 }
+  const settings = { key: 'settings', label: '设置', count: 0 }
   if (props.role === 'cooker') {
     return [
-      { key: 'todo', label: '待做', url: '/pages/cook/todo', count: props.badges.todo },
-      { key: 'dishes', label: '菜品', url: '/pages/cook/dishes', count: 0 },
-      { key: 'records', label: '记录', url: '/pages/cook/records', count: props.badges.records },
+      { key: 'todo', label: '待做', count: props.badges.todo },
+      { key: 'dishes', label: '菜品', count: 0 },
+      { key: 'records', label: '记录', count: props.badges.records },
       settings,
     ]
   }
   return [
-    { key: 'menu', label: '菜单', url: '/pages/eat/menu', count: 0 },
-    { key: 'orders', label: '订单', url: '/pages/eat/orders', count: props.badges.orders },
-    { key: 'records', label: '记录', url: '/pages/eat/records', count: props.badges.records },
+    { key: 'menu', label: '菜单', count: 0 },
+    { key: 'orders', label: '订单', count: props.badges.orders },
+    { key: 'records', label: '记录', count: props.badges.records },
     settings,
   ]
 })
@@ -39,47 +42,28 @@ const activeIndex = computed(() => {
   return index < 0 ? 0 : index
 })
 
-const originIndex = items.value.findIndex(item => item.key === readTabOrigin())
-const slideIndex = ref(originIndex >= 0 && originIndex !== activeIndex.value ? originIndex : activeIndex.value)
+const slideIndex = ref(activeIndex.value)
 const moving = ref(false)
-const locked = ref(false)
-const shown = ref(items.value)
-const dock = getCurrentInstance()
 const timers: ReturnType<typeof setTimeout>[] = []
-const metrics = measure(Math.max(items.value.length, 1))
+const metrics = computed(() => measure(Math.max(items.value.length, 1)))
+let slideToken = 0
 
-watch(items, (next) => {
-  if (!locked.value)
-    shown.value = next
-})
-
-onMounted(() => {
-  clearTabMotion()
-  if (slideIndex.value === activeIndex.value)
+watch(activeIndex, (next, prev) => {
+  if (prev == null || next === prev)
     return
-  locked.value = true
-  let started = false
-  const start = () => {
-    if (started)
+  const token = ++slideToken
+  moving.value = false
+  slideIndex.value = prev
+  nextTick(() => {
+    if (token !== slideToken)
       return
-    started = true
     moving.value = true
     later(() => {
-      slideIndex.value = activeIndex.value
+      if (token !== slideToken)
+        return
+      slideIndex.value = next
     }, 32)
-  }
-  nextTick(() => {
-    uni.createSelectorQuery()
-      .in(dock?.proxy)
-      .select('.tab-dock-pill')
-      .boundingClientRect()
-      .exec(() => start())
   })
-  later(start, 120)
-  later(() => {
-    locked.value = false
-    shown.value = items.value
-  }, 700)
 })
 
 onUnmounted(() => {
@@ -88,13 +72,13 @@ onUnmounted(() => {
 })
 
 const pillStyle = computed(() => ({
-  width: `${metrics.pill}px`,
-  transform: `translate3d(${metrics.step * slideIndex.value}px, 0, 0)`,
+  width: `${metrics.value.pill}px`,
+  transform: `translate3d(${metrics.value.step * slideIndex.value}px, 0, 0)`,
 }))
 
 const inkStyle = computed(() => ({
-  width: `${metrics.width}px`,
-  transform: `translate3d(${-metrics.step * slideIndex.value}px, 0, 0)`,
+  width: `${metrics.value.width}px`,
+  transform: `translate3d(${-metrics.value.step * slideIndex.value}px, 0, 0)`,
 }))
 
 function measure(count: number) {
@@ -108,24 +92,10 @@ function later(fn: () => void, ms: number) {
   timers.push(setTimeout(fn, ms))
 }
 
-let leaving = false
-
-function open(url: string, key: string) {
-  if (leaving || key === props.current)
+function open(key: string) {
+  if (key === props.current)
     return
-  const from = items.value.findIndex(item => item.key === props.current)
-  const to = items.value.findIndex(item => item.key === key)
-  if (from < 0 || to < 0)
-    return
-  leaving = true
-  beginTabSwitch(props.current, from, to)
-  uni.redirectTo({
-    url,
-    fail: () => {
-      leaving = false
-      clearTabMotion()
-    },
-  })
+  emit('pick', key)
 }
 </script>
 
@@ -138,10 +108,10 @@ function open(url: string, key: string) {
       <view class="relative h-full">
         <view class="h-full flex items-stretch gap-8rpx">
           <view
-            v-for="item in shown"
+            v-for="item in items"
             :key="item.key"
             class="flex flex-1 items-center justify-center gap-8rpx"
-            @tap="open(item.url, item.key)"
+            @tap="open(item.key)"
           >
             <view class="text-34rpx text-#3c2428 font-display leading-[1.15]">
               {{ item.label }}
@@ -162,7 +132,7 @@ function open(url: string, key: string) {
             :style="inkStyle"
           >
             <view
-              v-for="item in shown"
+              v-for="item in items"
               :key="item.key"
               class="flex flex-1 items-center justify-center gap-8rpx"
             >

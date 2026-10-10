@@ -4,22 +4,14 @@ import { badges, dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
-import { whenTabIdle } from '@/utils/tab-motion'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
-
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
 
 const account = ref<AccountView | null>(null)
 const records = ref<RecordCard[]>([])
 let spin = 0
 
-onShow(() => {
+onMounted(() => {
   void refresh()
 })
 
@@ -33,11 +25,10 @@ async function refresh() {
     const nextBadges = await badges()
     if (id !== spin)
       return
-    await whenTabIdle()
-    if (id !== spin)
-      return
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
+    noteBadges(nextBadges)
+    markTabFresh('records')
     records.value = listed.records
     await primeFileUrls(listed.records.flatMap(record => record.photoFileIds))
   }
@@ -75,10 +66,12 @@ function wideTiles(count: number) {
   const shown = Math.min(count, 9)
   return shown === 2 || shown === 4
 }
+
+defineExpose({ refresh })
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <ink-load v-if="!account" label="正在翻记下的" />
     <view v-else-if="!records.length" class="flex flex-col gap-28rpx">
       <screen-head title="记录" note="还没有记下的一餐" />
@@ -159,8 +152,5 @@ function wideTiles(count: number) {
         </text>
       </view>
     </view>
-    <template #dock>
-      <tab-dock role="cooker" current="records" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+  </view>
 </template>

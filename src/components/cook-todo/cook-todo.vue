@@ -4,16 +4,8 @@ import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/ap
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
-import { whenTabIdle } from '@/utils/tab-motion'
+import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
-
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
 
 const account = ref<AccountView | null>(null)
 const orders = ref<OrderDetail[]>([])
@@ -31,7 +23,7 @@ const groups = computed(() => {
   return [...map.entries()].map(([date, list]) => ({ date, list }))
 })
 
-onShow(() => {
+onMounted(() => {
   void refresh()
 })
 
@@ -44,10 +36,9 @@ async function refresh() {
     const data = await listTodo()
     if (id !== spin)
       return
-    await whenTabIdle()
-    if (id !== spin)
-      return
     account.value = view
+    noteBadges(view.badges)
+    markTabFresh('todo')
     orders.value = data.orders
     ready.value = true
     await primeFileUrls(data.orders.flatMap(order => order.items.map(item => item.coverFileId)))
@@ -107,12 +98,14 @@ function writeRecord(order: OrderDetail) {
 }
 
 function openRecords() {
-  uni.redirectTo({ url: '/pages/cook/records' })
+  openTab('records')
 }
+
+defineExpose({ refresh })
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <view v-if="!ready" class="flex flex-col">
       <screen-head title="待做" />
       <ink-load label="正在看待做" />
@@ -242,8 +235,5 @@ function openRecords() {
         </template>
       </view>
     </view>
-    <template #dock>
-      <tab-dock role="cooker" current="todo" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+  </view>
 </template>

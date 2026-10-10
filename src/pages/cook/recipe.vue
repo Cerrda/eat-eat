@@ -64,7 +64,7 @@ function copyLink() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-32rpx">
-      <back-bar label="做法" fallback="/pages/cook/todo" />
+      <back-bar label="做法" fallback="/pages/home/index" />
       <template v-if="dish">
         <view class="flex flex-col items-start">
           <text class="text-64rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">

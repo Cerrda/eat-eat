@@ -4,6 +4,7 @@ import { dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { menuIntent } from '@/utils/draft'
 import { withinMenu } from '@/utils/format'
+import { openTab, returnHome } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -64,14 +65,15 @@ function reorder() {
     return
   menuIntent.date = order.value.date
   menuIntent.slot = order.value.slot
-  uni.redirectTo({ url: '/pages/eat/menu' })
+  openTab('menu')
+  returnHome()
 }
 </script>
 
 <template>
   <paper-page>
     <view class="flex flex-col gap-24rpx">
-      <back-bar label="订单" fallback="/pages/eat/orders" />
+      <back-bar label="订单" fallback="/pages/home/index" />
       <template v-if="order && account">
         <view class="flex flex-col items-start">
           <text class="text-72rpx text-#3c2428 leading-[1.15] font-display">

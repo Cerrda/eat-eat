@@ -67,7 +67,7 @@ async function submit() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar label="取消" fallback="/pages/eat/orders" />
+      <back-bar label="取消" fallback="/pages/home/index" />
       <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
         {{ headline }}
       </text>

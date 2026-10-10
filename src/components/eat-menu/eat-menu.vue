@@ -1,26 +1,23 @@
 <script setup lang="ts">
-import type { AccountView, Category, MealBoard, MenuDish, OrderDetail, Slot } from '@/api/eat'
+import type { Category, MealBoard, MenuDish, OrderDetail, Slot } from '@/api/eat'
 import { badges, dateLabel, getOrder, listCategories, listMenu, mealBoard, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
-import { whenTabIdle } from '@/utils/tab-motion'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
+const props = defineProps<{
+  active?: boolean
+}>()
+
+const alive = computed(() => props.active !== false)
 
 const slots: Slot[] = ['morning', 'noon', 'evening']
 const slotShort: Record<Slot, string> = { morning: '早', noon: '中', evening: '晚' }
 
-const account = ref<AccountView | null>(null)
 const board = ref<MealBoard | null>(null)
 const dishes = ref<MenuDish[]>([])
 const categories = ref<Category[]>([])
@@ -43,8 +40,12 @@ const selectedBusy = computed(() => {
 
 const emptyMenu = computed(() => knownCount.value === 0)
 
-onShow(() => {
+onMounted(() => {
   void refresh()
+})
+
+onUnmounted(() => {
+  clearTimeout(timer)
 })
 
 watch(keyword, () => {
@@ -71,18 +72,18 @@ async function refresh() {
     ])
     if (id !== spin)
       return
-    await whenTabIdle()
-    if (id !== spin)
-      return
-    account.value = { ...view, badges: nextBadges }
-    rememberAccount(account.value)
+    rememberAccount({ ...view, badges: nextBadges })
+    noteBadges(nextBadges)
     dishes.value = menu.dishes
     categories.value = cats.categories
     board.value = meal
     if (!keyword.value.trim() && !categoryId.value)
       knownCount.value = menu.dishes.length
     await primeFileUrls(menu.dishes.map(dish => dish.coverFileId))
+    if (id !== spin)
+      return
     ensureSelection()
+    markTabFresh('menu')
   }
   catch (err) {
     if (id === spin)
@@ -212,10 +213,12 @@ function onTrayTap() {
   else
     goConfirm()
 }
+
+defineExpose({ refresh })
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <view v-if="emptyMenu" class="flex flex-col gap-28rpx">
       <screen-head title="菜单" note="还没有上架的菜。" />
       <view class="w-full flex flex-col items-center">
@@ -347,9 +350,8 @@ function onTrayTap() {
       </template>
       <ink-load v-else label="正在摆这一餐" />
     </view>
-    <template #dock>
+    <root-portal v-if="alive && showTray && board">
       <view
-        v-if="showTray && board"
         class="fixed bottom-[calc(184rpx+env(safe-area-inset-bottom))] left-0 right-0 z-10 box-border flex items-center justify-between gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid bg-#fbf3ea px-44rpx py-24rpx"
       >
         <view class="min-w-0 flex flex-col gap-4rpx">
@@ -372,7 +374,6 @@ function onTrayTap() {
           </text>
         </view>
       </view>
-      <tab-dock role="eater" current="menu" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+    </root-portal>
+  </view>
 </template>

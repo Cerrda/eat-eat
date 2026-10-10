@@ -1,5 +1,6 @@
 import type { AccountView, Role } from '@/api/eat'
 import { EatRequestError, enter, me } from '@/api/eat'
+import { resetHomeTab } from '@/utils/tabs'
 
 let current: AccountView | null = null
 let choosing = false
@@ -51,7 +52,7 @@ export function accountPath(view: AccountView) {
   if (view.next === 'confirm')
     return `/pages/bind/join?code=${view.inviteCode}`
   if (view.next === 'home')
-    return view.role === 'eater' ? '/pages/eat/menu' : '/pages/cook/todo'
+    return '/pages/home/index'
   return '/pages/index'
 }
 
@@ -63,6 +64,8 @@ export function routeAccount(view: AccountView) {
   const route = page?.route ? `/${page.route}` : ''
   if (route === url.split('?')[0])
     return Promise.resolve(false)
+  if (view.next === 'home' && (view.role === 'eater' || view.role === 'cooker'))
+    resetHomeTab(view.role)
   return new Promise<boolean>((resolve) => {
     let settled = false
     const finish = (ok: boolean) => {

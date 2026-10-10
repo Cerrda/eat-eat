@@ -2,21 +2,13 @@
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
-import { beginTabSwitch, whenTabIdle } from '@/utils/tab-motion'
+import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
-
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
 
 const account = ref<AccountView | null>(null)
 const orders = ref<OrderDetail[]>([])
 
-onShow(() => {
+onMounted(() => {
   void refresh()
 })
 
@@ -27,9 +19,10 @@ async function refresh() {
       return
     const listed = await listOrders()
     const nextBadges = await badges()
-    await whenTabIdle()
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
+    noteBadges(nextBadges)
+    markTabFresh('orders')
     orders.value = listed.orders
   }
   catch (err) {
@@ -42,9 +35,10 @@ function openOrder(order: OrderDetail) {
 }
 
 function openMenu() {
-  beginTabSwitch('orders', 1, 0)
-  uni.redirectTo({ url: '/pages/eat/menu' })
+  openTab('menu')
 }
+
+defineExpose({ refresh })
 
 function when(order: OrderDetail) {
   if (!account.value)
@@ -54,7 +48,7 @@ function when(order: OrderDetail) {
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <ink-load v-if="!account" label="正在翻点过的" />
     <view v-else-if="!orders.length" class="flex flex-col gap-28rpx">
       <screen-head :kicker="`${account?.nickname || '食神'}点过的`" title="订单" note="还没有点过。" />
@@ -106,8 +100,5 @@ function when(order: OrderDetail) {
         </text>
       </view>
     </view>
-    <template #dock>
-      <tab-dock role="eater" current="orders" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+  </view>
 </template>

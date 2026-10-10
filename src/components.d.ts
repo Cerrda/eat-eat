@@ -9,7 +9,13 @@ declare module 'vue' {
   export interface GlobalComponents {
     BackBar: typeof import('./components/back-bar/back-bar.vue')['default']
     CodeCells: typeof import('./components/code-cells/code-cells.vue')['default']
+    CookDishes: typeof import('./components/cook-dishes/cook-dishes.vue')['default']
+    CookRecords: typeof import('./components/cook-records/cook-records.vue')['default']
+    CookTodo: typeof import('./components/cook-todo/cook-todo.vue')['default']
     DishCover: typeof import('./components/dish-cover/dish-cover.vue')['default']
+    EatMenu: typeof import('./components/eat-menu/eat-menu.vue')['default']
+    EatOrders: typeof import('./components/eat-orders/eat-orders.vue')['default']
+    EatRecords: typeof import('./components/eat-records/eat-records.vue')['default']
     InkDialog: typeof import('./components/ink-dialog/ink-dialog.vue')['default']
     InkLoad: typeof import('./components/ink-load/ink-load.vue')['default']
     InkSpin: typeof import('./components/ink-spin/ink-spin.vue')['default']
@@ -18,7 +24,9 @@ declare module 'vue' {
     PaperPage: typeof import('./components/paper-page/paper-page.vue')['default']
     PaperPin: typeof import('./components/paper-pin/paper-pin.vue')['default']
     ScreenHead: typeof import('./components/screen-head/screen-head.vue')['default']
+    SettingsPane: typeof import('./components/settings-pane/settings-pane.vue')['default']
     StampButton: typeof import('./components/stamp-button/stamp-button.vue')['default']
     TabDock: typeof import('./components/tab-dock/tab-dock.vue')['default']
+    TabScroll: typeof import('./components/tab-scroll/tab-scroll.vue')['default']
   }
 }

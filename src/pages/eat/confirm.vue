@@ -73,7 +73,7 @@ async function submit() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar label="确认" fallback="/pages/eat/menu" />
+      <back-bar label="确认" fallback="/pages/home/index" />
       <template v-if="account && orderDraft.dishes.length">
       <text class="text-30rpx text-#7a534c font-body">
         {{ headline }}

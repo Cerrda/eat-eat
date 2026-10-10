@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import type { AccountView, Category } from '@/api/eat'
+import type { Category } from '@/api/eat'
 import type { DishCard } from '@/api/types'
 import { listCategories, listDishes } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
-import { whenTabIdle } from '@/utils/tab-motion'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine } from '@/utils/format'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
-
-const account = ref<AccountView | null>(null)
 const ready = ref(false)
 const dishes = ref<DishCard[]>([])
 const categories = ref<Category[]>([])
@@ -39,8 +30,12 @@ const emptyCopy = computed(() => {
   return ''
 })
 
-onShow(() => {
+onMounted(() => {
   void refresh()
+})
+
+onUnmounted(() => {
+  clearTimeout(timer)
 })
 
 watch(keyword, () => {
@@ -65,16 +60,16 @@ async function refresh() {
     ])
     if (id !== spin)
       return
-    await whenTabIdle()
-    if (id !== spin)
-      return
-    account.value = view
+    noteBadges(view.badges)
     dishes.value = listed.dishes
     categories.value = cats.categories
     if (!keyword.value.trim() && !categoryId.value)
       knownCount.value = listed.dishes.length
     ready.value = true
     await primeFileUrls(listed.dishes.map(dish => dish.coverFileId))
+    if (id !== spin)
+      return
+    markTabFresh('dishes')
   }
   catch (err) {
     if (id === spin)
@@ -98,10 +93,12 @@ function editDish(dish: DishCard) {
 function openCategories() {
   uni.navigateTo({ url: '/pages/cook/categories' })
 }
+
+defineExpose({ refresh })
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <ink-load v-if="!ready" label="正在翻菜" />
     <view v-else-if="bareEmpty" class="flex flex-col gap-28rpx">
       <screen-head title="菜品" note="还没有菜" />
@@ -229,9 +226,5 @@ function openCategories() {
         {{ emptyCopy }}
       </text>
     </view>
-    <template #dock>
-      <tab-dock role="cooker" current="dishes" :badges="account?.badges || { todo: 0, orders: 0, records: 0 }" />
-    </template>
-  </paper-page>
+  </view>
 </template>
-

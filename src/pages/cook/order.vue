@@ -111,7 +111,7 @@ function cancel() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-32rpx">
-      <back-bar label="这一餐" fallback="/pages/cook/todo" />
+      <back-bar label="这一餐" fallback="/pages/home/index" />
       <template v-if="order">
       <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
         {{ headline }}

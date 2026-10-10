@@ -141,7 +141,7 @@ async function add(event?: FieldEvent) {
 <template>
   <paper-page>
     <view class="flex flex-col gap-32rpx">
-      <back-bar label="菜品" fallback="/pages/cook/dishes" />
+      <back-bar label="菜品" fallback="/pages/home/index" />
       <ink-load v-if="!ready" label="正在翻分类" />
       <template v-else>
         <view class="flex flex-col items-start">

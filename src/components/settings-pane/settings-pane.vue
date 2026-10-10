@@ -1,27 +1,17 @@
 <script setup lang="ts">
-import type { AccountView, Role } from '@/api/eat'
+import type { AccountView } from '@/api/eat'
 import { ROLE_LABEL, unbind, updateNickname } from '@/api/eat'
 import { ensureAccount, peekAccount, rememberAccount, routeAccount } from '@/utils/account'
-import { whenTabIdle } from '@/utils/tab-motion'
 import { faceOf } from '@/utils/face'
 import { keepOneLine, textLength } from '@/utils/format'
 import { showHint } from '@/utils/hint'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { ask, showError } from '@/utils/ui'
-
-definePage({
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FBF3EA',
-  },
-})
 
 const account = ref<AccountView | null>(peekAccount())
 const nickname = ref(account.value?.nickname || '')
 keepOneLine(nickname)
 const pending = ref(false)
-const dockRole = computed((): Role => account.value?.role === 'eater' ? 'eater' : 'cooker')
-const badges = computed(() => account.value?.badges || { todo: 0, orders: 0, records: 0 })
 const partnerLine = computed(() => {
   const name = account.value?.partnerNickname || ''
   const role = account.value?.partnerRole
@@ -29,19 +19,26 @@ const partnerLine = computed(() => {
     return name
   return `${name}  ·  ${ROLE_LABEL[role]}`
 })
-onShow(async () => {
+async function refresh() {
   try {
     const view = await ensureAccount({ next: 'home' })
     if (!view)
       return
-    await whenTabIdle()
     account.value = view
     nickname.value = view.nickname
+    noteBadges(view.badges)
+    markTabFresh('settings')
   }
   catch (err) {
     showError(err)
   }
+}
+
+onMounted(() => {
+  void refresh()
 })
+
+defineExpose({ refresh })
 
 async function saveNickname() {
   if (!account.value)
@@ -59,6 +56,7 @@ async function saveNickname() {
     rememberAccount(view)
     account.value = view
     nickname.value = view.nickname
+    noteBadges(view.badges)
   }
   catch (err) {
     nickname.value = account.value.nickname
@@ -88,7 +86,7 @@ async function leave() {
 </script>
 
 <template>
-  <paper-page dock>
+  <view>
     <view v-if="!account" class="flex flex-col">
       <screen-head title="设置" />
       <ink-load label="正在打开设置" />
@@ -140,8 +138,5 @@ async function leave() {
         </text>
       </view>
     </view>
-    <template #dock>
-      <tab-dock :role="dockRole" current="settings" :badges="badges" />
-    </template>
-  </paper-page>
+  </view>
 </template>

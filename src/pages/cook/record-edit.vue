@@ -27,7 +27,6 @@ const locked = ref(false)
 const pending = ref(false)
 const ready = ref(false)
 const hydrated = ref(false)
-const recordsHome = ref('/pages/cook/records')
 const slotLabels = ['早上', '中午', '晚上']
 
 const backLabel = computed(() => {
@@ -51,7 +50,6 @@ async function load() {
     const view = await ensureAccount({ next: 'home' })
     if (!view)
       return
-    recordsHome.value = view.role === 'eater' ? '/pages/eat/records' : '/pages/cook/records'
     today.value = view.today
     if (hydrated.value) {
       ready.value = true
@@ -197,7 +195,7 @@ async function submit() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar :label="backLabel" :fallback="recordsHome" />
+      <back-bar :label="backLabel" fallback="/pages/home/index" />
       <template v-if="ready">
         <view class="flex flex-col items-start gap-4rpx">
           <text class="text-72rpx text-#3c2428 leading-[1.15]" :class="faceOf('记下这餐', 'serif')">

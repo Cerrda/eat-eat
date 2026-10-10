@@ -157,7 +157,7 @@ async function remove() {
 <template>
   <paper-page>
     <view class="flex flex-col gap-28rpx">
-      <back-bar label="编辑" fallback="/pages/cook/dishes" />
+      <back-bar label="编辑" fallback="/pages/home/index" />
       <ink-load v-if="!booted" label="正在摊开这道菜" />
       <template v-else>
         <textarea
