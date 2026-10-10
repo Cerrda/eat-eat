@@ -1635,50 +1635,83 @@
                     },
                     {
                       "type": "frame",
-                      "id": "QogA5",
+                      "id": "kMjmp",
                       "name": "内容",
                       "width": "fill_container",
                       "layout": "vertical",
-                      "gap": 18,
+                      "gap": 20,
                       "padding": [
-                        35,
-                        22,
                         28,
-                        22
+                        24,
+                        36,
+                        24
                       ],
                       "children": [
                         {
-                          "type": "frame",
-                          "id": "BSOf7",
-                          "name": "品牌",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "jCKmz",
-                              "name": "EatEat",
-                              "fill": "$ink",
-                              "content": "EatEat",
-                              "lineHeight": 1.15,
-                              "fontFamily": "$font-serif",
-                              "fontSize": 22,
-                              "fontWeight": "normal",
-                              "fontStyle": "italic"
-                            }
-                          ]
+                          "type": "text",
+                          "id": "U8JJZN",
+                          "name": "EatEat",
+                          "fill": "$ink",
+                          "content": "EatEat",
+                          "lineHeight": 1.15,
+                          "fontFamily": "$font-serif",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "fontStyle": "italic"
                         },
                         {
-                          "type": "text",
-                          "id": "ANK96",
-                          "name": "说明",
-                          "fill": "$ink",
-                          "content": "把这间厨房交给对方",
-                          "lineHeight": 1.45,
-                          "fontFamily": "$font-sans",
-                          "fontSize": 20,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "jHK7r",
+                          "name": "题",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "UuBc7",
+                              "name": "标题",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "p9NeWk",
+                                  "name": "标题上",
+                                  "fill": "$ink",
+                                  "content": "把这间厨房",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 30,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "HQBLh",
+                                  "name": "标题下",
+                                  "fill": "$ink",
+                                  "content": "交给对方",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 30,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "gp4YT",
+                              "name": "旁白",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "对方点开这条，就能进来。",
+                              "lineHeight": 1.55,
+                              "fontFamily": "$font-sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         },
                         {
                           "type": "frame",
@@ -1847,22 +1880,13 @@
                         },
                         {
                           "type": "frame",
-                          "id": "SThcY",
+                          "id": "Otp15",
                           "name": "转发给微信好友",
                           "width": "fill_container",
                           "fill": "$burgundy",
                           "cornerRadius": 26,
                           "stroke": "$burgundy",
                           "strokeWidth": 2,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#4E222D59",
-                            "offset": {
-                              "x": 3,
-                              "y": 4
-                            }
-                          },
                           "padding": [
                             15,
                             16
@@ -1872,19 +1896,19 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "TyJwQ",
+                              "id": "dhxyl",
                               "name": "按钮字",
                               "fill": "$paper",
                               "content": "转发给微信好友",
                               "fontFamily": "$font-sans",
                               "fontSize": 15,
-                              "fontWeight": "500"
+                              "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "o3Xxt",
+                          "id": "qjq38",
                           "name": "复制邀请码",
                           "width": "fill_container",
                           "fill": "$cream",
@@ -1900,43 +1924,73 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "w0008",
+                              "id": "wdMhD",
                               "name": "按钮字",
                               "fill": "$ink",
                               "content": "复制邀请码",
                               "fontFamily": "$font-sans",
                               "fontSize": 15,
-                              "fontWeight": "500"
+                              "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "NQtcu",
-                          "name": "刷新",
-                          "gap": 6,
+                          "id": "DLEdG",
+                          "name": "页脚",
+                          "width": "fill_container",
+                          "stroke": "$line",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "UDnUZ",
-                              "name": "刷新图标",
-                              "width": 16,
-                              "height": 16,
-                              "icon": "arrows-clockwise",
-                              "library": "phosphor",
-                              "weight": 400,
-                              "fill": "$muted"
-                            },
-                            {
-                              "type": "text",
-                              "id": "HtBWg",
-                              "name": "刷新字",
-                              "fill": "$muted",
-                              "content": "换一个邀请码",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "OXzB9",
+                              "name": "注脚",
+                              "gap": 14,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "oQTNp",
+                                  "name": "换一个邀请码",
+                                  "fill": "$muted",
+                                  "content": "换一个邀请码",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "lxEaN",
+                                  "name": "点",
+                                  "fill": "$line",
+                                  "content": "·",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "XCEGQ",
+                                  "name": "回到选择",
+                                  "fill": "$muted",
+                                  "content": "回到选择",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -2063,56 +2117,75 @@
                     },
                     {
                       "type": "frame",
-                      "id": "aTLK0",
+                      "id": "F0RCog",
                       "name": "内容",
                       "width": "fill_container",
                       "layout": "vertical",
-                      "gap": 16,
+                      "gap": 22,
                       "padding": [
-                        35,
-                        22,
-                        32,
-                        22
+                        28,
+                        24,
+                        36,
+                        24
                       ],
                       "children": [
                         {
+                          "type": "text",
+                          "id": "zrUrK",
+                          "name": "EatEat",
+                          "fill": "$ink",
+                          "content": "EatEat",
+                          "lineHeight": 1.15,
+                          "fontFamily": "$font-serif",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "fontStyle": "italic"
+                        },
+                        {
                           "type": "frame",
-                          "id": "WCoof",
-                          "name": "品牌",
+                          "id": "zT1B0",
+                          "name": "题",
                           "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
+                          "layout": "vertical",
+                          "gap": 10,
                           "children": [
                             {
                               "type": "text",
-                              "id": "lY6rq",
-                              "name": "EatEat",
+                              "id": "MPD4I",
+                              "name": "标题",
                               "fill": "$ink",
-                              "content": "EatEat",
+                              "content": "等对方来点餐",
                               "lineHeight": 1.15,
                               "fontFamily": "$font-serif",
-                              "fontSize": 22,
-                              "fontWeight": "normal",
-                              "fontStyle": "italic"
+                              "fontSize": 30,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "lHNnS",
+                              "name": "旁白",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "灯还亮着。对方点开，就能进来。",
+                              "lineHeight": 1.55,
+                              "fontFamily": "$font-sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
                         {
-                          "type": "text",
-                          "id": "K0BecU",
-                          "name": "说明",
-                          "fill": "$ink",
-                          "content": "等对方来点餐",
-                          "lineHeight": 1.45,
-                          "fontFamily": "$font-sans",
-                          "fontSize": 20,
-                          "fontWeight": "normal"
-                        },
-                        {
                           "type": "frame",
-                          "id": "ztdHK",
-                          "name": "小屋插画位",
+                          "id": "FXmx2",
+                          "name": "小屋",
                           "width": "fill_container",
+                          "padding": [
+                            2,
+                            0,
+                            0,
+                            0
+                          ],
                           "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
@@ -3113,58 +3186,51 @@
                         },
                         {
                           "type": "frame",
-                          "id": "tNOyN",
+                          "id": "q2MSX",
                           "name": "纸条",
                           "width": "fill_container",
-                          "fill": "#00000000",
-                          "stroke": "$brass",
-                          "strokeWidth": {
-                            "left": 2
-                          },
-                          "strokeAlignment": "inner",
+                          "fill": "$cream",
+                          "cornerRadius": 18,
+                          "stroke": "$line",
+                          "strokeWidth": 1,
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 6,
                           "padding": [
-                            6,
-                            2,
-                            6,
-                            14
+                            16,
+                            18
                           ],
                           "children": [
                             {
                               "type": "text",
-                              "id": "dH8R8",
-                              "name": "纸条眉",
+                              "id": "ztFf8",
+                              "name": "眉",
                               "fill": "$brass",
                               "content": "邀请码",
-                              "lineHeight": 1.15,
-                              "fontFamily": "$font-mono",
-                              "fontSize": 14,
-                              "fontWeight": "normal",
-                              "letterSpacing": 1.2
+                              "fontFamily": "$font-sans",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
-                              "id": "PGSx4",
+                              "id": "hAKQW",
                               "name": "码",
                               "fill": "$ink",
                               "content": "K7M2QX",
-                              "lineHeight": 1.15,
                               "fontFamily": "$font-mono",
                               "fontSize": 28,
                               "fontWeight": "normal",
-                              "letterSpacing": 4
+                              "letterSpacing": 2
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "EWAyc",
+                          "id": "td1E1",
                           "name": "再转发给微信好友",
                           "width": "fill_container",
-                          "fill": "$cream",
-                          "cornerRadius": 18,
-                          "stroke": "$line",
+                          "fill": "$burgundy",
+                          "cornerRadius": 26,
+                          "stroke": "$burgundy",
                           "strokeWidth": 2,
                           "padding": [
                             15,
@@ -3175,13 +3241,62 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "zL6LX",
+                              "id": "FmI7M",
                               "name": "按钮字",
-                              "fill": "$ink",
+                              "fill": "$paper",
                               "content": "再转发给微信好友",
                               "fontFamily": "$font-sans",
                               "fontSize": 15,
-                              "fontWeight": "500"
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "itPfR",
+                          "name": "页脚",
+                          "width": "fill_container",
+                          "stroke": "$line",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "SRuqV",
+                              "name": "注脚",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "DhoBv",
+                                  "name": "前",
+                                  "fill": "$muted",
+                                  "content": "选错了这边，",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "sJRsP",
+                                  "name": "回到选择",
+                                  "fill": "$brass",
+                                  "content": "回到选择",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             }
                           ]
                         }

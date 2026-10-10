@@ -2,9 +2,9 @@
 import type { AccountView, RecordCard } from '@/api/eat'
 import { badges, dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, rememberAccount } from '@/utils/account'
-import { whenTabIdle } from '@/utils/tab-motion'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
+import { whenTabIdle } from '@/utils/tab-motion'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -91,7 +91,7 @@ function when(record: RecordCard) {
         <view v-if="record.photoFileIds[0]" class="relative h-360rpx w-full">
           <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
           <view class="absolute inset-0 overflow-hidden rounded-36rpx">
-            <dish-cover class="h-full w-full" :file-id="record.photoFileIds[0]" name="照" />
+            <dish-cover class="h-full w-full" :file-id="record.photoFileIds[0]" name="照" size="cover" />
           </view>
           <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
         </view>

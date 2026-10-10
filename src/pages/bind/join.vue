@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { AccountView } from '@/api/eat'
 import { acceptInvite, EatRequestError, previewInvite } from '@/api/eat'
+import { useCapsuleClearance } from '@/composables/useTopPadding'
 import { loadAccount, rememberAccount, routeAccount } from '@/utils/account'
-import { faceOf } from '@/utils/face'
 import { normalizeCode } from '@/utils/format'
 import { ask, showError } from '@/utils/ui'
 
@@ -19,8 +19,31 @@ const looked = ref('')
 const mode = ref<'input' | 'confirm' | 'invalid' | 'taken' | 'loading'>('input')
 const preview = ref<AccountView | null>(null)
 const pending = ref(false)
+const clearance = useCapsuleClearance()
 
 const roleTitle = computed(() => preview.value?.role === 'cooker' ? '做饭的人' : '点餐的人')
+const showResult = computed(() => mode.value === 'invalid' || mode.value === 'taken' || (mode.value === 'confirm' && !!preview.value))
+const eyebrow = computed(() => {
+  if (mode.value === 'invalid')
+    return '没有加入'
+  if (mode.value === 'taken')
+    return '现在这间'
+  return '你的身份'
+})
+const roleHeading = computed(() => {
+  if (mode.value === 'invalid')
+    return '这个码用不了'
+  if (mode.value === 'taken')
+    return '你已经有厨房'
+  return roleTitle.value
+})
+const detail = computed(() => {
+  if (mode.value === 'invalid')
+    return '过期了，或写错了。请对方重新转发。'
+  if (mode.value === 'taken')
+    return '一个人只能待在一间厨房里。'
+  return ''
+})
 
 onLoad((query) => {
   const incoming = normalizeCode(String(query?.code || query?.inviteCode || ''))
@@ -118,63 +141,44 @@ async function backHome() {
 
 <template>
   <paper-page>
-    <view class="flex flex-col gap-32rpx">
-      <text class="text-44rpx text-#3c2428 font-display italic">
+    <view class="flex flex-col gap-31rpx" :style="{ paddingTop: `calc(${clearance} + 13rpx)` }">
+      <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
         EatEat
       </text>
-      <text v-if="mode === 'invalid' || mode === 'taken'" class="text-28rpx text-#792b3e font-body">
-        另一方
+      <text class="text-38rpx text-#3c2428 font-normal leading-[1.45] font-body">
+        填写邀请码
       </text>
-      <text class="text-40rpx text-#3c2428 leading-[1.45]" :class="faceOf('填上这 6 位', 'sans')">
-        填上这 6 位
-      </text>
-      <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" />
+      <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" :invalid="mode === 'invalid'" />
 
-      <view v-if="mode === 'confirm' && preview" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid pt-32rpx">
-        <text class="text-28rpx text-#792b3e font-body">
-          你的身份
-        </text>
-        <text class="text-56rpx text-#3c2428 font-display">
-          {{ roleTitle }}
-        </text>
-        <stamp-button :disabled="pending" :busy="pending" @tap="join(false)">
+      <view v-if="showResult" class="flex flex-col gap-31rpx">
+        <view class="box-border flex flex-col gap-12rpx border-0 border-b-4rpx border-t-4rpx border-#c9a297 border-solid py-31rpx">
+          <text
+            class="text-27rpx leading-[1.15] tracking-[2rpx] font-mono"
+            :class="mode === 'invalid' ? 'text-#9c342c' : 'text-#792b3e'"
+          >
+            {{ eyebrow }}
+          </text>
+          <text class="text-54rpx text-#3c2428 font-normal leading-[1.15] font-display">
+            {{ roleHeading }}
+          </text>
+          <text v-if="detail" class="text-29rpx text-#7a534c leading-[1.5] font-body">
+            {{ detail }}
+          </text>
+        </view>
+        <stamp-button v-if="mode === 'confirm'" flat strong :disabled="pending" :busy="pending" @tap="join(false)">
           {{ pending ? '正在确认身份' : '确定身份' }}
         </stamp-button>
-        <view class="flex justify-center py-8rpx" @tap="reset">
-          <text class="text-28rpx text-#7a534c font-body">
+        <stamp-button v-else-if="mode === 'invalid'" flat strong @tap="reset">
+          再试一次
+        </stamp-button>
+        <stamp-button v-else flat strong @tap="backHome">
+          回到我的厨房
+        </stamp-button>
+        <view v-if="mode === 'confirm'" @tap="reset">
+          <text class="text-27rpx text-#7a534c leading-[1.45] font-body">
             不是这间厨房
           </text>
         </view>
-      </view>
-
-      <view v-else-if="mode === 'invalid'" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid pt-32rpx">
-        <text class="text-28rpx text-#9c342c font-body">
-          没有加入
-        </text>
-        <text class="text-56rpx text-#3c2428 font-display">
-          这个码用不了
-        </text>
-        <text class="text-30rpx text-#7a534c leading-[1.5] font-body">
-          过期了，或写错了。请对方重新转发。
-        </text>
-        <stamp-button @tap="reset">
-          再试一次
-        </stamp-button>
-      </view>
-
-      <view v-else-if="mode === 'taken'" class="flex flex-col gap-20rpx border-0 border-t-4rpx border-#c9a297 border-solid pt-32rpx">
-        <text class="text-28rpx text-#792b3e font-body">
-          现在这间
-        </text>
-        <text class="text-56rpx text-#3c2428 font-display">
-          你已经有厨房
-        </text>
-        <text class="text-30rpx text-#7a534c leading-[1.5] font-body">
-          一个人只能待在一间厨房里。
-        </text>
-        <stamp-button @tap="backHome">
-          回到我的厨房
-        </stamp-button>
       </view>
 
       <ink-load v-else-if="mode === 'loading'" label="正在对这 6 位" />

@@ -8,6 +8,23 @@ interface TempFileItem {
   tempFileURL?: string
 }
 
+/** 按屏幕上的实际占用选一档，避免列表和宫格去拉相机原图。 */
+export type CloudImageSize = 'thumb' | 'tile' | 'cover' | 'raw'
+
+const IMAGE_FIT = {
+  thumb: { w: 480, q: 70 },
+  tile: { w: 720, q: 75 },
+  cover: { w: 1280, q: 80 },
+} as const
+
+export function fitCloudImageUrl(url: string, size: CloudImageSize = 'thumb') {
+  if (size === 'raw' || !/^https?:\/\//.test(url) || url.includes('x-oss-process='))
+    return url
+  const { w, q } = IMAGE_FIT[size]
+  const process = `x-oss-process=image/auto-orient,1/resize,m_lfit,w_${w},limit_1/quality,q_${q}/format,jpg`
+  return `${url}${url.includes('?') ? '&' : '?'}${process}`
+}
+
 export async function primeFileUrls(ids: string[]) {
   const missing = [...new Set(ids.filter(id => id.startsWith('cloud://') && !urlCache.has(id)))]
   if (!missing.length)
@@ -29,18 +46,17 @@ export async function primeFileUrls(ids: string[]) {
   }
 }
 
-export async function resolveFileUrl(fileId?: string) {
+export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'thumb') {
   if (!fileId)
     return ''
   if (/^https?:\/\//.test(fileId) || fileId.startsWith('wxfile://') || fileId.startsWith('blob:') || fileId.startsWith('/'))
     return fileId
   if (!fileId.startsWith('cloud://'))
     return ''
-  const cached = urlCache.get(fileId)
-  if (cached)
-    return cached
-  await primeFileUrls([fileId])
-  return urlCache.get(fileId) || ''
+  if (!urlCache.has(fileId))
+    await primeFileUrls([fileId])
+  const raw = urlCache.get(fileId) || ''
+  return raw ? fitCloudImageUrl(raw, size) : ''
 }
 
 export function chooseImage(source: 'album' | 'camera') {

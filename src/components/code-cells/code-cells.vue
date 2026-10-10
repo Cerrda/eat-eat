@@ -4,9 +4,11 @@ import { normalizeCode } from '@/utils/format'
 const props = withDefaults(defineProps<{
   modelValue?: string
   readonly?: boolean
+  invalid?: boolean
 }>(), {
   modelValue: '',
   readonly: false,
+  invalid: false,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
@@ -19,14 +21,15 @@ function onInput(event: { detail: { value: string } }) {
 </script>
 
 <template>
-  <view class="relative h-104rpx overflow-hidden">
-    <view class="flex justify-between">
+  <view class="relative overflow-hidden">
+    <view class="flex gap-15rpx">
       <view
         v-for="index in 6"
         :key="index"
-        class="h-104rpx w-88rpx flex items-center justify-center rounded-28rpx bg-#fff9f4"
+        class="box-border h-112rpx min-w-0 flex flex-1 items-center justify-center border-4rpx border-solid rounded-35rpx bg-#fff9f4"
+        :class="invalid ? 'border-#9c342c' : 'border-#c9a297'"
       >
-        <text class="text-44rpx text-#3c2428 font-display">
+        <text class="text-42rpx text-#3c2428 leading-[1.15] font-mono">
           {{ chars[index - 1] || '' }}
         </text>
       </view>
@@ -54,7 +57,7 @@ function onInput(event: { detail: { value: string } }) {
   left: -100%;
   z-index: 1;
   width: 200%;
-  height: 100%;
+  height: 112rpx;
   color: rgba(0, 0, 0, 0);
   caret-color: transparent;
   background: transparent;

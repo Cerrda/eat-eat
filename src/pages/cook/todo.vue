@@ -163,7 +163,7 @@ function openRecords() {
                   class="relative box-border overflow-hidden border-4rpx border-#fff9f4 rounded-36rpx border-solid"
                   :class="order.status === 'pending' ? 'h-296rpx' : 'h-352rpx'"
                 >
-                  <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" />
+                  <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" size="cover" />
                   <view class="absolute bottom-0 left-0 right-0 flex">
                     <view
                       class="box-border max-w-full flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-#fff9f4"

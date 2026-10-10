@@ -2,6 +2,19 @@ import type { AccountView, Role } from '@/api/eat'
 import { EatRequestError, enter, me } from '@/api/eat'
 
 let current: AccountView | null = null
+let choosing = false
+
+export function beginChoose() {
+  choosing = true
+}
+
+export function endChoose() {
+  choosing = false
+}
+
+export function isChoosing() {
+  return choosing
+}
 
 export function rememberAccount(view: AccountView) {
   current = view

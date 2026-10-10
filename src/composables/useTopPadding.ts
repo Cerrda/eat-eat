@@ -39,3 +39,23 @@ export function useTopPadding() {
   }
   return topPadding
 }
+
+function readCapsuleHeight() {
+  // #ifdef MP-WEIXIN
+  const menu = uni.getMenuButtonBoundingClientRect()
+  if (menu.height > 0)
+    return menu.height
+  // #endif
+  return 0
+}
+
+/** paper-page 已经让到胶囊顶部，这里再补上胶囊高度，正文就从胶囊下沿开始。 */
+export function useCapsuleClearance() {
+  const height = ref(readCapsuleHeight())
+  if (!height.value) {
+    onMounted(() => {
+      height.value = readCapsuleHeight()
+    })
+  }
+  return computed(() => height.value ? `${height.value}px` : '0px')
+}

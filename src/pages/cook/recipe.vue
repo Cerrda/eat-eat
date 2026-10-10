@@ -75,7 +75,7 @@ function copyLink() {
         <text v-if="categoryName" class="text-30rpx text-#7a534c leading-[1.3]" :class="faceOf(categoryName, 'sans')">
           {{ categoryName }}
         </text>
-        <dish-cover class="h-336rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" />
+        <dish-cover class="h-336rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" size="cover" />
         <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
           <text class="text-28rpx text-#792b3e" :class="faceOf('食材', 'mono')">
             食材

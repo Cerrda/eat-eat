@@ -269,6 +269,7 @@ async function remove() {
               :src="localCover"
               :file-id="coverFileId"
               :name="name"
+              size="tile"
             />
             <view v-else class="h-full flex flex-col items-center justify-center gap-12rpx">
               <image class="h-56rpx w-56rpx" src="/static/icons/cover-image.png" mode="aspectFit" />

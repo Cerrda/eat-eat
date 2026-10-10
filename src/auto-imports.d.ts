@@ -13,6 +13,7 @@ declare global {
   const askText: typeof import('./utils/ui')['askText']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
+  const beginChoose: typeof import('./utils/account')['beginChoose']
   const beginTabSwitch: typeof import('./utils/tab-motion')['beginTabSwitch']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
   const chooseImage: typeof import('./utils/files')['chooseImage']
@@ -45,10 +46,12 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const eatCloud: typeof import('./utils/cloud')['eatCloud']
   const effectScope: typeof import('vue')['effectScope']
+  const endChoose: typeof import('./utils/account')['endChoose']
   const ensureAccount: typeof import('./utils/account')['ensureAccount']
   const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const faceOf: typeof import('./utils/face')['faceOf']
+  const fitCloudImageUrl: typeof import('./utils/files')['fitCloudImageUrl']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
@@ -57,6 +60,7 @@ declare global {
   const ignoredCancel: typeof import('./utils/files')['ignoredCancel']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
+  const isChoosing: typeof import('./utils/account')['isChoosing']
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
@@ -196,6 +200,7 @@ declare global {
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
   const useCached: typeof import('@vueuse/core')['useCached']
+  const useCapsuleClearance: typeof import('./composables/useTopPadding')['useCapsuleClearance']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useClipboardItems: typeof import('@vueuse/core')['useClipboardItems']
   const useCloned: typeof import('@vueuse/core')['useCloned']
@@ -368,6 +373,9 @@ declare global {
   export type { FaceRole } from './utils/face'
   import('./utils/face')
   // @ts-ignore
+  export type { CloudImageSize } from './utils/files'
+  import('./utils/files')
+  // @ts-ignore
   export type { TabShift } from './utils/tab-motion'
   import('./utils/tab-motion')
 }
@@ -384,6 +392,7 @@ declare module 'vue' {
     readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly beginChoose: UnwrapRef<typeof import('./utils/account')['beginChoose']>
     readonly beginTabSwitch: UnwrapRef<typeof import('./utils/tab-motion')['beginTabSwitch']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
@@ -416,10 +425,12 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly eatCloud: UnwrapRef<typeof import('./utils/cloud')['eatCloud']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly endChoose: UnwrapRef<typeof import('./utils/account')['endChoose']>
     readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
+    readonly fitCloudImageUrl: UnwrapRef<typeof import('./utils/files')['fitCloudImageUrl']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
@@ -428,6 +439,7 @@ declare module 'vue' {
     readonly ignoredCancel: UnwrapRef<typeof import('./utils/files')['ignoredCancel']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
+    readonly isChoosing: UnwrapRef<typeof import('./utils/account')['isChoosing']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
@@ -565,6 +577,7 @@ declare module 'vue' {
     readonly useBroadcastChannel: UnwrapRef<typeof import('@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('@vueuse/core')['useBrowserLocation']>
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
+    readonly useCapsuleClearance: UnwrapRef<typeof import('./composables/useTopPadding')['useCapsuleClearance']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useClipboardItems: UnwrapRef<typeof import('@vueuse/core')['useClipboardItems']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccountView } from '@/api/eat'
-import { ensureAccount } from '@/utils/account'
-import { faceOf } from '@/utils/face'
+import { useCapsuleClearance } from '@/composables/useTopPadding'
+import { beginChoose, ensureAccount } from '@/utils/account'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -13,6 +13,7 @@ definePage({
 })
 
 const account = ref<AccountView | null>(null)
+const clearance = useCapsuleClearance()
 const title = computed(() => account.value?.role === 'eater' ? '等对方来做饭' : '等对方来点餐')
 
 onShow(async () => {
@@ -26,6 +27,11 @@ onShow(async () => {
   }
 })
 
+function rechoose() {
+  beginChoose()
+  uni.reLaunch({ url: '/pages/index' })
+}
+
 onShareAppMessage(() => ({
   title: account.value?.shareTitle || '来 EatEat',
   path: `/pages/bind/join?code=${account.value?.inviteCode || ''}`,
@@ -34,26 +40,49 @@ onShareAppMessage(() => ({
 
 <template>
   <paper-page>
-    <view v-if="account" class="flex flex-col gap-36rpx">
-      <text class="text-44rpx text-#3c2428 font-display italic">
-        EatEat
-      </text>
-      <text class="text-40rpx text-#3c2428 leading-[1.45]" :class="faceOf(title, 'sans')">
-        {{ title }}
-      </text>
-      <image class="w-376rpx self-center" src="/static/house.png" mode="widthFix" />
-      <view class="flex flex-col gap-12rpx rounded-36rpx bg-#fff9f4 px-32rpx py-28rpx">
-        <text class="text-28rpx text-#792b3e font-body">
-          邀请码
+    <view :style="{ paddingTop: clearance }">
+      <view v-if="account" class="flex flex-col gap-42rpx">
+        <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+          EatEat
         </text>
-        <text class="text-56rpx text-#3c2428 tracking-[0.18em] font-display">
-          {{ account.inviteCode }}
-        </text>
+        <view class="flex flex-col gap-19rpx">
+          <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+            {{ title }}
+          </text>
+          <text class="text-27rpx text-#7a534c leading-[1.55] font-body">
+            灯还亮着。对方点开，就能进来。
+          </text>
+        </view>
+        <view class="flex justify-center pt-4rpx">
+          <image class="w-362rpx" src="/static/house.png" mode="widthFix" />
+        </view>
+        <view class="box-border flex flex-col gap-12rpx border-2rpx border-#c9a297 rounded-35rpx border-solid bg-#fff9f4 px-35rpx py-31rpx">
+          <text class="text-25rpx text-#792b3e leading-[1.45] font-body">
+            邀请码
+          </text>
+          <text class="text-54rpx text-#3c2428 leading-[1.15] tracking-[4rpx] font-mono">
+            {{ account.inviteCode }}
+          </text>
+        </view>
+        <stamp-button flat open-type="share">
+          再转发给微信好友
+        </stamp-button>
+        <view class="flex flex-col gap-31rpx pt-35rpx">
+          <view class="h-2rpx w-full bg-#3c2428" />
+          <view class="flex items-center py-19rpx" @tap="rechoose">
+            <text class="text-29rpx text-#7a534c leading-[1.45] font-body">
+              选错了这边，
+            </text>
+            <view class="flex flex-col gap-6rpx">
+              <text class="text-29rpx text-#792b3e leading-[1.45] font-body">
+                回到选择
+              </text>
+              <view class="h-2rpx w-full rounded-2rpx bg-#792b3e" />
+            </view>
+          </view>
+        </view>
       </view>
-      <stamp-button variant="ghost" open-type="share">
-        再转发给微信好友
-      </stamp-button>
+      <ink-load v-else label="正在打开这间厨房" />
     </view>
-    <ink-load v-else label="正在打开这间厨房" />
   </paper-page>
 </template>

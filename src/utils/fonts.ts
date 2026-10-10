@@ -1,23 +1,25 @@
+const HOST = 'https://env-00jy6u6u3cps-static.normal.cloudstatic.cn'
+
 const FACES = [
   {
     family: 'Ma Shan Zheng',
     weight: '400',
-    url: 'https://env-00jy6u6u3cps.normal.cloudstatic.cn/eat/fonts/ma-shan-zheng.woff2',
+    url: `${HOST}/eat/fonts/ma-shan-zheng.woff2`,
   },
   {
     family: 'LXGW WenKai',
     weight: '400',
-    url: 'https://env-00jy6u6u3cps.normal.cloudstatic.cn/eat/fonts/lxgw-wenkai.woff2',
+    url: `${HOST}/eat/fonts/lxgw-wenkai.woff2`,
   },
   {
     family: 'LXGW WenKai',
     weight: '500',
-    url: 'https://env-00jy6u6u3cps.normal.cloudstatic.cn/eat/fonts/lxgw-wenkai-medium.woff2',
+    url: `${HOST}/eat/fonts/lxgw-wenkai-medium.woff2`,
   },
   {
     family: 'Long Cang',
     weight: '400',
-    url: 'https://env-00jy6u6u3cps.normal.cloudstatic.cn/eat/fonts/long-cang.woff2',
+    url: `${HOST}/eat/fonts/long-cang.woff2`,
   },
 ] as const
 
