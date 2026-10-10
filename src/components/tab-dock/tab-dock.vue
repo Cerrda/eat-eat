@@ -42,54 +42,102 @@ const activeIndex = computed(() => {
   return index < 0 ? 0 : index
 })
 
-const slideIndex = ref(activeIndex.value)
-const moving = ref(false)
-const timers: ReturnType<typeof setTimeout>[] = []
+const LEAD_MS = 200
+const FLOW_MS = 400
+
+interface DockMetrics {
+  width: number
+  pill: number
+  step: number
+}
+
+interface DockPose {
+  left: number
+  width: number
+}
+
+const phase = ref<'' | 'stretch' | 'settle'>('')
 const metrics = computed(() => measure(Math.max(items.value.length, 1)))
+const pose = ref<DockPose>(restPose(activeIndex.value, metrics.value))
+const timers: ReturnType<typeof setTimeout>[] = []
 let slideToken = 0
 
 watch(activeIndex, (next, prev) => {
   if (prev == null || next === prev)
     return
   const token = ++slideToken
-  moving.value = false
-  slideIndex.value = prev
+  clearTimers()
+  phase.value = ''
+  pose.value = restPose(prev, metrics.value)
   nextTick(() => {
     if (token !== slideToken)
       return
-    moving.value = true
     later(() => {
       if (token !== slideToken)
         return
-      slideIndex.value = next
+      const dock = metrics.value
+      pose.value = stretchPose(prev, next, dock)
+      phase.value = 'stretch'
+      later(() => {
+        if (token !== slideToken)
+          return
+        pose.value = restPose(next, dock)
+        phase.value = 'settle'
+      }, LEAD_MS)
+      later(() => {
+        if (token !== slideToken)
+          return
+        phase.value = ''
+      }, FLOW_MS + 24)
     }, 32)
   })
 })
 
-onUnmounted(() => {
-  for (const id of timers)
-    clearTimeout(id)
-})
+onUnmounted(clearTimers)
 
 const pillStyle = computed(() => ({
-  width: `${metrics.value.pill}px`,
-  transform: `translate3d(${metrics.value.step * slideIndex.value}px, 0, 0)`,
+  width: `${pose.value.width}px`,
+  transform: `translate3d(${pose.value.left}px, 0, 0)`,
 }))
 
 const inkStyle = computed(() => ({
   width: `${metrics.value.width}px`,
-  transform: `translate3d(${-metrics.value.step * slideIndex.value}px, 0, 0)`,
+  transform: `translate3d(${-pose.value.left}px, 0, 0)`,
 }))
 
-function measure(count: number) {
+function measure(count: number): DockMetrics {
   const gap = uni.upx2px(8)
   const width = uni.getWindowInfo().windowWidth - uni.upx2px(32) * 2 - uni.upx2px(4) * 2 - uni.upx2px(10) * 2
   const pill = (width - gap * (count - 1)) / count
   return { width, pill, step: pill + gap }
 }
 
+function restPose(index: number, dock: DockMetrics): DockPose {
+  return { left: dock.step * index, width: dock.pill }
+}
+
+function stretchPose(from: number, to: number, dock: DockMetrics): DockPose {
+  const start = dock.step * from
+  const end = dock.step * to
+  const trail = 0.12
+  if (to > from) {
+    const right = end + dock.pill
+    const left = start + (end - start) * trail
+    return { left, width: right - left }
+  }
+  const left = end
+  const right = start + dock.pill + (end - start) * trail
+  return { left, width: right - left }
+}
+
 function later(fn: () => void, ms: number) {
   timers.push(setTimeout(fn, ms))
+}
+
+function clearTimers() {
+  for (const id of timers)
+    clearTimeout(id)
+  timers.length = 0
 }
 
 function open(key: string) {
@@ -122,13 +170,12 @@ function open(key: string) {
           </view>
         </view>
         <view
-          class="tab-dock-pill pointer-events-none absolute bottom-0 left-0 top-0 z-1 overflow-hidden rounded-48rpx bg-#792b3e"
-          :class="moving ? 'tab-dock-slide' : ''"
+          class="tab-dock-pill pointer-events-none absolute left-0 z-1 overflow-hidden rounded-48rpx bg-#792b3e"
+          :class="phase ? `tab-dock-flow tab-dock-${phase}` : ''"
           :style="pillStyle"
         >
           <view
             class="tab-dock-ink absolute left-0 top-0 h-full flex items-stretch gap-8rpx"
-            :class="moving ? 'tab-dock-slide' : ''"
             :style="inkStyle"
           >
             <view
@@ -153,12 +200,69 @@ function open(key: string) {
 <style>
 @import "../../styles/font-util.css";
 
-.tab-dock-pill,
+.tab-dock-pill {
+  top: 0;
+  height: 100%;
+  will-change: transform, width, height;
+}
+
 .tab-dock-ink {
   will-change: transform;
 }
 
-.tab-dock-slide {
-  transition: transform 0.32s cubic-bezier(0.22, 1.12, 0.36, 1);
+.tab-dock-pill.tab-dock-stretch {
+  transition:
+    transform 200ms cubic-bezier(0.12, 0.72, 0.18, 1),
+    width 200ms cubic-bezier(0.12, 0.72, 0.18, 1);
+}
+
+.tab-dock-pill.tab-dock-stretch .tab-dock-ink {
+  transition: transform 200ms cubic-bezier(0.12, 0.72, 0.18, 1);
+}
+
+.tab-dock-pill.tab-dock-settle {
+  transition:
+    transform 200ms cubic-bezier(0.22, 1.18, 0.36, 1),
+    width 200ms cubic-bezier(0.22, 1.18, 0.36, 1);
+}
+
+.tab-dock-pill.tab-dock-settle .tab-dock-ink {
+  transition: transform 200ms cubic-bezier(0.22, 1.18, 0.36, 1);
+}
+
+.tab-dock-pill.tab-dock-flow {
+  animation: tab-dock-squash 400ms linear both;
+}
+
+@keyframes tab-dock-squash {
+  0% {
+    top: 0;
+    height: 100%;
+  }
+
+  24% {
+    top: 2.5%;
+    height: 95%;
+  }
+
+  50% {
+    top: 4%;
+    height: 92%;
+  }
+
+  68% {
+    top: 1.5%;
+    height: 97%;
+  }
+
+  84% {
+    top: -2.5%;
+    height: 105%;
+  }
+
+  100% {
+    top: 0;
+    height: 100%;
+  }
 }
 </style>

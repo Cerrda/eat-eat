@@ -440,7 +440,7 @@ module.exports = {
           </text>
         </view>
       </view>
-      <view class="pull-body">
+      <view class="pull-body box-border pr-28rpx">
         <slot />
         <view v-if="loading" class="flex items-center justify-center gap-16rpx py-32rpx">
           <ink-spin />
@@ -463,9 +463,10 @@ module.exports = {
   display: flex;
   flex: 1;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% + 28rpx);
   height: 0;
   min-height: 0;
+  margin-right: -28rpx;
   overflow: hidden;
 }
 
@@ -480,7 +481,7 @@ module.exports = {
 .pull-indicator {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 28rpx;
   left: 0;
   height: 180px;
   display: flex;

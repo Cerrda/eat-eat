@@ -34,7 +34,7 @@ watch(() => props.motion, (value) => {
   }, 32)
   timer = setTimeout(() => {
     shiftClass.value = ''
-  }, 380)
+  }, 456)
 })
 
 onUnmounted(() => {
@@ -66,26 +66,26 @@ onUnmounted(() => {
 <style>
 .tab-hold-right {
   opacity: 0;
-  transform: translate3d(48rpx, 0, 0);
+  transform: translate3d(32rpx, 0, 0);
 }
 
 .tab-hold-left {
   opacity: 0;
-  transform: translate3d(-48rpx, 0, 0);
+  transform: translate3d(-32rpx, 0, 0);
 }
 
 .tab-from-right {
-  animation: tab-from-right 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: tab-from-right 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .tab-from-left {
-  animation: tab-from-left 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: tab-from-left 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes tab-from-right {
   from {
     opacity: 0;
-    transform: translate3d(48rpx, 0, 0);
+    transform: translate3d(32rpx, 0, 0);
   }
 
   to {
@@ -97,7 +97,7 @@ onUnmounted(() => {
 @keyframes tab-from-left {
   from {
     opacity: 0;
-    transform: translate3d(-48rpx, 0, 0);
+    transform: translate3d(-32rpx, 0, 0);
   }
 
   to {
