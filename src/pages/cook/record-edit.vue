@@ -290,7 +290,6 @@ async function submit() {
           删除这餐
         </text>
       </template>
-      <ink-load v-else label="正在摊开记录" />
     </view>
   </paper-page>
 </template>

@@ -193,7 +193,6 @@ async function backHome() {
         </view>
       </view>
 
-      <ink-load v-else-if="mode === 'loading'" label="正在对这 6 位" />
     </view>
   </paper-page>
 </template>

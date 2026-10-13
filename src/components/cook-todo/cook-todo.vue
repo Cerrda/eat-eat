@@ -191,9 +191,8 @@ defineExpose({ refresh })
         </text>
       </view>
     </view>
-    <ink-load v-if="!ready" label="正在看待做" />
     <list-scroll
-      v-else
+      v-if="ready"
       :refreshing="pulling"
       :loading="loading"
       :finished="finished"

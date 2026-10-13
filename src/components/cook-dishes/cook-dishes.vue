@@ -139,9 +139,8 @@ defineExpose({ refresh })
     <view class="shrink-0">
       <screen-head title="菜品" :note="bareEmpty ? '还没有菜' : ''" />
     </view>
-    <ink-load v-if="!ready" label="正在翻菜" />
     <list-scroll
-      v-else
+      v-if="ready"
       :refreshing="pulling"
       :loading="loading"
       :finished="finished"

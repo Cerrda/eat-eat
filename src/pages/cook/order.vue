@@ -188,7 +188,6 @@ function cancel() {
         </text>
       </view>
       </template>
-      <ink-load v-else label="正在打开这一餐" />
     </view>
   </paper-page>
 </template>

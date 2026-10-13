@@ -3,10 +3,8 @@ import { ensurePageFonts, waitFontLayout } from '@/utils/fonts'
 
 const props = withDefaults(defineProps<{
   hold?: boolean
-  label?: string
 }>(), {
   hold: false,
-  label: '',
 })
 
 const fontsReady = ref(false)
@@ -58,6 +56,5 @@ onBeforeUnmount(() => {
     >
       <slot />
     </view>
-    <ink-load v-if="!painted" :label="label || undefined" />
   </view>
 </template>

@@ -121,7 +121,6 @@ function copyLink() {
           </view>
         </view>
       </template>
-      <ink-load v-else label="正在打开做法" />
     </view>
   </paper-page>
 </template>

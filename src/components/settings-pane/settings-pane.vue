@@ -109,8 +109,7 @@ async function leave() {
       <screen-head title="设置" />
     </view>
     <scroll-view scroll-y class="h-0 min-h-0 w-full flex-1" :show-scrollbar="false">
-      <ink-load v-if="!account" label="正在打开设置" />
-      <view v-else class="flex flex-col gap-32rpx pt-32rpx">
+      <view v-if="account" class="flex flex-col gap-32rpx pt-32rpx">
         <view class="flex flex-col">
           <view class="flex flex-col gap-12rpx border-0 border-t-4rpx border-#c9a297 border-solid py-32rpx">
             <view class="flex items-center justify-between">

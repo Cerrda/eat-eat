@@ -148,7 +148,6 @@ async function submit() {
           </view>
         </view>
       </template>
-      <ink-load v-else label="正在核对这一餐" />
     </view>
   </paper-page>
 </template>

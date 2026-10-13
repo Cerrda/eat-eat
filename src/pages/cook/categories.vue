@@ -134,8 +134,7 @@ async function add(event?: FieldEvent) {
   <paper-page>
     <view class="flex flex-col gap-32rpx">
       <back-bar label="菜品" fallback="/pages/home/index" />
-      <ink-load v-if="!ready" label="正在翻分类" />
-      <template v-else>
+      <template v-if="ready">
         <view class="flex flex-col items-start">
           <text class="text-72rpx text-#3c2428 leading-[1.2]" :class="faceOf('分类', 'serif')">
             分类

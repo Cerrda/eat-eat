@@ -64,6 +64,5 @@ function openOrder() {
         </stamp-button>
       </view>
     </view>
-    <ink-load v-else label="正在写下这一笔" />
   </paper-page>
 </template>

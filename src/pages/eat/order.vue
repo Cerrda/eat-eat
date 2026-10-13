@@ -175,6 +175,5 @@ function reorder() {
         </view>
       </view>
     </view>
-    <ink-load v-else label="正在打开这一餐" />
   </paper-page>
 </template>

@@ -84,7 +84,6 @@ onShareAppMessage(() => ({
           </view>
         </view>
       </view>
-      <ink-load v-else label="正在打开这间厨房" />
     </view>
   </paper-page>
 </template>

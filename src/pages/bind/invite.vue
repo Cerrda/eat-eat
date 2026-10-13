@@ -124,7 +124,6 @@ function copyCode() {
           </view>
         </view>
       </view>
-      <ink-load v-else label="正在写出邀请" />
     </view>
   </paper-page>
 </template>

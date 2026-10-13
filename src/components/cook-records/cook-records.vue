@@ -114,9 +114,8 @@ defineExpose({ refresh })
         </view>
       </screen-head>
     </view>
-    <ink-load v-if="!account" label="正在翻记下的" />
     <list-scroll
-      v-else
+      v-if="account"
       :refreshing="pulling"
       :loading="loading"
       :finished="finished"

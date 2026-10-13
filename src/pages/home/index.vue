@@ -184,7 +184,6 @@ watch(ready, () => {
         <tab-dock :role="role" :current="tabKey" :badges="tabBadges" @pick="showTab" />
       </template>
     </view>
-    <ink-load v-if="!shown" label="正在打开厨房" />
     <ink-toast />
     <ink-dialog />
   </view>

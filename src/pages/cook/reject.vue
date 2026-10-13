@@ -74,7 +74,6 @@ async function submit() {
       <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
         {{ headline }}
       </text>
-      <ink-load v-if="!order" label="正在打开这一餐" />
       <view class="box-border h-300rpx flex flex-col justify-between rounded-28rpx bg-#fff9f4 px-28rpx py-28rpx">
         <textarea
           v-model="note"

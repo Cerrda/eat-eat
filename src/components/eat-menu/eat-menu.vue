@@ -1169,11 +1169,8 @@ defineExpose({ refresh })
     <view class="shrink-0">
       <screen-head title="菜单" :note="bareEmpty ? '还没有上架的菜。' : ''" />
     </view>
-    <view v-if="!board" class="min-h-0 w-full flex flex-1 items-center justify-center">
-      <ink-load label="正在摆这一餐" />
-    </view>
     <list-scroll
-      v-else
+      v-if="board"
       ref="scroller"
       :inset-top="bareEmpty ? 28 : 64"
       :inset-bottom="trayClear"

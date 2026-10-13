@@ -102,9 +102,8 @@ function extra(order: OrderDetail) {
     <view class="shrink-0">
       <screen-head title="订单" :note="account && !total ? '还没有点过。' : ''" />
     </view>
-    <ink-load v-if="!account" label="正在翻点过的" />
     <list-scroll
-      v-else
+      v-if="account"
       :refreshing="pulling"
       :loading="loading"
       :finished="finished"
