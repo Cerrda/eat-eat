@@ -15,7 +15,6 @@ declare module 'vue' {
     DishCover: typeof import('./components/dish-cover/dish-cover.vue')['default']
     EatMenu: typeof import('./components/eat-menu/eat-menu.vue')['default']
     EatOrders: typeof import('./components/eat-orders/eat-orders.vue')['default']
-    FontGate: typeof import('./components/font-gate/font-gate.vue')['default']
     InkDialog: typeof import('./components/ink-dialog/ink-dialog.vue')['default']
     InkSpin: typeof import('./components/ink-spin/ink-spin.vue')['default']
     InkToast: typeof import('./components/ink-toast/ink-toast.vue')['default']

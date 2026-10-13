@@ -10,7 +10,6 @@ import SettingsPane from '@/components/settings-pane/settings-pane.vue'
 import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
 import { ensureAccount } from '@/utils/account'
-import { ensurePageFonts, waitFontLayout } from '@/utils/fonts'
 import { cookerTabs, eaterTabs, invalidateTabs, isTabFresh, noteBadges, onTabPick, tabBadges, tabKey, tabsOf } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
@@ -29,8 +28,6 @@ interface Pane {
 
 const role = ref<Role>('eater')
 const ready = ref(false)
-const fontsOn = ref(false)
-const shown = ref(false)
 const motion = ref<'' | 'left' | 'right'>('')
 const opened = reactive<Record<TabKey, boolean>>({
   menu: false,
@@ -126,42 +123,12 @@ async function boot() {
 onLoad(() => {
   void boot()
 })
-
-function delay(ms: number) {
-  return new Promise<void>(resolve => setTimeout(resolve, ms))
-}
-
-async function reveal() {
-  if (!fontsOn.value || !ready.value || shown.value)
-    return
-  await nextTick()
-  await delay(48)
-  if (!fontsOn.value || !ready.value)
-    return
-  shown.value = true
-}
-
-onMounted(async () => {
-  try {
-    await ensurePageFonts()
-    await waitFontLayout()
-  }
-  catch (error) {
-    console.error('[font] page', error)
-  }
-  fontsOn.value = true
-  await reveal()
-})
-
-watch(ready, () => {
-  void reveal()
-})
 </script>
 
 <template>
   <view class="relative h-screen w-full overflow-hidden bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
-    <view :class="shown ? '' : 'pointer-events-none opacity-0'">
+    <view >
       <template v-if="ready">
         <tab-scroll v-if="role === 'eater' && opened.menu" publish :active="tabKey === 'menu'" :motion="motion">
           <eat-menu ref="menuPane" :active="tabKey === 'menu'" />

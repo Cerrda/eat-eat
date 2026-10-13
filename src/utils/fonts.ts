@@ -183,18 +183,3 @@ export function bootFonts() {
   })()
   return globalJob
 }
-
-export async function ensurePageFonts() {
-  try {
-    await readyDir()
-  }
-  catch (error) {
-    console.error('[font] mkdir', error)
-    return
-  }
-  await applyAll(false)
-}
-
-export function waitFontLayout() {
-  return new Promise<void>(resolve => setTimeout(resolve, 32))
-}

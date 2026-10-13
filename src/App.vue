@@ -5,7 +5,7 @@ import { bootFonts } from '@/utils/fonts'
 
 onLaunch(() => {
   primeTopPadding()
-  bootFonts()
+  // bootFonts()
 })
 
 onShow(() => {

@@ -467,7 +467,6 @@ declare module 'vue' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly endChoose: UnwrapRef<typeof import('./utils/account')['endChoose']>
     readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
-    readonly ensurePageFonts: UnwrapRef<typeof import('./utils/fonts')['ensurePageFonts']>
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
@@ -781,7 +780,6 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
-    readonly waitFontLayout: UnwrapRef<typeof import('./utils/fonts')['waitFontLayout']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>
