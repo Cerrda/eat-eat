@@ -101,10 +101,10 @@ function readBase64(filePath: string) {
   })
 }
 
-function register(face: Face, base64: string) {
+function register(face: Face, base64: string, global: boolean) {
   return new Promise<void>((resolve, reject) => {
     uni.loadFontFace({
-      global: true,
+      global,
       family: face.family,
       source: `url("data:font/woff2;charset=utf-8;base64,${base64}")`,
       desc: { style: 'normal', weight: face.weight },
@@ -115,41 +115,86 @@ function register(face: Face, base64: string) {
   })
 }
 
-async function useLocal(face: Face, filePath: string) {
-  await register(face, await readBase64(filePath))
+const fileJobs = new Map<string, Promise<string>>()
+
+function readyFile(face: Face) {
+  let job = fileJobs.get(face.file)
+  if (!job) {
+    job = (async () => {
+      const filePath = `${FONT_DIR}/${face.file}`
+      if (!(await hasFile(filePath)))
+        await download(face.url, filePath)
+      return filePath
+    })().catch((error) => {
+      fileJobs.delete(face.file)
+      throw error
+    })
+    fileJobs.set(face.file, job)
+  }
+  return job
 }
 
-async function bootFace(face: Face) {
+async function applyFace(face: Face, global: boolean) {
   const filePath = `${FONT_DIR}/${face.file}`
   const cached = await hasFile(filePath)
-  if (!cached)
-    await download(face.url, filePath)
+  const path = await readyFile(face)
   try {
-    await useLocal(face, filePath)
+    await register(face, await readBase64(path), global)
   }
   catch (error) {
     if (!cached)
       throw error
+    fileJobs.delete(face.file)
     await removeFile(filePath)
     await download(face.url, filePath)
-    await useLocal(face, filePath)
+    fileJobs.set(face.file, Promise.resolve(filePath))
+    await register(face, await readBase64(filePath), global)
   }
-
 }
 
-export async function bootFonts() {
+async function applyAll(global: boolean) {
+  await Promise.all(FACES.map(async (face) => {
+    try {
+      await applyFace(face, global)
+    }
+    catch (error) {
+      console.error(`[font] ${face.family} ${face.weight}`, error)
+    }
+  }))
+}
+
+let dirJob: Promise<void> | null = null
+let globalJob: Promise<void> | null = null
+
+function readyDir() {
+  dirJob ??= ensureDir(FONT_DIR)
+  return dirJob
+}
+
+export function bootFonts() {
+  globalJob ??= (async () => {
+    try {
+      await readyDir()
+      await applyAll(true)
+    }
+    catch (error) {
+      console.error('[font] mkdir', error)
+    }
+  })()
+  return globalJob
+}
+
+export async function ensurePageFonts() {
   try {
-    await ensureDir(FONT_DIR)
-    await Promise.all(FACES.map(async (face) => {
-      try {
-        await bootFace(face)
-      }
-      catch (error) {
-        console.error(`[font] ${face.family} ${face.weight}`, error)
-      }
-    }))
+    await readyDir()
   }
   catch (error) {
     console.error('[font] mkdir', error)
+    return
   }
+  await applyAll(false)
+}
+
+export function waitFontLayout() {
+  return new Promise<void>(resolve => setTimeout(resolve, 32))
 }

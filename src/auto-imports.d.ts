@@ -53,6 +53,7 @@ declare global {
   const effectScope: typeof import('vue')['effectScope']
   const endChoose: typeof import('./utils/account')['endChoose']
   const ensureAccount: typeof import('./utils/account')['ensureAccount']
+  const ensurePageFonts: typeof import('./utils/fonts')['ensurePageFonts']
   const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const faceOf: typeof import('./utils/face')['faceOf']
@@ -369,6 +370,7 @@ declare global {
   const useWindowFocus: typeof import('@vueuse/core')['useWindowFocus']
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
+  const waitFontLayout: typeof import('./utils/fonts')['waitFontLayout']
   const watch: typeof import('vue')['watch']
   const watchArray: typeof import('@vueuse/core')['watchArray']
   const watchAtMost: typeof import('@vueuse/core')['watchAtMost']
@@ -465,6 +467,7 @@ declare module 'vue' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly endChoose: UnwrapRef<typeof import('./utils/account')['endChoose']>
     readonly ensureAccount: UnwrapRef<typeof import('./utils/account')['ensureAccount']>
+    readonly ensurePageFonts: UnwrapRef<typeof import('./utils/fonts')['ensurePageFonts']>
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
@@ -778,6 +781,7 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
+    readonly waitFontLayout: UnwrapRef<typeof import('./utils/fonts')['waitFontLayout']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>
