@@ -8,17 +8,20 @@ export default {
 
 <script setup lang="ts">
 import type { AccountView, RecordCard } from '@/api/eat'
-import { badges, dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
+import { dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, rememberAccount } from '@/utils/account'
+import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
-const pool = ref<RecordCard[]>([])
-const { shown, total, finished, loading, reset, more } = usePaged(pool)
+const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+  const listed = await listRecords({ page })
+  await primeFileUrls(listed.records.flatMap(record => record.photoFileIds))
+  return { rows: listed.records, total: listed.total }
+})
 const pulling = ref(false)
 let spin = 0
 
@@ -32,17 +35,14 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home' })
     if (!view || id !== spin)
       return
-    const listed = await listRecords()
-    const nextBadges = await badges()
+    await reset()
     if (id !== spin)
       return
+    const nextBadges = patchBadges({ records: 0 })
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
     noteBadges(nextBadges)
     markTabFresh('records')
-    pool.value = listed.records
-    reset()
-    await primeFileUrls(listed.records.flatMap(record => record.photoFileIds))
   }
   catch (err) {
     if (id === spin)
@@ -59,6 +59,15 @@ async function onPull() {
   }
   finally {
     pulling.value = false
+  }
+}
+
+async function onMore() {
+  try {
+    await more()
+  }
+  catch (err) {
+    showError(err)
   }
 }
 
@@ -97,8 +106,8 @@ defineExpose({ refresh })
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="记录" :note="account && !pool.length ? '还没有记下的一餐' : ''">
-        <view v-if="account && pool.length" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
+      <screen-head title="记录" :note="account && !total ? '还没有记下的一餐' : ''">
+        <view v-if="account && total" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
           <text class="text-26rpx text-#fbf3ea font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
             记下这餐
           </text>
@@ -113,9 +122,9 @@ defineExpose({ refresh })
       :finished="finished"
       :total="total"
       @refresh="onPull"
-      @more="more"
+      @more="onMore"
     >
-      <view v-if="!pool.length" class="w-full flex justify-center pb-16rpx pt-32rpx">
+      <view v-if="!total" class="w-full flex justify-center pb-16rpx pt-32rpx">
         <view class="relative h-336rpx w-456rpx" @tap="createOne">
           <view class="absolute left-0 top-84rpx box-border h-244rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-44rpx">
             <view class="flex items-center gap-12rpx">

@@ -31,7 +31,7 @@
     },
     "status": {
       "bsonType": "string",
-      "description": "on 已上架，off 已下架"
+      "description": "on 在菜单上，off 不在菜单上"
     },
     "deleted": {
       "bsonType": "bool"

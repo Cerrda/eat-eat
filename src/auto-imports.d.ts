@@ -7,6 +7,7 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const LIST_PAGE_SIZE: typeof import('./composables/usePaged')['LIST_PAGE_SIZE']
   const accountPath: typeof import('./utils/account')['accountPath']
   const addDays: typeof import('./utils/format')['addDays']
   const ask: typeof import('./utils/ui')['ask']
@@ -76,6 +77,7 @@ declare global {
   const loadAccount: typeof import('./utils/account')['loadAccount']
   const loadCookRemindAlways: typeof import('./utils/subscribe')['loadCookRemindAlways']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
+  const markAppShow: typeof import('./utils/account')['markAppShow']
   const markRaw: typeof import('vue')['markRaw']
   const markTabFresh: typeof import('./utils/tabs')['markTabFresh']
   const menuIntent: typeof import('./utils/draft')['menuIntent']
@@ -130,6 +132,7 @@ declare global {
   const openTab: typeof import('./utils/tabs')['openTab']
   const orderDraft: typeof import('./utils/draft')['orderDraft']
   const pageRoute: typeof import('./utils/hint')['pageRoute']
+  const patchBadges: typeof import('./utils/account')['patchBadges']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
   const peekAccount: typeof import('./utils/account')['peekAccount']
   const primeFileUrls: typeof import('./utils/files')['primeFileUrls']
@@ -149,6 +152,8 @@ declare global {
   const refDefault: typeof import('@vueuse/core')['refDefault']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
+  const releaseTodo: typeof import('./utils/account')['releaseTodo']
+  const reloadMe: typeof import('./utils/account')['reloadMe']
   const rememberAccount: typeof import('./utils/account')['rememberAccount']
   const renewCookRemindIfAlways: typeof import('./utils/subscribe')['renewCookRemindIfAlways']
   const resetHomeTab: typeof import('./utils/tabs')['resetHomeTab']
@@ -386,6 +391,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { PageResult } from './composables/usePaged'
+  import('./composables/usePaged')
+  // @ts-ignore
   export type { FaceRole } from './utils/face'
   import('./utils/face')
   // @ts-ignore
@@ -408,6 +416,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly LIST_PAGE_SIZE: UnwrapRef<typeof import('./composables/usePaged')['LIST_PAGE_SIZE']>
     readonly accountPath: UnwrapRef<typeof import('./utils/account')['accountPath']>
     readonly addDays: UnwrapRef<typeof import('./utils/format')['addDays']>
     readonly ask: UnwrapRef<typeof import('./utils/ui')['ask']>
@@ -477,6 +486,7 @@ declare module 'vue' {
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
     readonly loadCookRemindAlways: UnwrapRef<typeof import('./utils/subscribe')['loadCookRemindAlways']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
+    readonly markAppShow: UnwrapRef<typeof import('./utils/account')['markAppShow']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly markTabFresh: UnwrapRef<typeof import('./utils/tabs')['markTabFresh']>
     readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>
@@ -531,6 +541,7 @@ declare module 'vue' {
     readonly openTab: UnwrapRef<typeof import('./utils/tabs')['openTab']>
     readonly orderDraft: UnwrapRef<typeof import('./utils/draft')['orderDraft']>
     readonly pageRoute: UnwrapRef<typeof import('./utils/hint')['pageRoute']>
+    readonly patchBadges: UnwrapRef<typeof import('./utils/account')['patchBadges']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly peekAccount: UnwrapRef<typeof import('./utils/account')['peekAccount']>
     readonly primeFileUrls: UnwrapRef<typeof import('./utils/files')['primeFileUrls']>
@@ -550,6 +561,8 @@ declare module 'vue' {
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
+    readonly releaseTodo: UnwrapRef<typeof import('./utils/account')['releaseTodo']>
+    readonly reloadMe: UnwrapRef<typeof import('./utils/account')['reloadMe']>
     readonly rememberAccount: UnwrapRef<typeof import('./utils/account')['rememberAccount']>
     readonly renewCookRemindIfAlways: UnwrapRef<typeof import('./utils/subscribe')['renewCookRemindIfAlways']>
     readonly resetHomeTab: UnwrapRef<typeof import('./utils/tabs')['resetHomeTab']>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OrderDetail } from '@/api/eat'
 import { cancelOrder, dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
-import { ensureAccount } from '@/utils/account'
+import { ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { showHint } from '@/utils/hint'
 import { showError } from '@/utils/ui'
@@ -53,7 +53,10 @@ async function submit() {
   }
   pending.value = true
   try {
+    const wasPending = order.value?.status === 'pending'
     await cancelOrder(orderId.value, note.value.trim())
+    if (wasPending)
+      releaseTodo()
     uni.navigateBack()
   }
   catch (err) {

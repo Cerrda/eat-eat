@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, getDish, getOrder, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
-import { ensureAccount } from '@/utils/account'
+import { ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showError } from '@/utils/ui'
@@ -73,7 +73,10 @@ async function accept() {
     return
   pending.value = true
   try {
+    const wasPending = order.value.status === 'pending'
     order.value = await acceptOrder(order.value.orderId)
+    if (wasPending)
+      releaseTodo()
   }
   catch (err) {
     showError(err)

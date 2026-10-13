@@ -7,15 +7,15 @@ export default {
 </script>
 
 <script setup lang="ts">
-import type { Category, MealBoard, MenuDish, OrderDetail, Slot } from '@/api/eat'
-import { badges, dateLabel, getOrder, listCategories, listMenu, mealBoard, SLOT_LABEL } from '@/api/eat'
-import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, rememberAccount } from '@/utils/account'
+import type { Category, MealBoard, MenuDish, MenuName, OrderDetail, Slot } from '@/api/eat'
+import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard, SLOT_LABEL } from '@/api/eat'
+import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
+import { ensureAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
-import { markTabFresh, noteBadges } from '@/utils/tabs'
+import { markTabFresh } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const props = defineProps<{
@@ -30,7 +30,8 @@ const slots: Slot[] = ['morning', 'noon', 'evening']
 const slotShort: Record<Slot, string> = { morning: '早', noon: '中', evening: '晚' }
 
 const board = ref<MealBoard | null>(null)
-const pool = ref<MenuDish[]>([])
+const menuTotal = ref(0)
+const names = ref<MenuName[]>([])
 const categories = ref<Category[]>([])
 const keyword = ref('')
 keepOneLine(keyword)
@@ -67,6 +68,13 @@ const keptIds = ref<string[]>([])
 const freshIds = ref<string[]>([])
 const rolling = ref(false)
 const intoView = ref('')
+const tadaId = ref('')
+const scroller = ref<{
+  readFrame: () => Promise<{ scrollTop: number, scrollHeight: number, height: number } | null>
+  scrollTo: (top: number) => void
+} | null>(null)
+let focusToken = 0
+let tadaTimer: ReturnType<typeof setTimeout> | undefined
 const activeOrder = ref<OrderDetail | null>(null)
 const pulling = ref(false)
 let spin = 0
@@ -74,17 +82,42 @@ let rollTimer: ReturnType<typeof setTimeout> | undefined
 let rollToken = 0
 const ROLL_MS = 680
 
-const viewRows = computed(() => {
-  const word = keyword.value.trim()
-  let rows = pool.value
-  if (categoryId.value)
-    rows = rows.filter(dish => dish.categoryId === categoryId.value)
-  if (word)
-    rows = rows.filter(dish => dish.name.includes(word))
-  return rows
+function absorb(rows: MenuDish[]) {
+  if (!rows.length || !tray.value.length)
+    return
+  const byId = new Map(rows.map(dish => [dish.dishId, dish]))
+  let changed = false
+  const next = tray.value.map((item) => {
+    const dish = byId.get(item.dish.dishId)
+    if (!dish)
+      return item
+    if (
+      dish.name === item.dish.name
+      && dish.coverFileId === item.dish.coverFileId
+      && dish.categoryId === item.dish.categoryId
+      && dish.categoryName === item.dish.categoryName
+    ) {
+      return item
+    }
+    changed = true
+    return { ...item, dish }
+  })
+  if (changed)
+    tray.value = next
+}
+
+const { shown, total, finished, loading, reset, more, extend } = usePaged(async (page) => {
+  const menu = await listMenu({
+    page,
+    keyword: keyword.value.trim(),
+    categoryId: categoryId.value,
+  })
+  menuTotal.value = typeof menu.menuTotal === 'number' ? menu.menuTotal : menu.dishes.length
+  await primeFileUrls(menu.dishes.map(dish => dish.coverFileId))
+  absorb(menu.dishes)
+  return { rows: menu.dishes, total: menu.total }
 })
-const { shown, total, finished, loading, reset, more, reveal } = usePaged(viewRows)
-const bareEmpty = computed(() => Boolean(board.value) && pool.value.length === 0 && !keyword.value.trim() && !categoryId.value)
+const bareEmpty = computed(() => Boolean(board.value) && menuTotal.value === 0 && !keyword.value.trim() && !categoryId.value)
 
 const selectedBusy = computed(() => {
   if (!board.value)
@@ -96,12 +129,34 @@ onMounted(() => {
   void refresh()
 })
 
-watch([keyword, categoryId], () => {
-  reset()
+let filterTimer: ReturnType<typeof setTimeout> | undefined
+
+function reloadList(wait = 0) {
+  if (filterTimer)
+    clearTimeout(filterTimer)
+  filterTimer = setTimeout(() => {
+    filterTimer = undefined
+    void reset().catch(err => showError(err))
+  }, wait)
+}
+
+function cancelReload() {
+  if (!filterTimer)
+    return
+  clearTimeout(filterTimer)
+  filterTimer = undefined
+}
+
+watch(keyword, () => {
+  reloadList(280)
 })
 
-watch(pool, (rows) => {
-  const alive = new Set(rows.map(dish => dish.dishId))
+watch(categoryId, () => {
+  reloadList(0)
+})
+
+function forgetMissing(ids: string[]) {
+  const alive = new Set(ids)
   for (const dish of [...picked.value]) {
     if (!alive.has(dish.dishId))
       beginLeave(dish.dishId)
@@ -112,9 +167,16 @@ watch(pool, (rows) => {
   if (roundOn.value && roundIds.value.length === 0)
     endRound()
   fitWish()
+}
+
+watch(menuTotal, (total, prev) => {
+  if (total !== prev && names.value.length !== total)
+    names.value = []
+  if (total === 0)
+    forgetMissing([])
 })
 
-const randomRoom = computed(() => Math.max(pool.value.length - picked.value.length, 0))
+const randomRoom = computed(() => Math.max(menuTotal.value - picked.value.length, 0))
 const openIds = computed(() => roundIds.value.filter(id => !keptIds.value.includes(id)))
 const rollSealed = computed(() => roundOn.value && !rolling.value && keptIds.value.length >= wishCount.value)
 
@@ -138,23 +200,16 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'eater' })
     if (!view || id !== spin)
       return
-    const [menu, cats, meal, nextBadges] = await Promise.all([
-      listMenu(),
+    cancelReload()
+    const [cats, meal] = await Promise.all([
       listCategories(),
       mealBoard(),
-      badges(),
+      reset(),
     ])
     if (id !== spin)
       return
-    rememberAccount({ ...view, badges: nextBadges })
-    noteBadges(nextBadges)
-    pool.value = menu.dishes
     categories.value = cats.categories
     board.value = meal
-    reset()
-    await primeFileUrls(menu.dishes.map(dish => dish.coverFileId))
-    if (id !== spin)
-      return
     ensureSelection()
     markTabFresh('menu')
   }
@@ -268,8 +323,30 @@ function endRound() {
   freshIds.value = []
 }
 
-function drawDishes(total: number, exclude: Set<string>) {
-  const bag = pool.value.filter(dish => !exclude.has(dish.dishId))
+async function ensureNames() {
+  if (menuTotal.value > 0 && names.value.length >= menuTotal.value)
+    return
+  const listed = await listMenuNames()
+  menuTotal.value = listed.names.length
+  names.value = listed.names
+  forgetMissing(names.value.map(item => item.dishId))
+}
+
+function dishFromName(item: MenuName): MenuDish {
+  const loaded = shown.value.find(dish => dish.dishId === item.dishId)
+  if (loaded)
+    return loaded
+  return {
+    dishId: item.dishId,
+    name: item.name,
+    categoryId: '',
+    categoryName: '',
+    coverFileId: item.coverFileId,
+  }
+}
+
+function drawDishes(count: number, exclude: Set<string>) {
+  const bag = names.value.filter(dish => !exclude.has(dish.dishId))
   for (let index = bag.length - 1; index > 0; index -= 1) {
     const swap = Math.floor(Math.random() * (index + 1))
     const left = bag[index]
@@ -279,7 +356,7 @@ function drawDishes(total: number, exclude: Set<string>) {
     bag[index] = right
     bag[swap] = left
   }
-  return bag.slice(0, total)
+  return bag.slice(0, count).map(dishFromName)
 }
 
 function afterRoll(apply: () => void) {
@@ -365,12 +442,22 @@ function bumpWish(step: number) {
   wishCount.value = next
 }
 
-function beginRound() {
+async function beginRound() {
   if (roundOn.value || rolling.value || selectedBusy.value)
     return
+  rolling.value = true
+  try {
+    await ensureNames()
+  }
+  catch (err) {
+    rolling.value = false
+    showError(err)
+    return
+  }
   const exclude = new Set(picked.value.map(dish => dish.dishId))
   const drawn = drawDishes(wishCount.value, exclude)
   if (drawn.length < wishCount.value) {
+    rolling.value = false
     showHint(drawn.length ? '没有那么多可以随便的菜' : '菜单上的菜都加上了')
     return
   }
@@ -384,16 +471,26 @@ function beginRound() {
   })
 }
 
-function rollAgain() {
+async function rollAgain() {
   if (!roundOn.value || rolling.value || rollSealed.value)
     return
   const open = openIds.value
   const need = wishCount.value - keptIds.value.length
   if (need < 1)
     return
+  rolling.value = true
+  try {
+    await ensureNames()
+  }
+  catch (err) {
+    rolling.value = false
+    showError(err)
+    return
+  }
   const exclude = new Set(picked.value.map(dish => dish.dishId))
   const drawn = drawDishes(need, exclude)
   if (!drawn.length) {
+    rolling.value = false
     showHint('没有别的菜可以换了')
     return
   }
@@ -429,24 +526,124 @@ function dishKey(id: string) {
   return `dish-${id.replace(/[^A-Za-z0-9_-]/g, '')}`
 }
 
-async function focusDish(id: string) {
-  const dish = pool.value.find(item => item.dishId === id)
-  if (!dish)
-    return
-  const word = keyword.value.trim()
-  const hidden = Boolean(categoryId.value && dish.categoryId !== categoryId.value) || Boolean(word && !dish.name.includes(word))
-  if (hidden) {
-    categoryId.value = ''
-    keyword.value = ''
-    await nextTick()
+function nodeBox(selector: string) {
+  const proxy = instance?.proxy
+  if (!proxy)
+    return Promise.resolve(null)
+  return new Promise<{ top: number, height: number } | null>((resolve) => {
+    uni.createSelectorQuery().in(proxy).select(selector).boundingClientRect((rect) => {
+      const box = rect && !Array.isArray(rect) ? rect : null
+      resolve(box && box.height ? { top: box.top, height: box.height } : null)
+    }).exec()
+  })
+}
+
+function playTada(id: string, wait: number, token: number) {
+  if (tadaTimer)
+    clearTimeout(tadaTimer)
+  tadaId.value = ''
+  tadaTimer = setTimeout(() => {
+    tadaTimer = undefined
+    if (token !== focusToken || leftPage)
+      return
+    tadaId.value = id
+  }, wait)
+}
+
+async function onMore() {
+  try {
+    await more()
   }
-  const index = viewRows.value.findIndex(item => item.dishId === id)
-  if (index < 0)
+  catch (err) {
+    showError(err)
+  }
+}
+
+function locateOpen() {
+  return !keyword.value.trim() && !categoryId.value && !filterTimer
+}
+
+function fillSpan(loaded: number, dishId: string) {
+  const index = names.value.findIndex(item => item.dishId === dishId)
+  if (index < 0 || index < loaded)
+    return 0
+  const end = Math.ceil((index + 1) / LIST_PAGE_SIZE) * LIST_PAGE_SIZE
+  return end - loaded
+}
+
+async function pullWindow(offset: number, pageSize: number) {
+  const menu = await listMenu({ offset, pageSize })
+  menuTotal.value = typeof menu.menuTotal === 'number' ? menu.menuTotal : menu.total
+  await primeFileUrls(menu.dishes.map(dish => dish.coverFileId))
+  absorb(menu.dishes)
+  return { rows: menu.dishes, total: menu.total }
+}
+
+async function focusDish(id: string) {
+  if (!locateOpen())
     return
-  reveal(index)
-  intoView.value = 'dish-focus'
+  const token = ++focusToken
+  if (!picked.value.some(item => item.dishId === id))
+    return
+  try {
+    await ensureNames()
+    if (token !== focusToken || leftPage)
+      return
+    if (!shown.value.some(item => item.dishId === id)) {
+      await extend(loaded => fillSpan(loaded, id), pullWindow)
+      if (token !== focusToken || leftPage)
+        return
+      if (!shown.value.some(item => item.dishId === id))
+        return
+    }
+  }
+  catch (err) {
+    if (token === focusToken)
+      showError(err)
+    return
+  }
+  intoView.value = ''
   await nextTick()
-  intoView.value = dishKey(id)
+  await new Promise(resolve => setTimeout(resolve, 32))
+  if (token !== focusToken || leftPage)
+    return
+  let placed = await placeDish(id)
+  if (placed === 'miss') {
+    await new Promise(resolve => setTimeout(resolve, 48))
+    if (token !== focusToken || leftPage)
+      return
+    placed = await placeDish(id)
+  }
+  if (token !== focusToken || leftPage)
+    return
+  if (placed === 'miss') {
+    intoView.value = 'dish-focus'
+    await nextTick()
+    if (token !== focusToken || leftPage)
+      return
+    intoView.value = dishKey(id)
+  }
+  playTada(id, placed === 'still' ? 32 : 320, token)
+}
+
+async function placeDish(id: string) {
+  const list = scroller.value
+  if (!list)
+    return 'miss'
+  const [row, frame] = await Promise.all([
+    nodeBox(`#${dishKey(id)}`),
+    list.readFrame(),
+  ])
+  if (!row || !frame)
+    return 'miss'
+  const mid = uni.getWindowInfo().windowHeight / 2
+  const delta = row.top + row.height / 2 - mid
+  const max = Math.max(0, frame.scrollHeight - frame.height)
+  const target = Math.min(max, Math.max(0, frame.scrollTop + delta))
+  if (Math.abs(target - frame.scrollTop) <= 1)
+    return 'still'
+  list.scrollTo(target)
+  return 'moved'
 }
 
 const againMark = ref(1)
@@ -470,7 +667,7 @@ function viewOrdered() {
 }
 
 const showTray = computed(() => {
-  if (!board.value || !pool.value.length)
+  if (!board.value || !menuTotal.value)
     return false
   return Boolean(selectedBusy.value) || picked.value.length > 0
 })
@@ -846,6 +1043,8 @@ onUnmounted(() => {
     clearTimeout(rollTimer)
   if (trayTimer)
     clearTimeout(trayTimer)
+  if (tadaTimer)
+    clearTimeout(tadaTimer)
   for (const timer of chipTimers.values())
     clearTimeout(timer)
   for (const timer of nameTimers.values())
@@ -968,6 +1167,7 @@ defineExpose({ refresh })
     <ink-load v-if="!board" label="正在摆这一餐" />
     <list-scroll
       v-else
+      ref="scroller"
       :inset-top="bareEmpty ? 28 : 64"
       :inset-bottom="trayClear"
       :refreshing="pulling"
@@ -976,7 +1176,7 @@ defineExpose({ refresh })
       :total="total"
       :into-view="intoView"
       @refresh="onPull"
-      @more="more"
+      @more="onMore"
     >
       <view v-if="bareEmpty" class="w-full flex flex-col items-center pt-28rpx">
         <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
@@ -1090,7 +1290,7 @@ defineExpose({ refresh })
             </view>
           </scroll-view>
         </view>
-        <view v-if="pool.length && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-28rpx py-20rpx">
+        <view v-if="menuTotal && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-28rpx py-20rpx">
           <roll-dice :rolling="rolling" />
           <view class="random-copy min-w-0 flex-1">
             <view class="random-title" :class="roundOn ? 'random-title-up' : ''">
@@ -1162,6 +1362,7 @@ defineExpose({ refresh })
         >
           <view
             class="h-144rpx w-144rpx shrink-0 rounded-36rpx"
+            :class="tadaId === dish.dishId ? 'dish-tada' : ''"
             :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
           >
             <dish-cover
@@ -1575,6 +1776,39 @@ defineExpose({ refresh })
     transform 240ms cubic-bezier(0.22, 1.12, 0.36, 1);
 }
 
+.dish-tada {
+  transform-origin: center center;
+  animation: dish-tada 680ms linear both;
+}
+
+@keyframes dish-tada {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  10%,
+  20% {
+    transform: scale(0.98) rotate(-2deg);
+  }
+
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale(1.045) rotate(2deg);
+  }
+
+  40%,
+  60%,
+  80% {
+    transform: scale(1.045) rotate(-2deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 @keyframes tray-in {
   from {
     opacity: 0;
@@ -1652,7 +1886,8 @@ defineExpose({ refresh })
   .tray-name-strip-on,
   .tray-name-ease,
   .tray-keep,
-  .tray-keep-on {
+  .tray-keep-on,
+  .dish-tada {
     transition: none;
     animation: none;
   }

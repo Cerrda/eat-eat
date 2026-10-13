@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Category } from '@/api/eat'
-import { createCategory, deleteCategory, listCategories, listDishes, renameCategory } from '@/api/eat'
+import { createCategory, deleteCategory, listCategories, renameCategory } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { ask, askText, showError } from '@/utils/ui'
@@ -14,7 +14,6 @@ definePage({
 })
 
 const categories = ref<Category[]>([])
-const counts = ref<Record<string, number>>({})
 const draft = ref('')
 const boxKey = ref(0)
 const focused = ref(false)
@@ -35,15 +34,8 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'cooker' })
     if (!view)
       return
-    const [listed, dishes] = await Promise.all([listCategories(), listDishes()])
+    const listed = await listCategories()
     categories.value = listed.categories
-    const next: Record<string, number> = {}
-    for (const dish of dishes.dishes) {
-      if (!dish.categoryId)
-        continue
-      next[dish.categoryId] = (next[dish.categoryId] || 0) + 1
-    }
-    counts.value = next
     ready.value = true
   }
   catch (err) {
@@ -161,14 +153,14 @@ async function add(event?: FieldEvent) {
           <text class="min-w-0 flex-1 text-44rpx text-#3c2428" :class="faceOf(category.name, 'serif')">
             {{ category.name }}
           </text>
-          <text class="text-28rpx text-#7a534c" :class="faceOf(counts[category.categoryId] ? `${counts[category.categoryId]} 道` : '还没有菜', 'mono')">
-            {{ counts[category.categoryId] ? `${counts[category.categoryId]} 道` : '还没有菜' }}
+          <text class="text-28rpx text-#7a534c" :class="faceOf(category.count ? `${category.count} 道` : '还没有菜', 'mono')">
+            {{ category.count ? `${category.count} 道` : '还没有菜' }}
           </text>
           <text class="text-28rpx text-#792b3e" :class="faceOf('改名', 'sans')" @tap="rename(category)">
             改名
           </text>
           <text
-            v-if="!counts[category.categoryId]"
+            v-if="!category.count"
             class="text-28rpx text-#9c342c"
             :class="faceOf('删除', 'sans')"
             @tap="remove(category)"

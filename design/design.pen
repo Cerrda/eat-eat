@@ -10638,18 +10638,6 @@
                           ]
                         },
                         {
-                          "type": "text",
-                          "id": "omwOp",
-                          "name": "已上架",
-                          "fill": "$brass",
-                          "content": "已上架",
-                          "lineHeight": 1.15,
-                          "fontFamily": "$font-mono",
-                          "fontSize": 15,
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.2
-                        },
-                        {
                           "type": "frame",
                           "id": "GsYO0",
                           "name": "菜品列表",
@@ -10735,17 +10723,6 @@
                                       "fontWeight": "normal"
                                     }
                                   ]
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "ycL0T",
-                                  "name": "状态",
-                                  "fill": "$brass",
-                                  "content": "已上架",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -10828,17 +10805,6 @@
                                       "fontWeight": "normal"
                                     }
                                   ]
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "dAdFS",
-                                  "name": "状态",
-                                  "fill": "$brass",
-                                  "content": "已上架",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -10921,124 +10887,8 @@
                                       "fontWeight": "normal"
                                     }
                                   ]
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "E9ePeR",
-                                  "name": "状态",
-                                  "fill": "$brass",
-                                  "content": "已上架",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal"
                                 }
                               ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "PA8oZ",
-                          "name": "已下架",
-                          "fill": "$brass",
-                          "content": "已下架",
-                          "lineHeight": 1.15,
-                          "fontFamily": "$font-mono",
-                          "fontSize": 15,
-                          "fontWeight": "normal",
-                          "letterSpacing": 1.2
-                        },
-                        {
-                          "type": "frame",
-                          "id": "i7EoH",
-                          "name": "蒸蛋羹",
-                          "width": "fill_container",
-                          "stroke": "$line",
-                          "strokeWidth": {
-                            "top": 2
-                          },
-                          "gap": 12,
-                          "padding": [
-                            12,
-                            0
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "D4SRC",
-                              "name": "蒸蛋羹封面",
-                              "metadata": {
-                                "type": "unsplash",
-                                "username": "dresla",
-                                "link": "https://unsplash.com/@dresla",
-                                "author": "Dresla"
-                              },
-                              "clip": true,
-                              "width": 56,
-                              "height": 56,
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "cover"
-                              },
-                              "cornerRadius": 18,
-                              "stroke": "#FFF9F4",
-                              "strokeWidth": 3,
-                              "strokeAlignment": "inner",
-                              "effect": {
-                                "type": "shadow",
-                                "shadowType": "outer",
-                                "color": "#4E222D47",
-                                "offset": {
-                                  "x": 3,
-                                  "y": 4
-                                }
-                              }
-                            },
-                            {
-                              "type": "frame",
-                              "id": "bwuD5",
-                              "name": "文字",
-                              "width": "fill_container",
-                              "layout": "vertical",
-                              "gap": 2,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "BjfUY",
-                                  "name": "菜名",
-                                  "fill": "$ink",
-                                  "content": "蒸蛋羹",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-serif",
-                                  "fontSize": 18,
-                                  "fontWeight": "normal"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "X8ZJWq",
-                                  "name": "元信息",
-                                  "fill": "$muted",
-                                  "content": "汤羹",
-                                  "fontFamily": "$font-sans",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "text",
-                              "id": "c6NP8",
-                              "name": "状态",
-                              "fill": "$muted",
-                              "content": "已下架",
-                              "lineHeight": 1.15,
-                              "fontFamily": "$font-mono",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -11430,7 +11280,7 @@
                       "padding": [
                         4,
                         22,
-                        24,
+                        36,
                         22
                       ],
                       "children": [
@@ -11946,6 +11796,30 @@
                               "fontFamily": "$font-sans",
                               "fontSize": 15,
                               "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tQTGL",
+                          "name": "删除",
+                          "width": "fill_container",
+                          "padding": [
+                            8,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "iX2Fs",
+                              "name": "删除字",
+                              "fill": "$danger",
+                              "content": "删除",
+                              "fontFamily": "$font-sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -30479,7 +30353,7 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "删掉之后，列表里不会再看到。正在做的那一餐只能先下架。",
+                          "content": "删掉之后，列表里不会再看到。正在做的那一餐，做完再删。",
                           "lineHeight": 1.6,
                           "fontFamily": "$font-sans",
                           "fontSize": 15,

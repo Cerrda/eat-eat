@@ -19,7 +19,6 @@ import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const ready = ref(false)
-const pool = ref<DishCard[]>([])
 const categories = ref<Category[]>([])
 const keyword = ref('')
 keepOneLine(keyword)
@@ -27,19 +26,16 @@ const categoryId = ref('')
 const pulling = ref(false)
 let spin = 0
 
-const viewRows = computed(() => {
-  const word = keyword.value.trim()
-  let rows = pool.value
-  if (categoryId.value)
-    rows = rows.filter(dish => dish.categoryId === categoryId.value)
-  if (word)
-    rows = rows.filter(dish => dish.name.includes(word))
-  return rows
+const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+  const listed = await listDishes({
+    page,
+    keyword: keyword.value.trim(),
+    categoryId: categoryId.value,
+  })
+  await primeFileUrls(listed.dishes.map(dish => dish.coverFileId))
+  return { rows: listed.dishes, total: listed.total }
 })
-const { shown, total, finished, loading, reset, more } = usePaged(viewRows)
-const onShelf = computed(() => shown.value.filter(dish => dish.status === 'on'))
-const offShelf = computed(() => shown.value.filter(dish => dish.status === 'off'))
-const bareEmpty = computed(() => ready.value && pool.value.length === 0 && !keyword.value.trim() && !categoryId.value)
+const bareEmpty = computed(() => ready.value && total.value === 0 && !keyword.value.trim() && !categoryId.value)
 const emptyCopy = computed(() => {
   if (keyword.value.trim())
     return '没有找到这道菜。'
@@ -52,8 +48,23 @@ onMounted(() => {
   void refresh()
 })
 
-watch([keyword, categoryId], () => {
-  reset()
+let filterTimer: ReturnType<typeof setTimeout> | undefined
+
+function reloadList(wait = 0) {
+  if (filterTimer)
+    clearTimeout(filterTimer)
+  filterTimer = setTimeout(() => {
+    filterTimer = undefined
+    void reset().catch(err => showError(err))
+  }, wait)
+}
+
+watch(keyword, () => {
+  reloadList(280)
+})
+
+watch(categoryId, () => {
+  reloadList(0)
 })
 
 async function refresh() {
@@ -62,25 +73,33 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'cooker' })
     if (!view || id !== spin)
       return
-    const [listed, cats] = await Promise.all([
-      listDishes(),
+    if (filterTimer) {
+      clearTimeout(filterTimer)
+      filterTimer = undefined
+    }
+    const [cats] = await Promise.all([
       listCategories(),
+      reset(),
     ])
     if (id !== spin)
       return
     noteBadges(view.badges)
-    pool.value = listed.dishes
     categories.value = cats.categories
-    reset()
     ready.value = true
-    await primeFileUrls(listed.dishes.map(dish => dish.coverFileId))
-    if (id !== spin)
-      return
     markTabFresh('dishes')
   }
   catch (err) {
     if (id === spin)
       showError(err)
+  }
+}
+
+async function onMore() {
+  try {
+    await more()
+  }
+  catch (err) {
+    showError(err)
   }
 }
 
@@ -128,7 +147,7 @@ defineExpose({ refresh })
       :finished="finished"
       :total="total"
       @refresh="onPull"
-      @more="more"
+      @more="onMore"
     >
       <view v-if="bareEmpty" class="w-full flex flex-col items-center pb-16rpx pt-32rpx">
         <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
@@ -193,12 +212,8 @@ defineExpose({ refresh })
             </view>
           </scroll-view>
         </view>
-        <template v-if="onShelf.length">
-          <text class="text-30rpx text-#792b3e" :class="faceOf('已上架', 'mono')">
-            已上架
-          </text>
-          <view class="flex flex-col">
-          <view v-for="dish in onShelf" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
+        <view v-if="shown.length" class="flex flex-col">
+          <view v-for="dish in shown" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
             <view class="relative h-120rpx w-118rpx shrink-0 -mb-8rpx -mr-6rpx">
               <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-#4e222d/28" />
               <view class="absolute left-0 top-0 h-112rpx w-112rpx overflow-hidden rounded-36rpx">
@@ -214,40 +229,9 @@ defineExpose({ refresh })
                 {{ dish.categoryName || '未分类' }}
               </text>
             </view>
-            <text class="shrink-0 text-28rpx text-#792b3e" :class="faceOf('已上架', 'mono')">
-              已上架
-            </text>
           </view>
-          </view>
-        </template>
-        <template v-if="offShelf.length">
-          <text class="text-30rpx text-#792b3e" :class="faceOf('已下架', 'mono')">
-            已下架
-          </text>
-          <view class="flex flex-col">
-          <view v-for="dish in offShelf" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
-            <view class="relative h-120rpx w-118rpx shrink-0 -mb-8rpx -mr-6rpx">
-              <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-#4e222d/28" />
-              <view class="absolute left-0 top-0 h-112rpx w-112rpx overflow-hidden rounded-36rpx">
-                <dish-cover class="h-full w-full" :file-id="dish.coverFileId" :name="dish.name" />
-              </view>
-              <view class="pointer-events-none absolute left-0 top-0 z-1 box-border h-112rpx w-112rpx border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
-            </view>
-            <view class="min-w-0 flex flex-1 flex-col gap-4rpx">
-              <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
-                {{ dish.name }}
-              </text>
-              <text class="text-28rpx text-#7a534c" :class="faceOf(dish.categoryName || '未分类', 'sans')">
-                {{ dish.categoryName || '未分类' }}
-              </text>
-            </view>
-            <text class="shrink-0 text-28rpx text-#7a534c" :class="faceOf('已下架', 'mono')">
-              已下架
-            </text>
-          </view>
-          </view>
-        </template>
-        <text v-if="emptyCopy && !onShelf.length && !offShelf.length" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">
+        </view>
+        <text v-if="emptyCopy && !shown.length" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">
           {{ emptyCopy }}
         </text>
       </view>

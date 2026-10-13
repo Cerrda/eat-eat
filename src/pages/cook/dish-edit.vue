@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Category, DishDetail } from '@/api/eat'
-import { deleteDish, getDish, listCategories, publishDish, unpublishDish } from '@/api/eat'
+import { deleteDish, getDish, listCategories, publishDish } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImage, ignoredCancel, primeFileUrls, resolveFileUrl, uploadImage } from '@/utils/files'
@@ -22,7 +22,6 @@ definePage({
 const dishId = ref('')
 const categories = ref<Category[]>([])
 const loaded = ref(false)
-const status = ref<'on' | 'off' | ''>('')
 const name = ref('')
 keepOneLine(name)
 const categoryId = ref('')
@@ -64,7 +63,6 @@ async function refresh() {
 }
 
 function fill(dish: DishDetail) {
-  status.value = dish.status
   name.value = dish.name
   categoryId.value = dish.categoryId
   ingredients.value = dish.ingredients.join('\n')
@@ -114,22 +112,6 @@ async function publish() {
   }
 }
 
-async function unpublish() {
-  if (!dishId.value || pending.value)
-    return
-  pending.value = 'off'
-  try {
-    await unpublishDish(dishId.value)
-    uni.navigateBack()
-  }
-  catch (err) {
-    showError(err)
-  }
-  finally {
-    pending.value = ''
-  }
-}
-
 function openCategories() {
   uni.navigateTo({ url: '/pages/cook/categories' })
 }
@@ -137,7 +119,7 @@ function openCategories() {
 async function remove() {
   if (!dishId.value || pending.value)
     return
-  const agreed = await ask('删除这道菜', '删掉之后，列表里不会再看到。正在做的那一餐只能先下架。', '删除')
+  const agreed = await ask('删除这道菜', '删掉之后，列表里不会再看到。正在做的那一餐，做完再删。', '删除')
   if (!agreed)
     return
   pending.value = 'delete'
@@ -294,12 +276,6 @@ async function remove() {
         <stamp-button :disabled="pending !== ''" :busy="pending === 'publish'" @button-tap="publish">
           {{ pending === 'publish' ? '正在上架' : '上架' }}
         </stamp-button>
-        <view v-if="dishId && status === 'on'" class="flex items-center justify-center gap-16rpx py-8rpx" @tap="unpublish">
-          <ink-spin v-if="pending === 'off'" tone="muted" />
-          <text class="text-28rpx text-#7a534c" :class="faceOf(pending === 'off' ? '正在下架' : '下架', 'sans')">
-            {{ pending === 'off' ? '正在下架' : '下架' }}
-          </text>
-        </view>
         <view v-if="dishId" class="flex items-center justify-center gap-16rpx py-8rpx" @tap="remove">
           <ink-spin v-if="pending === 'delete'" tone="muted" />
           <text class="text-28rpx text-#9c342c" :class="faceOf(pending === 'delete' ? '正在删除' : '删除', 'sans')">

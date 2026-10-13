@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { OrderDetail, RecordCard, Slot } from '@/api/eat'
-import { createRecord, dateLabel, deleteRecord, getOrder, listRecords, SLOT_LABEL, updateRecord } from '@/api/eat'
+import { createRecord, dateLabel, deleteRecord, getOrder, getRecord, SLOT_LABEL, updateRecord } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
@@ -65,12 +65,7 @@ async function load() {
       locked.value = true
     }
     else if (recordId.value) {
-      const listed = await listRecords()
-      const found = listed.records.find(item => item.recordId === recordId.value)
-      if (!found) {
-        showHint('没有这一餐的记录')
-        return
-      }
+      const found = await getRecord(recordId.value)
       applyRecord(found)
       locked.value = true
       await primeFileUrls(found.photoFileIds)

@@ -2,7 +2,7 @@
 import type { Role } from '@/api/eat'
 import { createInvite, EatRequestError } from '@/api/eat'
 import { useTopPadding } from '@/composables/useTopPadding'
-import { endChoose, isChoosing, loadAccount, routeAccount } from '@/utils/account'
+import { endChoose, isChoosing, loadAccount, reloadMe, routeAccount } from '@/utils/account'
 import { normalizeCode } from '@/utils/format'
 import { ask, showError } from '@/utils/ui'
 
@@ -29,7 +29,7 @@ async function boot(query?: Record<string, string | undefined>) {
     return
   }
   try {
-    const view = await loadAccount(true)
+    const view = await loadAccount()
     const backToChoose = isChoosing() && view.next === 'invite'
     if (view.next !== 'choose' && !backToChoose) {
       endChoose()
@@ -72,7 +72,7 @@ async function generate(role: Role) {
   catch (err) {
     if (err instanceof EatRequestError && err.errCode === 'ALREADY_BOUND') {
       endChoose()
-      const view = await loadAccount(true)
+      const view = await reloadMe()
       routeAccount(view)
       return
     }

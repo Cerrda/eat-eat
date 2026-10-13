@@ -1,9 +1,13 @@
-import type { AccountView, Role } from '@/api/eat'
-import { EatRequestError, enter, me } from '@/api/eat'
-import { resetHomeTab } from '@/utils/tabs'
+import type { AccountView, Badges, Role } from '@/api/eat'
+import { badges, EatRequestError, enter, me } from '@/api/eat'
+import { noteBadges, resetHomeTab } from '@/utils/tabs'
 
 let current: AccountView | null = null
 let choosing = false
+let showId = 0
+let fetchedId = -1
+let pending: Promise<AccountView> | null = null
+let pendingId = -1
 
 export function beginChoose() {
   choosing = true
@@ -25,23 +29,85 @@ export function peekAccount() {
   return current
 }
 
-export async function loadAccount(fresh = false) {
-  if (!fresh && current)
-    return current
+export function markAppShow() {
+  showId += 1
+}
+
+async function fetchMe() {
   const token = uni.getStorageSync('uni_id_token')
   try {
-    const view = token ? await me() : await enter()
-    current = view
-    return view
+    return token ? await me() : await enter()
   }
   catch (err) {
     const expired = err instanceof EatRequestError && err.errCode === 'NOT_LOGIN'
     if (!expired)
       throw err
-    const view = await enter()
-    current = view
-    return view
+    return enter()
   }
+}
+
+function keepAccount(view: AccountView, id: number) {
+  if (id !== showId)
+    return view
+  current = view
+  fetchedId = id
+  noteBadges(view.badges)
+  return view
+}
+
+async function fetchOpen(id: number) {
+  const view = await fetchMe()
+  let nextBadges = view.badges
+  try {
+    nextBadges = await badges()
+  }
+  catch {
+    // 角标失败时沿用账号里带回的数量，页面仍可打开
+  }
+  return keepAccount({ ...view, badges: nextBadges }, id)
+}
+
+export async function loadAccount(fresh = false) {
+  if (fresh)
+    return reloadMe()
+  if (current && fetchedId === showId)
+    return current
+  if (pending && pendingId === showId)
+    return pending
+  const id = showId
+  const run = fetchOpen(id)
+  pending = run
+  pendingId = id
+  try {
+    return await run
+  }
+  finally {
+    if (pending === run)
+      pending = null
+  }
+}
+
+export async function reloadMe() {
+  const view = await fetchMe()
+  current = view
+  fetchedId = showId
+  noteBadges(view.badges)
+  return view
+}
+
+export function patchBadges(partial: Partial<Badges>) {
+  const base = current?.badges ?? { todo: 0, orders: 0, records: 0 }
+  const next = { ...base, ...partial }
+  if (current)
+    current.badges = next
+  noteBadges(next)
+  return next
+}
+
+export function releaseTodo() {
+  if (current?.role !== 'cooker')
+    return
+  patchBadges({ todo: Math.max(0, current.badges.todo - 1) })
 }
 
 export function accountPath(view: AccountView) {
@@ -90,7 +156,7 @@ export async function ensureAccount(expect: {
   next?: AccountView['next'] | AccountView['next'][]
   role?: Role
 } = {}) {
-  const view = await loadAccount(true)
+  const view = await loadAccount()
   const allowed = expect.next == null
     ? null
     : (Array.isArray(expect.next) ? expect.next : [expect.next])

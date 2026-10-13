@@ -142,7 +142,7 @@ function reset() {
 
 async function backHome() {
   try {
-    const view = await loadAccount(true)
+    const view = await loadAccount()
     routeAccount(view)
   }
   catch (err) {

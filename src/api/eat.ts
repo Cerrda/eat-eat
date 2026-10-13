@@ -5,6 +5,7 @@ import type {
   DishQuery,
   EatCloud,
   MenuQuery,
+  PageQuery,
   PublishDishInput,
   Role,
   Slot,
@@ -21,6 +22,7 @@ export type {
   DishQuery,
   MealBoard,
   MenuDish,
+  MenuName,
   OrderDetail,
   OrderStatus,
   RecordCard,
@@ -239,16 +241,16 @@ export function publishDish(input: PublishDishInput) {
   return callEat(eat => eat.publishDish(input))
 }
 
-export function unpublishDish(dishId: string) {
-  return callEat(eat => eat.unpublishDish({ dishId }))
-}
-
 export function deleteDish(dishId: string) {
   return callEat(eat => eat.deleteDish({ dishId }))
 }
 
 export function listMenu(query?: MenuQuery) {
   return callEat(eat => eat.listMenu(query))
+}
+
+export function listMenuNames() {
+  return callEat(eat => eat.listMenuNames())
 }
 
 export function mealBoard() {
@@ -259,12 +261,12 @@ export function createOrder(input: { date: string, slot: Slot, dishIds: string[]
   return callEat(eat => eat.createOrder(input))
 }
 
-export function listTodo() {
-  return callEat(eat => eat.listTodo())
+export function listTodo(query?: PageQuery) {
+  return callEat(eat => eat.listTodo(query))
 }
 
-export function listOrders() {
-  return callEat(eat => eat.listOrders())
+export function listOrders(query?: PageQuery) {
+  return callEat(eat => eat.listOrders(query))
 }
 
 export function getOrder(orderId: string) {
@@ -287,8 +289,12 @@ export function getCookDish(orderId: string, dishId: string) {
   return callEat(eat => eat.getCookDish({ orderId, dishId }))
 }
 
-export function listRecords() {
-  return callEat(eat => eat.listRecords())
+export function getRecord(recordId: string) {
+  return callEat(eat => eat.getRecord({ recordId }))
+}
+
+export function listRecords(query?: PageQuery) {
+  return callEat(eat => eat.listRecords(query))
 }
 
 export function createRecord(input: CreateRecordInput) {

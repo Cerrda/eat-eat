@@ -10,7 +10,7 @@ export default {
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
-import { ensureAccount } from '@/utils/account'
+import { ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
@@ -19,8 +19,11 @@ import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError, tell } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
-const pool = ref<OrderDetail[]>([])
-const { shown, total, finished, loading, reset, more } = usePaged(pool)
+const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+  const data = await listTodo({ page })
+  await primeFileUrls(data.orders.flatMap(order => order.items.map(item => item.coverFileId)))
+  return { rows: data.orders, total: data.total }
+})
 const pulling = ref(false)
 const acting = ref('')
 const ready = ref(false)
@@ -48,20 +51,17 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'cooker' })
     if (!view || id !== spin)
       return
-    const [data, always] = await Promise.all([
-      listTodo(),
+    const [always] = await Promise.all([
       loadCookRemindAlways(),
+      reset(),
     ])
     if (id !== spin)
       return
     account.value = view
     noteBadges(view.badges)
     markTabFresh('todo')
-    pool.value = data.orders
-    reset()
     remindAlways.value = always
     ready.value = true
-    await primeFileUrls(data.orders.flatMap(order => order.items.map(item => item.coverFileId)))
   }
   catch (err) {
     if (id === spin)
@@ -107,6 +107,8 @@ async function accept(order: OrderDetail) {
   acting.value = order.orderId
   try {
     await acceptOrder(order.orderId)
+    if (order.status === 'pending')
+      releaseTodo()
     await refresh()
   }
   catch (err) {
@@ -137,6 +139,15 @@ function openRecords() {
   openTab('records')
 }
 
+async function onMore() {
+  try {
+    await more()
+  }
+  catch (err) {
+    showError(err)
+  }
+}
+
 function remind() {
   if (reminding.value)
     return
@@ -164,7 +175,7 @@ defineExpose({ refresh })
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="待做" :note="ready && !pool.length ? '还没有待做的一餐' : ''" />
+      <screen-head title="待做" :note="ready && !total ? '还没有待做的一餐' : ''" />
       <view
         v-if="ready && !remindAlways"
         class="eat-press mt-28rpx box-border h-78rpx flex items-center justify-between border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx"
@@ -188,7 +199,7 @@ defineExpose({ refresh })
       :finished="finished"
       :total="total"
       @refresh="onPull"
-      @more="more"
+      @more="onMore"
     >
       <view v-if="!groups.length" class="w-full flex flex-col items-center pb-16rpx pt-32rpx">
         <view class="relative h-428rpx w-616rpx">

@@ -52,17 +52,30 @@ export interface SessionView extends AccountView {
 export interface Category {
   categoryId: string
   name: string
+  count?: number
 }
 
-export interface DishQuery {
+export interface PageQuery {
+  page?: number
+  pageSize?: number
+}
+
+export interface PageMeta {
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface DishQuery extends PageQuery {
   keyword?: string
   categoryId?: string
   status?: DishStatus
 }
 
-export interface MenuQuery {
+export interface MenuQuery extends PageQuery {
   keyword?: string
   categoryId?: string
+  offset?: number
 }
 
 export interface DishCard {
@@ -79,6 +92,12 @@ export interface MenuDish {
   name: string
   categoryId: string
   categoryName: string
+  coverFileId: string
+}
+
+export interface MenuName {
+  dishId: string
+  name: string
   coverFileId: string
 }
 
@@ -176,22 +195,23 @@ export interface EatCloud {
   createCategory: (params: { name: string }) => Promise<CloudResult<Category>>
   renameCategory: (params: { categoryId: string, name: string }) => Promise<CloudResult<Category>>
   deleteCategory: (params: { categoryId: string }) => Promise<CloudResult<{ ok: true }>>
-  listDishes: (params?: DishQuery) => Promise<CloudResult<{ dishes: DishCard[] }>>
+  listDishes: (params?: DishQuery) => Promise<CloudResult<{ dishes: DishCard[] } & PageMeta>>
   getDish: (params: { dishId: string }) => Promise<CloudResult<DishDetail>>
   publishDish: (params: PublishDishInput) => Promise<CloudResult<DishDetail>>
-  unpublishDish: (params: { dishId: string }) => Promise<CloudResult<DishDetail>>
   deleteDish: (params: { dishId: string }) => Promise<CloudResult<{ ok: true }>>
-  listMenu: (params?: MenuQuery) => Promise<CloudResult<{ dishes: MenuDish[] }>>
+  listMenu: (params?: MenuQuery) => Promise<CloudResult<{ dishes: MenuDish[], menuTotal: number } & PageMeta>>
+  listMenuNames: () => Promise<CloudResult<{ names: MenuName[] }>>
   mealBoard: () => Promise<CloudResult<MealBoard>>
   createOrder: (params: { date: string, slot: Slot, dishIds: string[], note?: string }) => Promise<CloudResult<OrderDetail>>
-  listTodo: () => Promise<CloudResult<{ orders: OrderDetail[] }>>
-  listOrders: () => Promise<CloudResult<{ orders: OrderDetail[] }>>
+  listTodo: (params?: PageQuery) => Promise<CloudResult<{ orders: OrderDetail[] } & PageMeta>>
+  listOrders: (params?: PageQuery) => Promise<CloudResult<{ orders: OrderDetail[] } & PageMeta>>
   getOrder: (params: { orderId: string }) => Promise<CloudResult<OrderDetail>>
   acceptOrder: (params: { orderId: string }) => Promise<CloudResult<OrderDetail>>
   rejectOrder: (params: { orderId: string, note: string }) => Promise<CloudResult<OrderDetail>>
   cancelOrder: (params: { orderId: string, note: string }) => Promise<CloudResult<OrderDetail>>
   getCookDish: (params: { orderId: string, dishId: string }) => Promise<CloudResult<CookDish>>
-  listRecords: () => Promise<CloudResult<{ records: RecordCard[] }>>
+  getRecord: (params: { recordId: string }) => Promise<CloudResult<RecordCard>>
+  listRecords: (params?: PageQuery) => Promise<CloudResult<{ records: RecordCard[] } & PageMeta>>
   createRecord: (params: CreateRecordInput) => Promise<CloudResult<RecordCard>>
   updateRecord: (params: UpdateRecordInput) => Promise<CloudResult<RecordCard>>
   deleteRecord: (params: { recordId: string }) => Promise<CloudResult<{ ok: true }>>

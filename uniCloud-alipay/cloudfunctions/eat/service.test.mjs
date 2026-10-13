@@ -590,4 +590,201 @@ describe('批量新增菜品', () => {
     expect(again.kitchens[1].error).toBe('这间厨房还没有绑定')
     expect(await ctx.store.find('eat-categories', { kitchenId }, 10)).toHaveLength(1)
   })
+
+  it('列表默认一页 10 条，下一页接着给', async () => {
+    const ctx = setup()
+    await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
+    await ctx.use('openid-cooker')
+    const category = await ctx.eat.createCategory({ name: '家常' })
+    for (let index = 0; index < 12; index += 1) {
+      ctx.advance(1)
+      await ctx.eat.publishDish({
+        name: `菜${String(index).padStart(2, '0')}`,
+        categoryId: index < 2 ? category.categoryId : '',
+        coverFileId: 'cloud://cover',
+      })
+    }
+
+    const first = await ctx.eat.listDishes({})
+    expect(first.page).toBe(1)
+    expect(first.pageSize).toBe(10)
+    expect(first.total).toBe(12)
+    expect(first.dishes).toHaveLength(10)
+    expect(first.dishes[0].name).toBe('菜11')
+
+    const second = await ctx.eat.listDishes({ page: 2 })
+    expect(second.dishes.map(item => item.name)).toEqual(['菜01', '菜00'])
+    expect(second.total).toBe(12)
+
+    const named = await ctx.eat.listDishes({ keyword: '菜1' })
+    expect(named.total).toBe(2)
+    expect(named.dishes.map(item => item.name).sort()).toEqual(['菜10', '菜11'])
+
+    const wide = await ctx.eat.listDishes({ pageSize: 1000 })
+    expect(wide.pageSize).toBe(50)
+    expect(wide.dishes).toHaveLength(12)
+
+    const categories = await ctx.eat.listCategories()
+    expect(categories.categories.find(item => item.name === '家常').count).toBe(2)
+
+    await ctx.use('openid-eater')
+    const menu = await ctx.eat.listMenu({})
+    expect(menu.total).toBe(12)
+    expect(menu.dishes).toHaveLength(10)
+    expect(menu.menuTotal).toBe(12)
+    const filtered = await ctx.eat.listMenu({ keyword: '菜1', page: 1 })
+    expect(filtered.total).toBe(2)
+    expect(filtered.menuTotal).toBe(12)
+
+    const board = await ctx.eat.mealBoard()
+    await ctx.eat.createOrder({
+      date: board.today,
+      slot: 'noon',
+      dishIds: [menu.dishes[0].dishId],
+    })
+    for (let index = 0; index < 11; index += 1) {
+      await ctx.eat.createRecord({
+        date: `2026-01-${String(index + 1).padStart(2, '0')}`,
+        slot: 'noon',
+        text: `记${String(index).padStart(2, '0')}`,
+      })
+    }
+    const records = await ctx.eat.listRecords({})
+    expect(records.total).toBe(11)
+    expect(records.records).toHaveLength(10)
+    expect(records.records[0].text).toBe('记10')
+    const rest = await ctx.eat.listRecords({ page: 2 })
+    expect(rest.records).toHaveLength(1)
+    const one = await ctx.eat.getRecord({ recordId: rest.records[0].recordId })
+    expect(one.text).toBe(rest.records[0].text)
+
+    const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
+    for (let index = 0; index < 12; index += 1) {
+      await ctx.store.insert('eat-orders', {
+        kitchenId,
+        date: `2026-03-${String(index + 1).padStart(2, '0')}`,
+        slot: 'evening',
+        status: 'pending',
+        note: '',
+        items: [],
+        eaterUnread: false,
+      })
+    }
+    const orders = await ctx.eat.listOrders({ page: 1 })
+    expect(orders.total).toBe(13)
+    expect(orders.orders).toHaveLength(10)
+    const ordersNext = await ctx.eat.listOrders({ page: 2 })
+    expect(ordersNext.orders).toHaveLength(3)
+
+    await ctx.use('openid-cooker')
+    const todo = await ctx.eat.listTodo({ page: 1 })
+    expect(todo.total).toBe(13)
+    expect(todo.orders).toHaveLength(10)
+    const todoNext = await ctx.eat.listTodo({ page: 2 })
+    expect(todoNext.orders).toHaveLength(3)
+  })
+
+  it('超过 1000 条时仍能取到后面的页', async () => {
+    const ctx = setup()
+    await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
+    await ctx.use('openid-cooker')
+    const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
+    for (let index = 0; index < 1005; index += 1) {
+      await ctx.store.insert('eat-dishes', {
+        kitchenId,
+        name: `量${String(index).padStart(4, '0')}`,
+        categoryId: '',
+        coverFileId: 'cloud://cover',
+        status: 'on',
+        deleted: false,
+        publishedAt: index,
+        updatedAt: index,
+      })
+    }
+    const page = await ctx.eat.listDishes({ page: 101 })
+    expect(page.total).toBe(1005)
+    expect(page.dishes.map(item => item.name)).toEqual(['量0004', '量0003', '量0002', '量0001', '量0000'])
+
+    const named = await ctx.eat.listMenuNames()
+    expect(named.names).toHaveLength(1005)
+    expect(named.names[0].name).toBe('量1004')
+    expect(named.names[100].name).toBe('量0904')
+    expect(named.names[40].name).toBe('量0964')
+    expect(named.names[0]).toEqual({
+      dishId: named.names[0].dishId,
+      name: '量1004',
+      coverFileId: 'cloud://cover',
+    })
+
+    const first = await ctx.eat.listMenu({})
+    expect(first.pageSize).toBe(10)
+    expect(first.dishes.map(item => item.name)).toEqual(named.names.slice(0, 10).map(item => item.name))
+
+    const window = await ctx.eat.listMenu({ offset: 20, pageSize: 30 })
+    expect(window.pageSize).toBe(30)
+    expect(window.total).toBe(1005)
+    expect(window.dishes.map(item => item.name)).toEqual(named.names.slice(20, 50).map(item => item.name))
+    expect(window.dishes[20].name).toBe('量0964')
+    expect(window.dishes.map(item => item.name)).not.toContain('量1004')
+
+    const capped = await ctx.eat.listMenu({ pageSize: 1000 })
+    expect(capped.pageSize).toBe(50)
+    expect(capped.dishes).toHaveLength(50)
+  })
+
+  it('随机只拿已上架菜名，不含用料、下架和别的厨房', async () => {
+    const ctx = setup()
+    await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
+    await ctx.use('openid-cooker')
+    ctx.advance(1)
+    const egg = await ctx.eat.publishDish({
+      name: '番茄炒蛋',
+      coverFileId: 'cloud://cover',
+      ingredients: ['秘密用料XYZ'],
+      steps: ['炒一下'],
+    })
+    ctx.advance(1)
+    await ctx.eat.publishDish({
+      name: '青菜',
+      coverFileId: 'cloud://greens',
+    })
+    const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
+    await ctx.store.insert('eat-dishes', {
+      kitchenId,
+      name: '未上架',
+      coverFileId: 'cloud://off',
+      status: 'off',
+      deleted: false,
+      publishedAt: 9,
+    })
+    await ctx.store.insert('eat-dishes', {
+      kitchenId,
+      name: '已删',
+      coverFileId: 'cloud://gone',
+      status: 'on',
+      deleted: true,
+      publishedAt: 8,
+    })
+    await ctx.store.insert('eat-dishes', {
+      kitchenId: 'other',
+      name: '别人的',
+      coverFileId: 'cloud://other',
+      status: 'on',
+      deleted: false,
+      publishedAt: 99,
+    })
+
+    await ctx.use('openid-eater')
+    const named = await ctx.eat.listMenuNames()
+    expect(named.names).toEqual([
+      { dishId: expect.any(String), name: '青菜', coverFileId: 'cloud://greens' },
+      { dishId: egg.dishId, name: '番茄炒蛋', coverFileId: 'cloud://cover' },
+    ])
+    const packed = JSON.stringify(named)
+    expect(packed).not.toContain('秘密用料XYZ')
+    expect(packed).not.toContain('炒一下')
+    expect(packed).not.toContain('未上架')
+    expect(packed).not.toContain('已删')
+    expect(packed).not.toContain('别人的')
+  })
 })

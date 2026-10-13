@@ -62,10 +62,73 @@ function clipDishes(items) {
   return clipThing(names[0], '一餐')
 }
 
+const PAGE_SIZE = 10
+const PAGE_LIMIT = 50
+const QUERY_CAP = 100
+const WINDOW_LIMIT = 2000
+const MENU_ORDER = [
+  { field: 'publishedAt', dir: 'desc' },
+  { field: '_id', dir: 'desc' },
+]
+
 function input(params) {
   if (!params || typeof params !== 'object' || Array.isArray(params))
     return {}
   return params
+}
+
+function readPage(body) {
+  const size = Math.floor(Number(body && body.pageSize))
+  const pageSize = Number.isFinite(size) && size > 0 ? Math.min(size, PAGE_LIMIT) : PAGE_SIZE
+  const raw = Math.floor(Number(body && body.page))
+  const page = Number.isFinite(raw) && raw > 0 ? raw : 1
+  return { page, pageSize }
+}
+
+function pageMeta(total, page, pageSize) {
+  return { total, page, pageSize }
+}
+
+// offset 从 0 起跳过已在列表里的菜。这次的 pageSize 要能盖住目标菜，不走默认 10 条，也不吃单页 50 条上限。
+function readWindow(body) {
+  if (!body || !Object.prototype.hasOwnProperty.call(body, 'offset'))
+    return null
+  const offset = Math.floor(Number(body.offset))
+  const skip = Number.isFinite(offset) && offset > 0 ? offset : 0
+  const size = Math.floor(Number(body.pageSize))
+  const pageSize = Number.isFinite(size) && size > 0 ? Math.min(size, WINDOW_LIMIT) : PAGE_SIZE
+  return {
+    skip,
+    pageSize,
+    page: Math.floor(skip / PAGE_SIZE) + 1,
+  }
+}
+
+async function loadSlice(store, name, where, order, skip, limit, fields) {
+  const total = await store.count(name, where)
+  const rows = []
+  let left = limit
+  let cursor = skip
+  while (left > 0 && cursor < total) {
+    const take = Math.min(left, QUERY_CAP)
+    const part = await store.select(name, {
+      where,
+      order,
+      skip: cursor,
+      limit: take,
+      fields,
+    })
+    rows.push(...part)
+    if (!part.length || part.length < take)
+      break
+    cursor += part.length
+    left -= part.length
+  }
+  return { rows, total }
+}
+
+async function loadPage(store, name, where, order, page, pageSize) {
+  return loadSlice(store, name, where, order, (page - 1) * pageSize, pageSize)
 }
 
 function otherRole(role) {
@@ -899,12 +962,16 @@ function createEatService(deps) {
     const kitchen = await requireActive(user)
     const rows = await store.find('eat-categories', { kitchenId: kitchen._id }, 100)
     rows.sort((a, b) => a.createdAt - b.createdAt)
-    return {
-      categories: rows.map(category => ({
+    const categories = await Promise.all(rows.map(async (category) => ({
+      categoryId: category._id,
+      name: category.name,
+      count: await store.count('eat-dishes', {
+        kitchenId: kitchen._id,
         categoryId: category._id,
-        name: category.name,
-      })),
-    }
+        deleted: false,
+      }),
+    })))
+    return { categories }
   }
 
   async function createCategory(params) {
@@ -968,17 +1035,24 @@ function createEatService(deps) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
     requireRole(user, 'cooker')
-    let rows = await store.find('eat-dishes', { kitchenId: kitchen._id, deleted: false }, 500)
     const keyword = String(body.keyword || '').trim()
+    const where = { kitchenId: kitchen._id, deleted: false }
     if (keyword)
-      rows = rows.filter(dish => dish.name.includes(keyword))
+      where.name = { $contains: keyword }
     if (body.categoryId)
-      rows = rows.filter(dish => dish.categoryId === body.categoryId)
+      where.categoryId = body.categoryId
     if (body.status === 'on' || body.status === 'off')
-      rows = rows.filter(dish => dish.status === body.status)
-    rows.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0) || b.updatedAt - a.updatedAt)
+      where.status = body.status
+    const { page, pageSize } = readPage(body)
+    const { rows, total } = await loadPage(store, 'eat-dishes', where, [
+      { field: 'publishedAt', dir: 'desc' },
+      { field: 'updatedAt', dir: 'desc' },
+    ], page, pageSize)
     const names = await categoryMap(kitchen._id)
-    return { dishes: rows.map(dish => dishCard(dish, names)) }
+    return {
+      dishes: rows.map(dish => dishCard(dish, names)),
+      ...pageMeta(total, page, pageSize),
+    }
   }
 
   async function getDish(params) {
@@ -1042,20 +1116,6 @@ function createEatService(deps) {
     return dishDetail(await ownDish(kitchen, current._id), await categoryMap(kitchen._id))
   }
 
-  async function unpublishDish(params) {
-    const user = await requireUser()
-    const kitchen = await requireActive(user)
-    requireRole(user, 'cooker')
-    const dish = await ownDish(kitchen, input(params).dishId)
-    if (dish.status === 'on') {
-      await store.update('eat-dishes', { _id: dish._id, kitchenId: kitchen._id }, {
-        status: 'off',
-        updatedAt: now(),
-      })
-    }
-    return dishDetail(await ownDish(kitchen, dish._id), await categoryMap(kitchen._id))
-  }
-
   async function deleteDish(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
@@ -1067,7 +1127,7 @@ function createEatService(deps) {
       && order.items.some(item => item.dishId === dish._id),
     )
     if (blocked)
-      throw new EatError('VALIDATION', '这道菜还在一餐里面，只能先下架')
+      throw new EatError('VALIDATION', '这道菜还在一餐里面，做完再删')
     await store.update('eat-dishes', { _id: dish._id, kitchenId: kitchen._id }, {
       deleted: true,
       updatedAt: now(),
@@ -1079,14 +1139,21 @@ function createEatService(deps) {
     const body = input(params)
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    let rows = await store.find('eat-dishes', { kitchenId: kitchen._id, deleted: false }, 500)
-    rows = rows.filter(dish => dish.status === 'on')
     const keyword = String(body.keyword || '').trim()
+    const where = { kitchenId: kitchen._id, deleted: false, status: 'on' }
     if (keyword)
-      rows = rows.filter(dish => dish.name.includes(keyword))
+      where.name = { $contains: keyword }
     if (body.categoryId)
-      rows = rows.filter(dish => dish.categoryId === body.categoryId)
-    rows.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0))
+      where.categoryId = body.categoryId
+    const range = readWindow(body)
+    const { page, pageSize } = range || readPage(body)
+    const skip = range ? range.skip : (page - 1) * pageSize
+    const menuTotal = await store.count('eat-dishes', {
+      kitchenId: kitchen._id,
+      deleted: false,
+      status: 'on',
+    })
+    const { rows, total } = await loadSlice(store, 'eat-dishes', where, MENU_ORDER, skip, pageSize)
     const names = await categoryMap(kitchen._id)
     return {
       dishes: rows.map(dish => ({
@@ -1096,14 +1163,51 @@ function createEatService(deps) {
         categoryName: names.get(dish.categoryId) || '',
         coverFileId: dish.coverFileId || '',
       })),
+      menuTotal,
+      ...pageMeta(total, page, pageSize),
     }
+  }
+
+  async function listMenuNames() {
+    const user = await requireUser()
+    const kitchen = await requireActive(user)
+    const where = { kitchenId: kitchen._id, deleted: false, status: 'on' }
+    const names = []
+    let skip = 0
+    while (names.length < WINDOW_LIMIT) {
+      const rows = await store.select('eat-dishes', {
+        where,
+        order: MENU_ORDER,
+        skip,
+        limit: QUERY_CAP,
+        fields: { name: true, coverFileId: true },
+      })
+      for (const dish of rows) {
+        names.push({
+          dishId: dish._id,
+          name: dish.name,
+          coverFileId: dish.coverFileId || '',
+        })
+      }
+      if (rows.length < QUERY_CAP)
+        break
+      skip += rows.length
+    }
+    return { names }
   }
 
   async function mealBoard() {
     const user = await requireUser()
     const kitchen = await requireActive(user)
     const dates = upcomingDates()
-    const orders = await store.find('eat-orders', { kitchenId: kitchen._id }, 500)
+    const orders = await store.select('eat-orders', {
+      where: {
+        kitchenId: kitchen._id,
+        date: { $in: dates.map(item => item.date) },
+        status: { $in: ['pending', 'accepted'] },
+      },
+      limit: dates.length * 3,
+    })
     const busy = []
     for (const order of orders) {
       if (order.status !== 'pending' && order.status !== 'accepted')
@@ -1124,8 +1228,18 @@ function createEatService(deps) {
     }
   }
 
-  async function recordedSet(kitchen) {
-    const records = await store.find('eat-records', { kitchenId: kitchen._id, deleted: false }, 500)
+  async function recordedAmong(kitchen, orderIds) {
+    const ids = [...new Set(orderIds.filter(Boolean))]
+    if (!ids.length)
+      return new Set()
+    const records = await store.select('eat-records', {
+      where: {
+        kitchenId: kitchen._id,
+        deleted: false,
+        orderId: { $in: ids },
+      },
+      limit: ids.length,
+    })
     return new Set(records.map(record => record.orderId).filter(Boolean))
   }
 
@@ -1232,34 +1346,49 @@ function createEatService(deps) {
     }
   }
 
-  async function listTodo() {
+  async function listTodo(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
     requireRole(user, 'cooker')
-    const orders = await store.find('eat-orders', { kitchenId: kitchen._id }, 500)
-    const recorded = await recordedSet(kitchen)
-    const rows = orders.filter(order => order.status === 'pending' || order.status === 'accepted')
-    rows.sort((a, b) => a.date.localeCompare(b.date) || SLOT_ORDER[a.slot] - SLOT_ORDER[b.slot])
-    return { orders: rows.map(order => mapOrder(order, recorded.has(order._id))) }
+    const { page, pageSize } = readPage(input(params))
+    const where = {
+      kitchenId: kitchen._id,
+      status: { $in: ['pending', 'accepted'] },
+    }
+    const { rows, total } = await loadPage(store, 'eat-orders', where, [
+      { field: 'date', dir: 'asc' },
+      { field: 'slot', dir: 'asc', rank: SLOT_ORDER },
+    ], page, pageSize)
+    const recorded = await recordedAmong(kitchen, rows.map(order => order._id))
+    return {
+      orders: rows.map(order => mapOrder(order, recorded.has(order._id))),
+      ...pageMeta(total, page, pageSize),
+    }
   }
 
-  async function listOrders() {
+  async function listOrders(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    const orders = await store.find('eat-orders', { kitchenId: kitchen._id }, 500)
     if (user.role === 'eater') {
       await store.update('eat-orders', { kitchenId: kitchen._id, eaterUnread: true }, { eaterUnread: false })
     }
-    const recorded = await recordedSet(kitchen)
-    orders.sort((a, b) => b.date.localeCompare(a.date) || SLOT_ORDER[b.slot] - SLOT_ORDER[a.slot])
-    return { orders: orders.map(order => mapOrder(order, recorded.has(order._id))) }
+    const { page, pageSize } = readPage(input(params))
+    const { rows, total } = await loadPage(store, 'eat-orders', { kitchenId: kitchen._id }, [
+      { field: 'date', dir: 'desc' },
+      { field: 'slot', dir: 'desc', rank: SLOT_ORDER },
+    ], page, pageSize)
+    const recorded = await recordedAmong(kitchen, rows.map(order => order._id))
+    return {
+      orders: rows.map(order => mapOrder(order, recorded.has(order._id))),
+      ...pageMeta(total, page, pageSize),
+    }
   }
 
   async function getOrder(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
     const order = await ownOrder(kitchen, input(params).orderId)
-    const recorded = await recordedSet(kitchen)
+    const recorded = await recordedAmong(kitchen, [order._id])
     return mapOrder(order, recorded.has(order._id))
   }
 
@@ -1277,7 +1406,7 @@ function createEatService(deps) {
     })
     if (changed !== 1)
       throw new EatError('VALIDATION', '这餐已经不能改了')
-    const recorded = await recordedSet(kitchen)
+    const recorded = await recordedAmong(kitchen, [order._id])
     return mapOrder(await ownOrder(kitchen, order._id), recorded.has(order._id))
   }
 
@@ -1318,7 +1447,7 @@ function createEatService(deps) {
     })
     if (changed !== 1)
       throw new EatError('VALIDATION', '这餐已经不能改了')
-    const recorded = await recordedSet(kitchen)
+    const recorded = await recordedAmong(kitchen, [order._id])
     return mapOrder(await ownOrder(kitchen, order._id), recorded.has(order._id))
   }
 
@@ -1375,14 +1504,30 @@ function createEatService(deps) {
     return dishes
   }
 
-  async function listRecords() {
+  async function getRecord(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    const rows = await store.find('eat-records', { kitchenId: kitchen._id, deleted: false }, 500)
+    return mapRecord(await ownRecord(kitchen, input(params).recordId))
+  }
+
+  async function listRecords(params) {
+    const user = await requireUser()
+    const kitchen = await requireActive(user)
     const field = user.role === 'cooker' ? 'unreadCooker' : 'unreadEater'
     await store.update('eat-records', { kitchenId: kitchen._id, deleted: false, [field]: true }, { [field]: false })
-    rows.sort((a, b) => b.date.localeCompare(a.date) || SLOT_ORDER[b.slot] - SLOT_ORDER[a.slot] || b.createdAt - a.createdAt)
-    return { records: rows.map(mapRecord) }
+    const { page, pageSize } = readPage(input(params))
+    const { rows, total } = await loadPage(store, 'eat-records', {
+      kitchenId: kitchen._id,
+      deleted: false,
+    }, [
+      { field: 'date', dir: 'desc' },
+      { field: 'slot', dir: 'desc', rank: SLOT_ORDER },
+      { field: 'createdAt', dir: 'desc' },
+    ], page, pageSize)
+    return {
+      records: rows.map(mapRecord),
+      ...pageMeta(total, page, pageSize),
+    }
   }
 
   async function createRecord(params) {
@@ -1604,9 +1749,9 @@ function createEatService(deps) {
     listDishes,
     getDish,
     publishDish,
-    unpublishDish,
     deleteDish,
     listMenu,
+    listMenuNames,
     mealBoard,
     createOrder,
     listTodo,
@@ -1616,6 +1761,7 @@ function createEatService(deps) {
     rejectOrder,
     cancelOrder,
     getCookDish,
+    getRecord,
     listRecords,
     createRecord,
     updateRecord,

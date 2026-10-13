@@ -9,7 +9,7 @@ export default {
 <script setup lang="ts">
 import type { AccountView } from '@/api/eat'
 import { ROLE_LABEL, unbind, updateNickname } from '@/api/eat'
-import { ensureAccount, peekAccount, rememberAccount, routeAccount } from '@/utils/account'
+import { ensureAccount, peekAccount, reloadMe, rememberAccount, routeAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { keepOneLine, textLength } from '@/utils/format'
 import { showHint } from '@/utils/hint'
@@ -63,7 +63,14 @@ async function saveNickname() {
     return
   }
   try {
-    const view = await updateNickname(next)
+    const saved = await updateNickname(next)
+    let view = saved
+    try {
+      view = await reloadMe()
+    }
+    catch {
+      view = saved
+    }
     rememberAccount(view)
     account.value = view
     nickname.value = view.nickname

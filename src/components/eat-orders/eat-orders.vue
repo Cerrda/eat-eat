@@ -8,16 +8,18 @@ export default {
 
 <script setup lang="ts">
 import type { AccountView, OrderDetail } from '@/api/eat'
-import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
+import { dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, rememberAccount } from '@/utils/account'
+import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
-const pool = ref<OrderDetail[]>([])
-const { shown, total, finished, loading, reset, more } = usePaged(pool)
+const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+  const listed = await listOrders({ page })
+  return { rows: listed.orders, total: listed.total }
+})
 const pulling = ref(false)
 
 onMounted(() => {
@@ -29,14 +31,12 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'eater' })
     if (!view)
       return
-    const listed = await listOrders()
-    const nextBadges = await badges()
+    await reset()
+    const nextBadges = patchBadges({ orders: 0 })
     account.value = { ...view, badges: nextBadges }
     rememberAccount(account.value)
     noteBadges(nextBadges)
     markTabFresh('orders')
-    pool.value = listed.orders
-    reset()
   }
   catch (err) {
     showError(err)
@@ -61,6 +61,15 @@ function openOrder(order: OrderDetail) {
 
 function openMenu() {
   openTab('menu')
+}
+
+async function onMore() {
+  try {
+    await more()
+  }
+  catch (err) {
+    showError(err)
+  }
 }
 
 defineExpose({ refresh })
@@ -91,7 +100,7 @@ function extra(order: OrderDetail) {
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="订单" :note="account && !pool.length ? '还没有点过。' : ''" />
+      <screen-head title="订单" :note="account && !total ? '还没有点过。' : ''" />
     </view>
     <ink-load v-if="!account" label="正在翻点过的" />
     <list-scroll
@@ -101,7 +110,7 @@ function extra(order: OrderDetail) {
       :finished="finished"
       :total="total"
       @refresh="onPull"
-      @more="more"
+      @more="onMore"
     >
       <view v-if="!shown.length" class="w-full flex justify-center pb-16rpx pt-32rpx">
         <view class="relative h-428rpx w-616rpx" @tap="openMenu">

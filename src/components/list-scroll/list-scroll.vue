@@ -134,6 +134,56 @@ function onLower() {
     return
   emit('more')
 }
+
+const scrollTop = ref(0)
+
+interface ScrollFrame {
+  scrollTop: number
+  scrollHeight: number
+  height: number
+}
+
+function readFrame(): Promise<ScrollFrame | null> {
+  const proxy = instance?.proxy
+  if (!proxy)
+    return Promise.resolve(null)
+  return new Promise((resolve) => {
+    uni.createSelectorQuery()
+      .in(proxy)
+      .select('.list-scroll')
+      .boundingClientRect()
+      .select('.list-scroll')
+      .scrollOffset()
+      .exec((result) => {
+        const list = Array.isArray(result) ? result : []
+        const box = list[0] as { height?: number } | null
+        const offset = list[1] as { scrollTop?: number, scrollHeight?: number } | null
+        if (!box || Array.isArray(box) || !box.height || !offset || Array.isArray(offset)) {
+          resolve(null)
+          return
+        }
+        resolve({
+          scrollTop: offset.scrollTop || 0,
+          scrollHeight: offset.scrollHeight || 0,
+          height: box.height,
+        })
+      })
+  })
+}
+
+function scrollTo(top: number) {
+  const next = Math.max(0, Math.round(top))
+  if (scrollTop.value === next) {
+    scrollTop.value = next === 0 ? 1 : next - 1
+    nextTick(() => {
+      scrollTop.value = next
+    })
+    return
+  }
+  scrollTop.value = next
+}
+
+defineExpose({ readFrame, scrollTo })
 </script>
 
 <script module="pull" lang="wxs">
@@ -412,6 +462,7 @@ module.exports = {
     :show-scrollbar="false"
     :bounces="false"
     :scroll-y="scrollable"
+    :scroll-top="scrollTop"
     :scroll-into-view="intoView"
     scroll-with-animation
     :lower-threshold="120"

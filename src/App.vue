@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { primeTopPadding } from '@/composables/useTopPadding'
+import { loadAccount, markAppShow } from '@/utils/account'
 import { bootFonts } from '@/utils/fonts'
 
 onLaunch(() => {
   primeTopPadding()
   bootFonts()
+})
+
+onShow(() => {
+  markAppShow()
+  void loadAccount().catch(() => {})
 })
 </script>
 
