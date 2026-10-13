@@ -1,7 +1,7 @@
 import { computed, ref, shallowRef } from 'vue'
 
 // 与云函数默认页大小一致。补页时按这个边界把目标菜所在的那一页取整。
-export const LIST_PAGE_SIZE = 10
+export const LIST_PAGE_SIZE = 50
 
 export interface PageResult<T> {
   rows: T[]

@@ -62,7 +62,7 @@ function clipDishes(items) {
   return clipThing(names[0], '一餐')
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 50
 const PAGE_LIMIT = 50
 const QUERY_CAP = 100
 const WINDOW_LIMIT = 2000
@@ -89,7 +89,7 @@ function pageMeta(total, page, pageSize) {
   return { total, page, pageSize }
 }
 
-// offset 从 0 起跳过已在列表里的菜。这次的 pageSize 要能盖住目标菜，不走默认 10 条，也不吃单页 50 条上限。
+// offset 从 0 起跳过已在列表里的菜。这次的 pageSize 要能盖住目标菜，不走默认 50 条，也不吃单页 50 条上限。
 function readWindow(body) {
   if (!body || !Object.prototype.hasOwnProperty.call(body, 'offset'))
     return null
