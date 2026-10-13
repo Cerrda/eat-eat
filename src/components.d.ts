@@ -23,6 +23,7 @@ declare module 'vue' {
     ListScroll: typeof import('./components/list-scroll/list-scroll.vue')['default']
     PaperPage: typeof import('./components/paper-page/paper-page.vue')['default']
     PaperPin: typeof import('./components/paper-pin/paper-pin.vue')['default']
+    RollDice: typeof import('./components/roll-dice/roll-dice.vue')['default']
     ScreenHead: typeof import('./components/screen-head/screen-head.vue')['default']
     SettingsPane: typeof import('./components/settings-pane/settings-pane.vue')['default']
     StampButton: typeof import('./components/stamp-button/stamp-button.vue')['default']

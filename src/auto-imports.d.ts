@@ -10,6 +10,7 @@ declare global {
   const accountPath: typeof import('./utils/account')['accountPath']
   const addDays: typeof import('./utils/format')['addDays']
   const ask: typeof import('./utils/ui')['ask']
+  const askCookRemind: typeof import('./utils/subscribe')['askCookRemind']
   const askText: typeof import('./utils/ui')['askText']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -17,6 +18,7 @@ declare global {
   const beginClose: typeof import('./utils/ui')['beginClose']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
   const chooseImage: typeof import('./utils/files')['chooseImage']
+  const chooseImages: typeof import('./utils/files')['chooseImages']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -53,11 +55,6 @@ declare global {
   const errorMessage: typeof import('./utils/ui')['errorMessage']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const faceOf: typeof import('./utils/face')['faceOf']
-  const fillDishes: typeof import('./utils/sample-feed')['fillDishes']
-  const fillMenu: typeof import('./utils/sample-feed')['fillMenu']
-  const fillOrders: typeof import('./utils/sample-feed')['fillOrders']
-  const fillRecords: typeof import('./utils/sample-feed')['fillRecords']
-  const fillTodo: typeof import('./utils/sample-feed')['fillTodo']
   const fitCloudImageUrl: typeof import('./utils/files')['fitCloudImageUrl']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -74,10 +71,10 @@ declare global {
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
-  const isSample: typeof import('./utils/sample-feed')['isSample']
   const isTabFresh: typeof import('./utils/tabs')['isTabFresh']
   const keepOneLine: typeof import('./utils/format')['keepOneLine']
   const loadAccount: typeof import('./utils/account')['loadAccount']
+  const loadCookRemindAlways: typeof import('./utils/subscribe')['loadCookRemindAlways']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const markRaw: typeof import('vue')['markRaw']
   const markTabFresh: typeof import('./utils/tabs')['markTabFresh']
@@ -153,6 +150,7 @@ declare global {
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const rememberAccount: typeof import('./utils/account')['rememberAccount']
+  const renewCookRemindIfAlways: typeof import('./utils/subscribe')['renewCookRemindIfAlways']
   const resetHomeTab: typeof import('./utils/tabs')['resetHomeTab']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveFileUrl: typeof import('./utils/files')['resolveFileUrl']
@@ -394,6 +392,9 @@ declare global {
   export type { CloudImageSize } from './utils/files'
   import('./utils/files')
   // @ts-ignore
+  export type { SubscribeChoice } from './utils/subscribe'
+  import('./utils/subscribe')
+  // @ts-ignore
   export type { TabKey } from './utils/tabs'
   import('./utils/tabs')
   // @ts-ignore
@@ -410,6 +411,7 @@ declare module 'vue' {
     readonly accountPath: UnwrapRef<typeof import('./utils/account')['accountPath']>
     readonly addDays: UnwrapRef<typeof import('./utils/format')['addDays']>
     readonly ask: UnwrapRef<typeof import('./utils/ui')['ask']>
+    readonly askCookRemind: UnwrapRef<typeof import('./utils/subscribe')['askCookRemind']>
     readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -417,6 +419,7 @@ declare module 'vue' {
     readonly beginClose: UnwrapRef<typeof import('./utils/ui')['beginClose']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
+    readonly chooseImages: UnwrapRef<typeof import('./utils/files')['chooseImages']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -453,11 +456,6 @@ declare module 'vue' {
     readonly errorMessage: UnwrapRef<typeof import('./utils/ui')['errorMessage']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
-    readonly fillDishes: UnwrapRef<typeof import('./utils/sample-feed')['fillDishes']>
-    readonly fillMenu: UnwrapRef<typeof import('./utils/sample-feed')['fillMenu']>
-    readonly fillOrders: UnwrapRef<typeof import('./utils/sample-feed')['fillOrders']>
-    readonly fillRecords: UnwrapRef<typeof import('./utils/sample-feed')['fillRecords']>
-    readonly fillTodo: UnwrapRef<typeof import('./utils/sample-feed')['fillTodo']>
     readonly fitCloudImageUrl: UnwrapRef<typeof import('./utils/files')['fitCloudImageUrl']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -474,10 +472,10 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
-    readonly isSample: UnwrapRef<typeof import('./utils/sample-feed')['isSample']>
     readonly isTabFresh: UnwrapRef<typeof import('./utils/tabs')['isTabFresh']>
     readonly keepOneLine: UnwrapRef<typeof import('./utils/format')['keepOneLine']>
     readonly loadAccount: UnwrapRef<typeof import('./utils/account')['loadAccount']>
+    readonly loadCookRemindAlways: UnwrapRef<typeof import('./utils/subscribe')['loadCookRemindAlways']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly markTabFresh: UnwrapRef<typeof import('./utils/tabs')['markTabFresh']>
@@ -553,6 +551,7 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly rememberAccount: UnwrapRef<typeof import('./utils/account')['rememberAccount']>
+    readonly renewCookRemindIfAlways: UnwrapRef<typeof import('./utils/subscribe')['renewCookRemindIfAlways']>
     readonly resetHomeTab: UnwrapRef<typeof import('./utils/tabs')['resetHomeTab']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveFileUrl: UnwrapRef<typeof import('./utils/files')['resolveFileUrl']>

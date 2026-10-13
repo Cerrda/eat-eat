@@ -1,5 +1,6 @@
 const crypto = require('node:crypto')
 const { EatError } = require('./errors')
+const { sendOrderRemind } = require('./wx')
 
 const ROLES = ['cooker', 'eater']
 const SLOTS = ['morning', 'noon', 'evening']
@@ -20,6 +21,47 @@ function textLen(value) {
   return Array.from(value).length
 }
 
+const SLOT_CLOCK = { morning: '08:00', noon: '12:00', evening: '18:00' }
+
+function mealTime(ymd, slot) {
+  const [year, month, day] = String(ymd || '').split('-').map(Number)
+  if (!year || !month || !day)
+    return '12:00'
+  return `${year}年${month}月${day}日 ${SLOT_CLOCK[slot] || '12:00'}`
+}
+
+function clipThing(value, fallback) {
+  const text = String(value || '').replace(/[\r\n\t]/g, '').trim()
+  const chars = Array.from(text)
+  if (!chars.length)
+    return fallback
+  if (chars.length <= 20)
+    return chars.join('')
+  return `${chars.slice(0, 19).join('')}…`
+}
+
+function clipDishes(items) {
+  const names = (Array.isArray(items) ? items : [])
+    .map(item => String((item && item.name) || '').replace(/[\r\n\t]/g, '').trim())
+    .filter(Boolean)
+  if (!names.length)
+    return '一餐'
+  const joined = names.join('、')
+  if (Array.from(joined).length <= 20)
+    return joined
+  let acc = ''
+  for (const name of names) {
+    const next = acc ? `${acc}、${name}` : name
+    if (Array.from(`${next}等`).length <= 20)
+      acc = next
+    else
+      break
+  }
+  if (acc)
+    return `${acc}等`
+  return clipThing(names[0], '一餐')
+}
+
 function input(params) {
   if (!params || typeof params !== 'object' || Array.isArray(params))
     return {}
@@ -28,6 +70,15 @@ function input(params) {
 
 function otherRole(role) {
   return role === 'cooker' ? 'eater' : 'cooker'
+}
+
+function resolvedNickname(user, role) {
+  if (user && user.nicknameCustom) {
+    const name = String(user.nickname || '').trim()
+    if (name)
+      return name
+  }
+  return DEFAULT_NICKNAME[role] || ''
 }
 
 function formatShanghai(ms) {
@@ -325,6 +376,18 @@ function createEatService(deps) {
     return findOne('eat-users', { openid })
   }
 
+  async function keepRoleNickname(user, role) {
+    const nickname = resolvedNickname(user, role)
+    if (!user || !nickname || user.nicknameCustom || user.nickname === nickname)
+      return nickname
+    await store.update('eat-users', { _id: user._id }, {
+      nickname,
+      updatedAt: now(),
+    })
+    user.nickname = nickname
+    return nickname
+  }
+
   async function badgesFor(user, kitchen) {
     const orders = await store.find('eat-orders', { kitchenId: kitchen._id }, 500)
     const records = await store.find('eat-records', { kitchenId: kitchen._id, deleted: false }, 500)
@@ -366,7 +429,7 @@ function createEatService(deps) {
         ...base,
         next: 'invite',
         role,
-        nickname: fresh.nickname || DEFAULT_NICKNAME[role],
+        nickname: await keepRoleNickname(fresh, role),
         kitchenStatus: 'pending',
         inviteCode: invite?.code || '',
         expiresAt: invite?.expireAt || 0,
@@ -375,12 +438,15 @@ function createEatService(deps) {
       }
     }
     const partner = await partnerOf(kitchen, fresh)
-    const partnerRole = fresh.role === 'cooker' ? 'eater' : 'cooker'
+    const role = fresh.role === 'eater' ? 'eater' : 'cooker'
+    const partnerRole = role === 'cooker' ? 'eater' : 'cooker'
     return {
       ...base,
       next: 'home',
+      role,
+      nickname: await keepRoleNickname(fresh, role),
       kitchenStatus: 'active',
-      partnerNickname: partner?.nickname || DEFAULT_NICKNAME[partnerRole],
+      partnerNickname: await keepRoleNickname(partner, partnerRole),
       partnerRole,
       badges: await badgesFor(fresh, kitchen),
     }
@@ -431,7 +497,7 @@ function createEatService(deps) {
     const claimed = await store.update('eat-users', { _id: user._id, kitchenId: '' }, {
       kitchenId,
       role,
-      nickname: user.nicknameCustom ? user.nickname : DEFAULT_NICKNAME[role],
+      nickname: resolvedNickname(user, role),
       updatedAt: now(),
     })
     if (claimed !== 1) {
@@ -478,6 +544,120 @@ function createEatService(deps) {
     return { kind: 'join', invite, kitchen }
   }
 
+  async function pairKitchens(openidA, openidB) {
+    if (!openidA || !openidB || openidA === openidB)
+      return []
+    const direct = await store.find('eat-kitchens', {
+      status: 'dissolved',
+      cookerOpenid: openidA,
+      eaterOpenid: openidB,
+    }, 100)
+    const swapped = await store.find('eat-kitchens', {
+      status: 'dissolved',
+      cookerOpenid: openidB,
+      eaterOpenid: openidA,
+    }, 100)
+    const rows = [...direct, ...swapped]
+    rows.sort((a, b) => (b.dissolvedAt || 0) - (a.dissolvedAt || 0) || (b.boundAt || 0) - (a.boundAt || 0))
+    return rows
+  }
+
+  async function foldKitchen(canonicalId, oldId) {
+    await store.update('eat-categories', { kitchenId: oldId }, { kitchenId: canonicalId })
+    await store.update('eat-dishes', { kitchenId: oldId }, { kitchenId: canonicalId })
+    await store.update('eat-orders', { kitchenId: oldId }, { kitchenId: canonicalId })
+    await store.update('eat-records', { kitchenId: oldId }, { kitchenId: canonicalId })
+  }
+
+  async function dedupeCategories(kitchenId) {
+    const rows = await store.find('eat-categories', { kitchenId }, 100)
+    rows.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+    const seen = new Map()
+    for (const category of rows) {
+      const kept = seen.get(category.name)
+      if (!kept) {
+        seen.set(category.name, category)
+        continue
+      }
+      await store.update('eat-dishes', { kitchenId, categoryId: category._id }, { categoryId: kept._id })
+      await store.remove('eat-categories', { _id: category._id, kitchenId })
+    }
+  }
+
+  async function resumeKitchen(joiner, creator, invite, pending, previous, joinerRole) {
+    const [canonical, ...older] = previous
+    const creatorRole = invite.creatorRole
+    const nickname = resolvedNickname(joiner, joinerRole)
+    const creatorNickname = resolvedNickname(creator, creatorRole)
+    const claimed = await store.update('eat-users', { _id: joiner._id, kitchenId: '' }, {
+      kitchenId: canonical._id,
+      role: joinerRole,
+      nickname,
+      updatedAt: now(),
+    })
+    if (claimed !== 1)
+      throw new EatError('ALREADY_BOUND', ALREADY_MSG)
+
+    const moved = await store.update('eat-users', { _id: creator._id, kitchenId: pending._id }, {
+      kitchenId: canonical._id,
+      role: creatorRole,
+      nickname: creatorNickname,
+      updatedAt: now(),
+    })
+    if (moved !== 1) {
+      await store.update('eat-users', { _id: joiner._id, kitchenId: canonical._id }, {
+        kitchenId: '',
+        role: '',
+        updatedAt: now(),
+      })
+      throw new EatError('INVITE_INVALID', INVALID_MSG)
+    }
+
+    const cooker = joinerRole === 'cooker' ? joiner : creator
+    const eater = joinerRole === 'eater' ? joiner : creator
+    const reopened = await store.update('eat-kitchens', { _id: canonical._id, status: 'dissolved' }, {
+      status: 'active',
+      cookerOpenid: cooker.openid,
+      eaterOpenid: eater.openid,
+      cookerUserId: cooker._id,
+      eaterUserId: eater._id,
+      boundAt: now(),
+      dissolvedAt: 0,
+      updatedAt: now(),
+    })
+    if (reopened !== 1) {
+      await store.update('eat-users', { _id: joiner._id, kitchenId: canonical._id }, {
+        kitchenId: '',
+        role: '',
+        updatedAt: now(),
+      })
+      await store.update('eat-users', { _id: creator._id, kitchenId: canonical._id }, {
+        kitchenId: pending._id,
+        role: creatorRole,
+        nickname: creator.nickname || '',
+        updatedAt: now(),
+      })
+      throw new EatError('INVITE_INVALID', INVALID_MSG)
+    }
+
+    await store.update('eat-invites', { _id: invite._id, status: 'active' }, {
+      status: 'used',
+      usedByOpenid: joiner.openid,
+      usedAt: now(),
+    })
+    await store.update('eat-kitchens', { _id: pending._id, status: 'pending' }, {
+      status: 'dissolved',
+      dissolvedAt: now(),
+      updatedAt: now(),
+    })
+    await store.update('eat-invites', { kitchenId: pending._id, status: 'active' }, { status: 'revoked' })
+    for (const old of older)
+      await foldKitchen(canonical._id, old._id)
+    if (older.length)
+      await dedupeCategories(canonical._id)
+    return reload(joiner._id)
+  }
+
   async function joinKitchen(user, invite, kitchen) {
     const role = otherRole(invite.creatorRole)
     if (role === 'cooker' && kitchen.cookerOpenid)
@@ -485,7 +665,14 @@ function createEatService(deps) {
     if (role === 'eater' && kitchen.eaterOpenid)
       throw new EatError('INVITE_INVALID', INVALID_MSG)
 
-    const nickname = user.nicknameCustom ? user.nickname : DEFAULT_NICKNAME[role]
+    const creator = await findOne('eat-users', { openid: invite.creatorOpenid })
+    if (!creator)
+      throw new EatError('INVITE_INVALID', INVALID_MSG)
+    const previous = await pairKitchens(user.openid, creator.openid)
+    if (previous.length)
+      return resumeKitchen(user, creator, invite, kitchen, previous, role)
+
+    const nickname = resolvedNickname(user, role)
     const claimed = await store.update('eat-users', { _id: user._id, kitchenId: '' }, {
       kitchenId: kitchen._id,
       role,
@@ -527,6 +714,7 @@ function createEatService(deps) {
       usedByOpenid: user.openid,
       usedAt: now(),
     })
+    await keepRoleNickname(creator, invite.creatorRole)
     return reload(user._id)
   }
 
@@ -590,8 +778,8 @@ function createEatService(deps) {
       next: 'confirm',
       today: todayString(),
       role,
-      nickname: user.nicknameCustom ? user.nickname : DEFAULT_NICKNAME[role],
-      partnerNickname: partner?.nickname || DEFAULT_NICKNAME[invite.creatorRole],
+      nickname: resolvedNickname(user, role),
+      partnerNickname: resolvedNickname(partner, invite.creatorRole),
       partnerRole: invite.creatorRole,
       kitchenStatus: 'none',
       inviteCode: invite.code,
@@ -1021,7 +1209,27 @@ function createEatService(deps) {
       throw new EatError('SLOT_TAKEN', '这一餐已经点过了', { orderId: inProgress[0]._id })
     }
     const order = await ownOrder(kitchen, orderId)
+    await notifyCooker(kitchen, order)
     return mapOrder(order, false)
+  }
+
+  async function notifyCooker(kitchen, order) {
+    const touser = String(kitchen.cookerOpenid || '')
+    if (!touser)
+      return
+    try {
+      await sendOrderRemind({
+        touser,
+        page: `pages/cook/order?id=${order._id}`,
+        time: mealTime(order.date, order.slot),
+        dishes: clipDishes(order.items),
+        note: clipThing(order.note, '无'),
+      })
+    }
+    catch (err) {
+      const message = err && err.message ? err.message : String(err)
+      console.error('[eat] order remind failed', message)
+    }
   }
 
   async function listTodo() {
@@ -1259,6 +1467,127 @@ function createEatService(deps) {
     return badgesFor(await reload(user._id), kitchen)
   }
 
+  function personName(user, role) {
+    return resolvedNickname(user, role)
+  }
+
+  async function listBoundKitchens() {
+    const kitchens = await store.find('eat-kitchens', { status: 'active' }, 500)
+    const listed = []
+    for (const kitchen of kitchens) {
+      const cooker = kitchen.cookerOpenid ? await findOne('eat-users', { openid: kitchen.cookerOpenid }) : null
+      const eater = kitchen.eaterOpenid ? await findOne('eat-users', { openid: kitchen.eaterOpenid }) : null
+      listed.push({
+        kitchenId: kitchen._id,
+        cookerName: personName(cooker, 'cooker'),
+        eaterName: personName(eater, 'eater'),
+        boundAt: kitchen.boundAt || 0,
+      })
+    }
+    listed.sort((a, b) => (b.boundAt - a.boundAt) || a.cookerName.localeCompare(b.cookerName, 'zh'))
+    return { kitchens: listed }
+  }
+
+  function readImportDish(body) {
+    const name = normalizeDishName(body.name)
+    let category = String(body.category || '').trim()
+    if (category)
+      category = normalizeCategoryName(category)
+    if (body.ingredients != null && !Array.isArray(body.ingredients))
+      throw new EatError('VALIDATION', '食材要写成数组')
+    if (body.steps != null && !Array.isArray(body.steps))
+      throw new EatError('VALIDATION', '步骤要写成数组')
+    const ingredients = asLines(body.ingredients, 80, 200, '食材太长了', '食材太多了')
+    const steps = asLines(body.steps, 30, 200, '每一步最多 200 个字', '步骤最多 30 步')
+    const sourceUrl = normalizeUrl(body.sourceUrl)
+    const coverFileId = normalizeFileId(body.coverFileId, '还缺封面')
+    return { name, category, ingredients, steps, sourceUrl, coverFileId }
+  }
+
+  async function importDishes(body) {
+    const kitchenIds = Array.isArray(body.kitchenIds)
+      ? [...new Set(body.kitchenIds.map(id => String(id || '').trim()).filter(Boolean))]
+      : []
+    if (!kitchenIds.length)
+      throw new EatError('VALIDATION', '还没有选择厨房')
+    if (kitchenIds.length > 50)
+      throw new EatError('VALIDATION', '一次最多 50 间厨房')
+    if (!Array.isArray(body.dishes) || !body.dishes.length)
+      throw new EatError('VALIDATION', '这份文件里没有菜')
+    if (body.dishes.length > 80)
+      throw new EatError('VALIDATION', '一次最多 80 道菜')
+    const dishes = body.dishes.map(item => readImportDish(item || {}))
+    const results = []
+    for (const kitchenId of kitchenIds) {
+      const kitchen = await findOne('eat-kitchens', { _id: kitchenId })
+      const cooker = kitchen && kitchen.cookerOpenid ? await findOne('eat-users', { openid: kitchen.cookerOpenid }) : null
+      const eater = kitchen && kitchen.eaterOpenid ? await findOne('eat-users', { openid: kitchen.eaterOpenid }) : null
+      const row = {
+        kitchenId,
+        cookerName: personName(cooker, 'cooker'),
+        eaterName: personName(eater, 'eater'),
+        created: [],
+        skipped: [],
+        error: '',
+      }
+      if (!kitchen || kitchen.status !== 'active') {
+        row.error = '这间厨房还没有绑定'
+        results.push(row)
+        continue
+      }
+      const existing = await store.find('eat-dishes', { kitchenId, deleted: false }, 1000)
+      const names = new Set(existing.map(dish => dish.name))
+      const categories = await store.find('eat-categories', { kitchenId }, 100)
+      const categoryIds = new Map(categories.map(category => [category.name, category._id]))
+      for (const dish of dishes) {
+        if (names.has(dish.name)) {
+          row.skipped.push(dish.name)
+          continue
+        }
+        let categoryId = ''
+        if (dish.category) {
+          categoryId = categoryIds.get(dish.category) || ''
+          if (!categoryId) {
+            categoryId = await store.insert('eat-categories', {
+              kitchenId,
+              name: dish.category,
+              createdAt: now(),
+            })
+            categoryIds.set(dish.category, categoryId)
+          }
+        }
+        const createdAt = now()
+        await store.insert('eat-dishes', {
+          kitchenId,
+          name: dish.name,
+          ingredients: dish.ingredients,
+          steps: dish.steps,
+          sourceUrl: dish.sourceUrl,
+          coverFileId: dish.coverFileId,
+          categoryId,
+          status: 'on',
+          publishedAt: createdAt,
+          createdAt,
+          updatedAt: createdAt,
+          deleted: false,
+        })
+        names.add(dish.name)
+        row.created.push(dish.name)
+      }
+      results.push(row)
+    }
+    return { kitchens: results }
+  }
+
+  async function batchDishes(params) {
+    const body = input(params)
+    if (body.action === 'kitchens')
+      return listBoundKitchens()
+    if (body.action === 'import')
+      return importDishes(body)
+    throw new EatError('VALIDATION', '不认识这次操作')
+  }
+
   return {
     enter,
     me,
@@ -1292,6 +1621,7 @@ function createEatService(deps) {
     updateRecord,
     deleteRecord,
     badges,
+    batchDishes,
   }
 }
 

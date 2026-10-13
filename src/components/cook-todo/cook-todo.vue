@@ -14,17 +14,18 @@ import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
-import { fillTodo, isSample } from '@/utils/sample-feed'
+import { askCookRemind, loadCookRemindAlways, renewCookRemindIfAlways } from '@/utils/subscribe'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
-import { showError } from '@/utils/ui'
+import { showError, tell } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
 const pool = ref<OrderDetail[]>([])
-const rows = computed(() => fillTodo(pool.value, account.value?.today || ''))
-const { shown, total, finished, loading, reset, more } = usePaged(rows)
+const { shown, total, finished, loading, reset, more } = usePaged(pool)
 const pulling = ref(false)
 const acting = ref('')
 const ready = ref(false)
+const reminding = ref(false)
+const remindAlways = ref(false)
 let spin = 0
 
 const groups = computed(() => {
@@ -47,7 +48,10 @@ async function refresh() {
     const view = await ensureAccount({ next: 'home', role: 'cooker' })
     if (!view || id !== spin)
       return
-    const data = await listTodo()
+    const [data, always] = await Promise.all([
+      listTodo(),
+      loadCookRemindAlways(),
+    ])
     if (id !== spin)
       return
     account.value = view
@@ -55,6 +59,7 @@ async function refresh() {
     markTabFresh('todo')
     pool.value = data.orders
     reset()
+    remindAlways.value = always
     ready.value = true
     await primeFileUrls(data.orders.flatMap(order => order.items.map(item => item.coverFileId)))
   }
@@ -93,10 +98,10 @@ function dayTitle(date: string) {
 }
 
 async function accept(order: OrderDetail) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
+  void renewCookRemindIfAlways().then((still) => {
+    if (still === false)
+      remindAlways.value = false
+  })
   if (acting.value)
     return
   acting.value = order.orderId
@@ -113,39 +118,44 @@ async function accept(order: OrderDetail) {
 }
 
 function openOrder(order: OrderDetail) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/order?id=${order.orderId}` })
 }
 
 function openRecipe(order: OrderDetail, dishId: string) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/recipe?orderId=${order.orderId}&dishId=${dishId}` })
 }
 
 function reject(order: OrderDetail) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/reject?id=${order.orderId}` })
 }
 
 function writeRecord(order: OrderDetail) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/record-edit?orderId=${order.orderId}` })
 }
 
 function openRecords() {
   openTab('records')
+}
+
+function remind() {
+  if (reminding.value)
+    return
+  const pending = askCookRemind()
+  reminding.value = true
+  void pending.then(async (choice) => {
+    reminding.value = false
+    if (choice === 'accept') {
+      remindAlways.value = await loadCookRemindAlways()
+      showHint(remindAlways.value ? '之后有新餐会发到微信' : '下一餐会发到微信')
+      return
+    }
+    else if (choice === 'reject')
+      void tell('没有打开提醒', '点允许之后，对方点餐才会发到微信。若不再弹出，到小程序右上角的设置里打开「待办事项提醒」。')
+    else if (choice === 'ban')
+      void tell('暂时发不了提醒', '这条提醒被微信停用了。')
+    else
+      showHint('这次没有打开提醒')
+  })
 }
 
 defineExpose({ refresh })
@@ -154,7 +164,21 @@ defineExpose({ refresh })
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="待做" />
+      <screen-head title="待做" :note="ready && !pool.length ? '还没有待做的一餐' : ''" />
+      <view
+        v-if="ready && !remindAlways"
+        class="eat-press mt-28rpx box-border h-78rpx flex items-center justify-between border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx"
+        hover-class="eat-press-on"
+        :hover-stay-time="140"
+        @tap="remind"
+      >
+        <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('有新餐时提醒我', 'sans')">
+          有新餐时提醒我
+        </text>
+        <text class="text-28rpx text-#792b3e leading-none" :class="faceOf(reminding ? '正在打开' : '允许', 'mono')">
+          {{ reminding ? '正在打开' : '允许' }}
+        </text>
+      </view>
     </view>
     <ink-load v-if="!ready" label="正在看待做" />
     <list-scroll

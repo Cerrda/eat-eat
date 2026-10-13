@@ -1,0 +1,9 @@
+{
+  "weixin": {
+    "appid": "wx8a1698a3aa0663bf",
+    "privateKeyPath": "key/private.wx8a1698a3aa0663bf.key",
+    "projectPath": "dist/build/mp-weixin"
+  },
+  "version": "0.0.0",
+  "desc": "EatEat"
+}

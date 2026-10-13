@@ -94,7 +94,7 @@ function reorder() {
         {{ headline }}
       </text>
       <ink-underline :width="176" />
-      <view v-if="canChange" class="flex flex-col gap-28rpx">
+      <view v-if="canChange" class="flex flex-col">
         <view
           v-for="(item, index) in order.items"
           :key="item.dishId"

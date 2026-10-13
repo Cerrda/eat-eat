@@ -81,6 +81,7 @@ async function submit() {
         <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
           {{ headline }}
         </text>
+        <view class="flex flex-col">
         <view
           v-for="dish in orderDraft.dishes"
           :key="dish.dishId"
@@ -104,6 +105,7 @@ async function submit() {
               {{ dish.categoryName || '未分类' }}
             </text>
           </view>
+        </view>
         </view>
         <view class="flex flex-col gap-16rpx">
           <view class="flex items-center justify-between">

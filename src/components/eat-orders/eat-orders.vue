@@ -12,15 +12,12 @@ import { badges, dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/e
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
-import { showHint } from '@/utils/hint'
-import { fillOrders, isSample } from '@/utils/sample-feed'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
 const pool = ref<OrderDetail[]>([])
-const rows = computed(() => fillOrders(pool.value, account.value?.today || ''))
-const { shown, total, finished, loading, reset, more } = usePaged(rows)
+const { shown, total, finished, loading, reset, more } = usePaged(pool)
 const pulling = ref(false)
 
 onMounted(() => {
@@ -59,10 +56,6 @@ async function onPull() {
 }
 
 function openOrder(order: OrderDetail) {
-  if (isSample(order.orderId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/eat/order?id=${order.orderId}` })
 }
 
@@ -98,7 +91,7 @@ function extra(order: OrderDetail) {
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="订单" />
+      <screen-head title="订单" :note="account && !pool.length ? '还没有点过。' : ''" />
     </view>
     <ink-load v-if="!account" label="正在翻点过的" />
     <list-scroll

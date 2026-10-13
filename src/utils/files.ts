@@ -59,27 +59,43 @@ export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'th
   return raw ? fitCloudImageUrl(raw, size) : ''
 }
 
-export function chooseImage(source: 'album' | 'camera') {
-  return new Promise<string>((resolve, reject) => {
+function rejectChoose(error: unknown, reject: (reason: Error) => void) {
+  const message = String((error as { errMsg?: string }).errMsg || '')
+  if (message.includes('cancel'))
+    reject(new Error('cancel'))
+  else
+    reject(new EatRequestError('UPLOAD', '没有选到照片'))
+}
+
+/** 相册按剩余空位一次多选；微信相册单次最多 9 张。拍照仍是一张。 */
+export function chooseImages(source: 'album' | 'camera', count = 1) {
+  const limited = Math.min(9, Math.max(1, Math.floor(count)))
+  return new Promise<string[]>((resolve, reject) => {
     uni.chooseImage({
-      count: 1,
+      count: limited,
       sizeType: ['compressed'],
       sourceType: [source],
       success(result) {
-        const path = result.tempFilePaths[0]
-        if (path)
-          resolve(path)
+        const raw = result.tempFilePaths
+        const paths = (Array.isArray(raw) ? raw : []).filter(Boolean).slice(0, limited)
+        if (paths.length)
+          resolve(paths)
         else
           reject(new Error('cancel'))
       },
       fail(error) {
-        const message = String((error as { errMsg?: string }).errMsg || '')
-        if (message.includes('cancel'))
-          reject(new Error('cancel'))
-        else
-          reject(new EatRequestError('UPLOAD', '没有选到照片'))
+        rejectChoose(error, reject)
       },
     })
+  })
+}
+
+export function chooseImage(source: 'album' | 'camera') {
+  return chooseImages(source, 1).then((paths) => {
+    const path = paths[0]
+    if (!path)
+      throw new Error('cancel')
+    return path
   })
 }
 

@@ -205,6 +205,86 @@ describe('邀请码绑定微信 openid', () => {
     expect(active[0].cookerOpenid).toBe('openid-cooker')
     expect(active[0].eaterOpenid).toBe('openid-eater')
   })
+
+  it('谁填邀请码，没改过的称呼都按自己的角色', async () => {
+    const cookerHosts = setup()
+    const cookerInvite = await cookerHosts.eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
+    const eaterJoined = await cookerHosts.eat.acceptInvite({
+      code: 'wx:openid-eater',
+      inviteCode: cookerInvite.inviteCode,
+    })
+    expect(eaterJoined.nickname).toBe('食神')
+    expect(eaterJoined.partnerNickname).toBe('厨神')
+    await cookerHosts.use('openid-cooker')
+    const cooker = await cookerHosts.eat.me()
+    expect(cooker.nickname).toBe('厨神')
+    expect(cooker.partnerNickname).toBe('食神')
+
+    const eaterHosts = setup()
+    const eaterInvite = await eaterHosts.eat.createInvite({ code: 'wx:openid-eater', role: 'eater' })
+    const cookerJoined = await eaterHosts.eat.acceptInvite({
+      code: 'wx:openid-cooker',
+      inviteCode: eaterInvite.inviteCode,
+    })
+    expect(cookerJoined.role).toBe('cooker')
+    expect(cookerJoined.nickname).toBe('厨神')
+    expect(cookerJoined.partnerNickname).toBe('食神')
+    await eaterHosts.use('openid-eater')
+    const eater = await eaterHosts.eat.me()
+    expect(eater.nickname).toBe('食神')
+    expect(eater.partnerNickname).toBe('厨神')
+  })
+
+  it('填码的人先前选过同一边，加入后仍改成自己这一边', async () => {
+    const { eat, use } = setup()
+    const host = await eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
+    await eat.createInvite({ code: 'wx:openid-eater', role: 'cooker' })
+    const joined = await eat.acceptInvite({
+      code: 'wx:openid-eater',
+      inviteCode: host.inviteCode,
+      abandonPending: true,
+    })
+    expect(joined.role).toBe('eater')
+    expect(joined.nickname).toBe('食神')
+    expect(joined.partnerNickname).toBe('厨神')
+    await use('openid-cooker')
+    const cooker = await eat.me()
+    expect(cooker.nickname).toBe('厨神')
+    expect(cooker.partnerNickname).toBe('食神')
+  })
+
+  it('两边都被写成同一个人的称呼时，按角色改回来', async () => {
+    const { eat, store, use } = setup()
+    const created = await eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
+    await eat.acceptInvite({ code: 'wx:openid-eater', inviteCode: created.inviteCode })
+    await store.update('eat-users', { openid: 'openid-cooker' }, { nickname: '食神', nicknameCustom: false })
+    await store.update('eat-users', { openid: 'openid-eater' }, { nickname: '食神', nicknameCustom: false })
+
+    await use('openid-cooker')
+    const cooker = await eat.me()
+    expect(cooker.nickname).toBe('厨神')
+    expect(cooker.partnerNickname).toBe('食神')
+    await use('openid-eater')
+    const eater = await eat.me()
+    expect(eater.nickname).toBe('食神')
+    expect(eater.partnerNickname).toBe('厨神')
+
+    const users = await store.find('eat-users', {}, 10)
+    expect(users.find(user => user.openid === 'openid-cooker').nickname).toBe('厨神')
+    expect(users.find(user => user.openid === 'openid-eater').nickname).toBe('食神')
+  })
+
+  it('自己改过的称呼不会被角色默认值盖掉', async () => {
+    const { eat, use } = setup()
+    const created = await eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
+    await eat.acceptInvite({ code: 'wx:openid-eater', inviteCode: created.inviteCode })
+    await use('openid-cooker')
+    await eat.updateNickname({ nickname: '阿明' })
+    await use('openid-eater')
+    const eater = await eat.me()
+    expect(eater.nickname).toBe('食神')
+    expect(eater.partnerNickname).toBe('阿明')
+  })
 })
 
 describe('绑定后的厨房', () => {
@@ -333,6 +413,95 @@ describe('绑定后的厨房', () => {
     expect(await ctx.store.find('eat-orders', {}, 10)).toHaveLength(1)
   })
 
+  it('同一对人再次绑定时回到原来的厨房，并带回分开过的内容', async () => {
+    const ctx = await kitchen()
+    const original = await ctx.store.find('eat-kitchens', { status: 'active' }, 5)
+    await ctx.use('openid-cooker')
+    const category = await ctx.eat.createCategory({ name: '家常' })
+    const dish = await ctx.eat.publishDish({
+      name: '番茄炒蛋',
+      categoryId: category.categoryId,
+      coverFileId: 'cloud://cover',
+    })
+    const board = await ctx.eat.mealBoard()
+    await ctx.use('openid-eater')
+    const order = await ctx.eat.createOrder({
+      date: board.today,
+      slot: 'evening',
+      dishIds: [dish.dishId],
+    })
+    await ctx.eat.createRecord({
+      date: board.today,
+      slot: 'noon',
+      text: '原来的记录',
+    })
+    await ctx.use('openid-cooker')
+    await ctx.eat.unbind()
+
+    const earlier = await ctx.store.find('eat-kitchens', { status: 'dissolved' }, 5)
+    const olderId = await ctx.store.insert('eat-kitchens', {
+      status: 'dissolved',
+      cookerOpenid: 'openid-eater',
+      eaterOpenid: 'openid-cooker',
+      cookerUserId: '',
+      eaterUserId: '',
+      createdAt: 1,
+      updatedAt: 1,
+      boundAt: 1,
+      dissolvedAt: earlier[0].dissolvedAt - 1,
+    })
+    const earlierCategory = await ctx.store.insert('eat-categories', {
+      kitchenId: olderId,
+      name: '家常',
+      createdAt: 1,
+    })
+    await ctx.store.insert('eat-dishes', {
+      kitchenId: olderId,
+      name: '更早的汤',
+      categoryId: earlierCategory,
+      coverFileId: 'cloud://soup',
+      status: 'on',
+      deleted: false,
+      publishedAt: 1,
+      updatedAt: 1,
+    })
+
+    const side = await ctx.eat.createInvite({ code: 'wx:openid-cooker', role: 'cooker' })
+    await ctx.eat.acceptInvite({ code: 'wx:openid-other', inviteCode: side.inviteCode })
+    await ctx.use('openid-cooker')
+    await ctx.eat.publishDish({ name: '别人的菜', coverFileId: 'cloud://other' })
+    await ctx.eat.unbind()
+
+    const again = await ctx.eat.createInvite({ code: 'wx:openid-eater', role: 'cooker' })
+    const rejoined = await ctx.eat.acceptInvite({ code: 'wx:openid-cooker', inviteCode: again.inviteCode })
+    expect(rejoined.next).toBe('home')
+    expect(rejoined.role).toBe('eater')
+    expect(rejoined.nickname).toBe('食神')
+    expect(rejoined.partnerNickname).toBe('厨神')
+
+    await ctx.use('openid-eater')
+    const dishes = await ctx.eat.listDishes({})
+    expect(dishes.dishes.map(item => item.name).sort()).toEqual(['更早的汤', '番茄炒蛋'])
+    const categories = await ctx.eat.listCategories()
+    expect(categories.categories.map(item => item.name)).toEqual(['家常'])
+    const soup = dishes.dishes.find(item => item.name === '更早的汤')
+    expect(soup.categoryName).toBe('家常')
+
+    await ctx.use('openid-cooker')
+    const orders = await ctx.eat.listOrders()
+    expect(orders.orders.map(item => item.orderId)).toContain(order.orderId)
+    const records = await ctx.eat.listRecords()
+    expect(records.records.some(item => item.text === '原来的记录')).toBe(true)
+
+    const active = await ctx.store.find('eat-kitchens', { status: 'active' }, 10)
+    expect(active).toHaveLength(1)
+    expect(active[0]._id).toBe(original[0]._id)
+    expect(active[0].cookerOpenid).toBe('openid-eater')
+    expect(active[0].eaterOpenid).toBe('openid-cooker')
+    const otherDishes = await ctx.store.find('eat-dishes', { name: '别人的菜' }, 5)
+    expect(otherDishes[0].kitchenId).not.toBe(active[0]._id)
+  })
+
   it('没有菜的分类可以删，有菜时要先换走', async () => {
     const ctx = await kitchen()
     await ctx.use('openid-cooker')
@@ -349,5 +518,76 @@ describe('绑定后的厨房', () => {
     await ctx.eat.deleteCategory({ categoryId: empty.categoryId })
     const listed = await ctx.eat.listCategories()
     expect(listed.categories.map(item => item.name)).toEqual(['家常'])
+  })
+})
+
+describe('批量新增菜品', () => {
+  async function bindPair(eat, cooker, eater) {
+    const created = await eat.createInvite({ code: `wx:${cooker}`, role: 'cooker' })
+    await eat.acceptInvite({ code: `wx:${eater}`, inviteCode: created.inviteCode })
+  }
+
+  it('只列出已绑定的厨房，并用双方现在的称呼', async () => {
+    const ctx = setup()
+    await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
+    await ctx.eat.createInvite({ code: 'wx:openid-waiting', role: 'cooker' })
+    await ctx.use('openid-cooker')
+    await ctx.eat.updateNickname({ nickname: '阿明' })
+    await ctx.use('openid-eater')
+    await ctx.eat.updateNickname({ nickname: '阿花' })
+
+    const listed = await ctx.eat.batchDishes({ action: 'kitchens' })
+    expect(listed.kitchens).toHaveLength(1)
+    expect(listed.kitchens[0].cookerName).toBe('阿明')
+    expect(listed.kitchens[0].eaterName).toBe('阿花')
+    expect(JSON.stringify(listed)).not.toContain('openid')
+    const kitchens = await ctx.store.find('eat-kitchens', { status: 'active' }, 5)
+    expect(listed.kitchens[0].kitchenId).toBe(kitchens[0]._id)
+  })
+
+  it('按分类名补分类，同名菜跳过', async () => {
+    const ctx = setup()
+    await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
+    const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
+    const dish = {
+      name: '番茄炒蛋',
+      category: '家常',
+      ingredients: ['番茄 2 个', '鸡蛋 3 个'],
+      steps: ['先炒蛋', '再炒番茄'],
+      sourceUrl: 'https://example.com/tomato',
+      coverFileId: 'cloud://cover',
+    }
+
+    const imported = await ctx.eat.batchDishes({
+      action: 'import',
+      kitchenIds: [kitchenId],
+      dishes: [dish, { ...dish, name: '番茄炒蛋' }, { ...dish, name: '青菜汤', ingredients: ['青菜'], steps: [] }],
+    })
+    expect(imported.kitchens[0].created).toEqual(['番茄炒蛋', '青菜汤'])
+    expect(imported.kitchens[0].skipped).toEqual(['番茄炒蛋'])
+    expect(imported.kitchens[0].cookerName).toBe('厨神')
+    expect(imported.kitchens[0].eaterName).toBe('食神')
+
+    const categories = await ctx.store.find('eat-categories', { kitchenId }, 10)
+    expect(categories.map(item => item.name)).toEqual(['家常'])
+    const dishes = await ctx.store.find('eat-dishes', { kitchenId, deleted: false }, 10)
+    expect(dishes).toHaveLength(2)
+    const egg = dishes.find(item => item.name === '番茄炒蛋')
+    expect(egg.categoryId).toBe(categories[0]._id)
+    expect(egg.ingredients).toEqual(['番茄 2 个', '鸡蛋 3 个'])
+    expect(egg.steps).toEqual(['先炒蛋', '再炒番茄'])
+    expect(egg.sourceUrl).toBe('https://example.com/tomato')
+    expect(egg.coverFileId).toBe('cloud://cover')
+    expect(egg.status).toBe('on')
+
+    const again = await ctx.eat.batchDishes({
+      action: 'import',
+      kitchenIds: [kitchenId, 'missing'],
+      dishes: [{ name: '番茄炒蛋', category: '家常', ingredients: [], steps: [], coverFileId: 'cloud://cover' }],
+    })
+    expect(again.kitchens[0].created).toEqual([])
+    expect(again.kitchens[0].skipped).toEqual(['番茄炒蛋'])
+    expect(again.kitchens[1].error).toBe('这间厨房还没有绑定')
+    expect(await ctx.store.find('eat-categories', { kitchenId }, 10)).toHaveLength(1)
   })
 })

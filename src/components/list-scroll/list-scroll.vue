@@ -29,8 +29,12 @@ const props = withDefaults(defineProps<{
   finished: boolean
   total: number
   insetTop?: number
+  insetBottom?: number
+  intoView?: string
 }>(), {
   insetTop: 0,
+  insetBottom: 0,
+  intoView: '',
 })
 
 const emit = defineEmits<{
@@ -50,6 +54,11 @@ const scrollStyle = computed(() => {
 const cuePad = computed(() => {
   const inset = uni.upx2px(props.insetTop)
   return `${Math.max(4, 18 - inset / 2)}px`
+})
+const bodyStyle = computed(() => {
+  if (!props.insetBottom)
+    return undefined
+  return { paddingBottom: `${props.insetBottom}rpx` }
 })
 let moved = false
 
@@ -403,6 +412,8 @@ module.exports = {
     :show-scrollbar="false"
     :bounces="false"
     :scroll-y="scrollable"
+    :scroll-into-view="intoView"
+    scroll-with-animation
     :lower-threshold="120"
     @touchstart="pull.start"
     @touchmove="pull.move"
@@ -440,7 +451,7 @@ module.exports = {
           </text>
         </view>
       </view>
-      <view class="pull-body box-border pr-28rpx">
+      <view class="pull-body box-border pr-28rpx" :style="bodyStyle">
         <slot />
         <view v-if="loading" class="flex items-center justify-center gap-16rpx py-32rpx">
           <ink-spin />

@@ -18,6 +18,7 @@ import { ask, showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(peekAccount())
 const nickname = ref(account.value?.nickname || '')
+const nicknameReady = ref(false)
 keepOneLine(nickname)
 const pending = ref(false)
 const partnerLine = computed(() => {
@@ -28,12 +29,14 @@ const partnerLine = computed(() => {
   return `${name}  ·  ${ROLE_LABEL[role]}`
 })
 async function refresh() {
+  nicknameReady.value = false
   try {
     const view = await ensureAccount({ next: 'home' })
     if (!view)
       return
     account.value = view
     nickname.value = view.nickname
+    nicknameReady.value = true
     noteBadges(view.badges)
     markTabFresh('settings')
   }
@@ -49,7 +52,7 @@ onMounted(() => {
 defineExpose({ refresh })
 
 async function saveNickname() {
-  if (!account.value)
+  if (!nicknameReady.value || !account.value)
     return
   const next = nickname.value.trim()
   if (next === account.value.nickname)

@@ -15,8 +15,6 @@ import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine } from '@/utils/format'
-import { showHint } from '@/utils/hint'
-import { fillDishes, isSample } from '@/utils/sample-feed'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
@@ -35,12 +33,13 @@ const viewRows = computed(() => {
   if (categoryId.value)
     rows = rows.filter(dish => dish.categoryId === categoryId.value)
   if (word)
-    return rows.filter(dish => dish.name.includes(word))
-  return fillDishes(rows, categories.value, categoryId.value, pool.value.map(dish => dish.name))
+    rows = rows.filter(dish => dish.name.includes(word))
+  return rows
 })
 const { shown, total, finished, loading, reset, more } = usePaged(viewRows)
 const onShelf = computed(() => shown.value.filter(dish => dish.status === 'on'))
 const offShelf = computed(() => shown.value.filter(dish => dish.status === 'off'))
+const bareEmpty = computed(() => ready.value && pool.value.length === 0 && !keyword.value.trim() && !categoryId.value)
 const emptyCopy = computed(() => {
   if (keyword.value.trim())
     return '没有找到这道菜。'
@@ -106,10 +105,6 @@ function createDish() {
 }
 
 function editDish(dish: DishCard) {
-  if (isSample(dish.dishId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/dish-edit?id=${dish.dishId}` })
 }
 
@@ -123,7 +118,7 @@ defineExpose({ refresh })
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="菜品" />
+      <screen-head title="菜品" :note="bareEmpty ? '还没有菜' : ''" />
     </view>
     <ink-load v-if="!ready" label="正在翻菜" />
     <list-scroll
@@ -135,7 +130,18 @@ defineExpose({ refresh })
       @refresh="onPull"
       @more="more"
     >
-      <view class="flex flex-col gap-32rpx pt-32rpx">
+      <view v-if="bareEmpty" class="w-full flex flex-col items-center pb-16rpx pt-32rpx">
+        <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
+        <view class="relative z-0 w-456rpx flex items-center justify-center gap-12rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-48rpx pt-164rpx -mt-148rpx" @tap="createDish">
+          <text class="text-44rpx text-#792b3e leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
+            新增菜品
+          </text>
+          <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+            ›
+          </text>
+        </view>
+      </view>
+      <view v-else class="flex flex-col gap-32rpx pt-32rpx">
         <view class="border-0 border-y-4rpx border-#c9a297 border-solid py-32rpx" @tap="createDish">
           <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
             新增菜品
@@ -143,20 +149,15 @@ defineExpose({ refresh })
         </view>
         <view class="flex flex-col gap-20rpx">
           <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-full border-solid bg-#fff9f4 px-28rpx">
-            <view class="relative h-32rpx w-32rpx shrink-0">
-              <view class="absolute left-2rpx top-2rpx box-border h-20rpx w-20rpx border-3rpx border-#7a534c rounded-full border-solid" />
-              <view
-                class="absolute left-16rpx top-16rpx h-3rpx w-12rpx rounded-full bg-#7a534c"
-                style="transform: rotate(45deg); transform-origin: left center"
-              />
-            </view>
+            <view class="i-mingcute-search-line shrink-0 text-32rpx text-#7a534c" />
             <textarea
               v-model="keyword"
               disable-default-padding
-              class="h-40rpx min-w-0 flex-1 text-30rpx text-#3c2428 leading-40rpx"
+              class="h-80rpx min-w-0 flex-1 text-30rpx text-#3c2428 leading-80rpx"
               :class="faceOf(keyword, 'sans')"
               placeholder="搜菜名"
               placeholder-class="ph-sans"
+              placeholder-style="font-size: 30rpx; line-height: 80rpx;"
               confirm-type="search"
               :show-confirm-bar="false"
             />
@@ -196,6 +197,7 @@ defineExpose({ refresh })
           <text class="text-30rpx text-#792b3e" :class="faceOf('已上架', 'mono')">
             已上架
           </text>
+          <view class="flex flex-col">
           <view v-for="dish in onShelf" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
             <view class="relative h-120rpx w-118rpx shrink-0 -mb-8rpx -mr-6rpx">
               <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-#4e222d/28" />
@@ -216,11 +218,13 @@ defineExpose({ refresh })
               已上架
             </text>
           </view>
+          </view>
         </template>
         <template v-if="offShelf.length">
           <text class="text-30rpx text-#792b3e" :class="faceOf('已下架', 'mono')">
             已下架
           </text>
+          <view class="flex flex-col">
           <view v-for="dish in offShelf" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
             <view class="relative h-120rpx w-118rpx shrink-0 -mb-8rpx -mr-6rpx">
               <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-#4e222d/28" />
@@ -240,6 +244,7 @@ defineExpose({ refresh })
             <text class="shrink-0 text-28rpx text-#7a534c" :class="faceOf('已下架', 'mono')">
               已下架
             </text>
+          </view>
           </view>
         </template>
         <text v-if="emptyCopy && !onShelf.length && !offShelf.length" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">

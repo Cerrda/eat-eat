@@ -3,7 +3,7 @@ import type { OrderDetail, RecordCard, Slot } from '@/api/eat'
 import { createRecord, dateLabel, deleteRecord, getOrder, listRecords, SLOT_LABEL, updateRecord } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
-import { chooseImage, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
+import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
 import { showHint } from '@/utils/hint'
 import { ask, showError } from '@/utils/ui'
 
@@ -21,7 +21,9 @@ const today = ref('')
 const date = ref('')
 const slot = ref<Slot>('noon')
 const text = ref('')
+const photoLimit = 9
 const photos = ref<string[]>([])
+const uploading = ref(false)
 const dishIds = ref<string[]>([])
 const locked = ref(false)
 const pending = ref(false)
@@ -104,7 +106,9 @@ function onSlot(event: { detail: { value: string } }) {
 }
 
 function addPhoto() {
-  if (photos.value.length >= 9) {
+  if (uploading.value)
+    return
+  if (photos.value.length >= photoLimit) {
     showHint('照片最多 9 张')
     return
   }
@@ -117,15 +121,32 @@ function addPhoto() {
 }
 
 async function storePhoto(source: 'album' | 'camera') {
+  const room = photoLimit - photos.value.length
+  if (room <= 0 || uploading.value) {
+    if (room <= 0)
+      showHint('照片最多 9 张')
+    return
+  }
+  uploading.value = true
   try {
-    const path = await chooseImage(source)
-    const fileId = await uploadImage(path, 'records')
-    photos.value.push(fileId)
-    await primeFileUrls([fileId])
+    const picked = await chooseImages(source, source === 'camera' ? 1 : room)
+    const batch = picked.slice(0, room)
+    const settled = await Promise.allSettled(batch.map(path => uploadImage(path, 'records')))
+    const fileIds = settled.flatMap(item => item.status === 'fulfilled' ? [item.value] : [])
+    if (fileIds.length) {
+      photos.value = [...photos.value, ...fileIds].slice(0, photoLimit)
+      await primeFileUrls(fileIds)
+    }
+    const failed = settled.find(item => item.status === 'rejected')
+    if (failed?.status === 'rejected')
+      showError(failed.reason)
   }
   catch (err) {
     if (!ignoredCancel(err))
       showError(err)
+  }
+  finally {
+    uploading.value = false
   }
 }
 
@@ -240,17 +261,17 @@ async function submit() {
             <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
           </view>
           <view
-            v-if="photos.length < 9"
+            v-if="photos.length < photoLimit"
             class="box-border h-208rpx w-208rpx flex shrink-0 items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid"
             @tap="addPhoto"
           >
-            <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf('加一张', 'sans')">
-              加一张
+            <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf(uploading ? '正在加上' : '加一张', 'sans')">
+              {{ uploading ? '正在加上' : '加一张' }}
             </text>
           </view>
         </view>
-        <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf(`${photos.length} / 9 张`, 'sans')">
-          {{ photos.length }} / 9 张
+        <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf(`${photos.length} / ${photoLimit} 张`, 'sans')">
+          {{ photos.length }} / {{ photoLimit }} 张
         </text>
         <view class="box-border h-240rpx flex flex-col justify-between border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-28rpx">
           <textarea

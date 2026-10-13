@@ -4,5 +4,6 @@ export default uni({
   unocss: true,
   ignores: [
     'uniCloud-*/**',
+    '.minicirc',
   ],
 })

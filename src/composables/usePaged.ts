@@ -18,6 +18,14 @@ export function usePaged<T>(source: Ref<T[]>) {
     loading.value = false
   }
 
+  function reveal(index: number) {
+    if (index < 0)
+      return
+    const need = Math.floor(index / PAGE_SIZE) + 1
+    if (page.value < need)
+      page.value = need
+  }
+
   async function more() {
     if (loading.value || finished.value)
       return
@@ -30,5 +38,5 @@ export function usePaged<T>(source: Ref<T[]>) {
     loading.value = false
   }
 
-  return { shown, total, finished, loading, reset, more }
+  return { shown, total, finished, loading, reset, more, reveal }
 }

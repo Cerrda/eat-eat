@@ -119,6 +119,7 @@ function cancel() {
       <text class="text-30rpx text-#792b3e" :class="faceOf(statusText, 'mono')">
         {{ statusText }}
       </text>
+      <view v-if="order.items.length" class="flex flex-col">
       <view
         v-for="(item, index) in order.items"
         :key="item.dishId"
@@ -138,6 +139,7 @@ function cancel() {
             {{ categories[index] }}
           </text>
         </view>
+      </view>
       </view>
       <view v-if="order.note" class="flex flex-col gap-8rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-28rpx pr-4rpx">
         <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf(`${account?.partnerNickname || '食神'}留下的话`, 'mono')">

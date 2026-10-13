@@ -36,6 +36,7 @@ const methods = [
   'updateRecord',
   'deleteRecord',
   'badges',
+  'batchDishes',
 ]
 
 function guard(work) {

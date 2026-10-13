@@ -13,15 +13,12 @@ import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
-import { showHint } from '@/utils/hint'
-import { fillRecords, isSample } from '@/utils/sample-feed'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
 const pool = ref<RecordCard[]>([])
-const rows = computed(() => fillRecords(pool.value, account.value?.today || ''))
-const { shown, total, finished, loading, reset, more } = usePaged(rows)
+const { shown, total, finished, loading, reset, more } = usePaged(pool)
 const pulling = ref(false)
 let spin = 0
 
@@ -70,10 +67,6 @@ function createOne() {
 }
 
 function editOne(record: RecordCard) {
-  if (isSample(record.recordId)) {
-    showHint('这是凑出来的示例')
-    return
-  }
   uni.navigateTo({ url: `/pages/cook/record-edit?recordId=${record.recordId}` })
 }
 
@@ -104,8 +97,8 @@ defineExpose({ refresh })
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view class="shrink-0">
-      <screen-head title="记录">
-        <view v-if="account" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
+      <screen-head title="记录" :note="account && !pool.length ? '还没有记下的一餐' : ''">
+        <view v-if="account && pool.length" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
           <text class="text-26rpx text-#fbf3ea font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
             记下这餐
           </text>
@@ -122,7 +115,22 @@ defineExpose({ refresh })
       @refresh="onPull"
       @more="more"
     >
-      <view class="flex flex-col gap-32rpx pt-32rpx">
+      <view v-if="!pool.length" class="w-full flex justify-center pb-16rpx pt-32rpx">
+        <view class="relative h-336rpx w-456rpx" @tap="createOne">
+          <view class="absolute left-0 top-84rpx box-border h-244rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-44rpx">
+            <view class="flex items-center gap-12rpx">
+              <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('记下这餐', 'serif')">
+                记下这餐
+              </text>
+              <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+                ›
+              </text>
+            </view>
+          </view>
+          <image class="pointer-events-none absolute left-120rpx top-0 z-1 h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
+        </view>
+      </view>
+      <view v-else class="flex flex-col gap-32rpx pt-32rpx">
         <view
           v-for="record in shown"
           :key="record.recordId"
