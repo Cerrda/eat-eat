@@ -81,6 +81,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const markTabFresh: typeof import('./utils/tabs')['markTabFresh']
   const menuIntent: typeof import('./utils/draft')['menuIntent']
+  const menuPanePose: typeof import('./utils/tabs')['menuPanePose']
   const monthDay: typeof import('./utils/format')['monthDay']
   const nextTick: typeof import('vue')['nextTick']
   const normalizeCode: typeof import('./utils/format')['normalizeCode']
@@ -175,6 +176,8 @@ declare global {
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const tabBadges: typeof import('./utils/tabs')['tabBadges']
   const tabKey: typeof import('./utils/tabs')['tabKey']
+  const tabPanePoseKey: typeof import('./utils/tabs')['tabPanePoseKey']
+  const tabPaneShownKey: typeof import('./utils/tabs')['tabPaneShownKey']
   const tabsOf: typeof import('./utils/tabs')['tabsOf']
   const tell: typeof import('./utils/ui')['tell']
   const templateRef: typeof import('@vueuse/core')['templateRef']
@@ -403,7 +406,7 @@ declare global {
   export type { SubscribeChoice } from './utils/subscribe'
   import('./utils/subscribe')
   // @ts-ignore
-  export type { TabKey } from './utils/tabs'
+  export type { TabKey, TabPanePose } from './utils/tabs'
   import('./utils/tabs')
   // @ts-ignore
   export type { DialogResult } from './utils/ui'
@@ -490,6 +493,7 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly markTabFresh: UnwrapRef<typeof import('./utils/tabs')['markTabFresh']>
     readonly menuIntent: UnwrapRef<typeof import('./utils/draft')['menuIntent']>
+    readonly menuPanePose: UnwrapRef<typeof import('./utils/tabs')['menuPanePose']>
     readonly monthDay: UnwrapRef<typeof import('./utils/format')['monthDay']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly normalizeCode: UnwrapRef<typeof import('./utils/format')['normalizeCode']>

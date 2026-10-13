@@ -1,108 +1,126 @@
 <script setup lang="ts">
+import type { TabPanePose } from '@/utils/tabs'
 import { useTopPadding } from '@/composables/useTopPadding'
+import { menuPanePose } from '@/utils/tabs'
 
 const props = defineProps<{
   active: boolean
   motion: '' | 'left' | 'right'
+  publish?: boolean
 }>()
 
+const ENTER_MS = 400
 const topPadding = useTopPadding()
-const shiftClass = ref('')
-let timer: ReturnType<typeof setTimeout> | undefined
-let frame: ReturnType<typeof setTimeout> | undefined
+const instance = getCurrentInstance()
+const slide = `${uni.upx2px(32)}px`
+const identity = 'translate3d(0, 0, 0)'
+const ease = `opacity ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`
+const restPose: TabPanePose = { opacity: '1', transform: 'none', transition: 'none' }
+
+const pose = ref<TabPanePose>({ ...restPose })
+let token = 0
+const pending: ReturnType<typeof setTimeout>[] = []
+
+watch(pose, (value) => {
+  if (props.publish)
+    menuPanePose.value = value
+})
+
+const shellStyle = computed(() => ({
+  height: '100vh',
+  paddingTop: topPadding.value,
+  paddingBottom: 'calc(184rpx + env(safe-area-inset-bottom))',
+  visibility: props.active ? 'visible' : 'hidden',
+  pointerEvents: props.active ? 'auto' : 'none',
+  zIndex: props.active ? 1 : 0,
+  opacity: pose.value.opacity,
+  transform: pose.value.transform,
+  transition: pose.value.transition,
+}))
 
 watch(() => props.active, (on) => {
   if (on)
     return
-  shiftClass.value = ''
-  if (timer)
-    clearTimeout(timer)
-  if (frame)
-    clearTimeout(frame)
+  stop()
+  pose.value = { ...restPose }
 })
 
 watch(() => props.motion, (value) => {
   if (!props.active || !value)
     return
-  if (timer)
-    clearTimeout(timer)
-  if (frame)
-    clearTimeout(frame)
-  shiftClass.value = value === 'right' ? 'tab-hold-right' : 'tab-hold-left'
-  frame = setTimeout(() => {
-    shiftClass.value = value === 'right' ? 'tab-hold-right tab-from-right' : 'tab-hold-left tab-from-left'
-  }, 32)
-  timer = setTimeout(() => {
-    shiftClass.value = ''
-  }, 456)
+  stop()
+  const current = token
+  const offset = value === 'right' ? slide : `-${slide}`
+  pose.value = {
+    opacity: '0',
+    transform: `translate3d(${offset}, 0, 0)`,
+    transition: 'none',
+  }
+  nextTick(() => {
+    if (current !== token || !props.active)
+      return
+    let armed = false
+    const run = () => {
+      if (armed || current !== token || !props.active)
+        return
+      armed = true
+      pose.value = {
+        opacity: '0',
+        transform: `translate3d(${offset}, 0, 0)`,
+        transition: ease,
+      }
+      later(() => {
+        if (current !== token || !props.active)
+          return
+        pose.value = { opacity: '1', transform: identity, transition: ease }
+        later(() => {
+          if (current !== token || !props.active)
+            return
+          pose.value = { ...restPose }
+        }, ENTER_MS + 24)
+      }, 32)
+    }
+    later(run, 48)
+    const proxy = instance?.proxy
+    if (!proxy)
+      return
+    uni.createSelectorQuery().in(proxy).select('.tab-pane').boundingClientRect(() => {
+      run()
+    }).exec()
+  })
 })
 
-onUnmounted(() => {
-  if (timer)
-    clearTimeout(timer)
-  if (frame)
-    clearTimeout(frame)
-})
+onUnmounted(stop)
+
+function stop() {
+  token += 1
+  clearPending()
+}
+
+function later(fn: () => void, ms: number) {
+  const id = setTimeout(() => {
+    const index = pending.indexOf(id)
+    if (index >= 0)
+      pending.splice(index, 1)
+    fn()
+  }, ms)
+  pending.push(id)
+}
+
+function clearPending() {
+  for (const id of pending)
+    clearTimeout(id)
+  pending.length = 0
+}
 </script>
 
 <template>
   <view
-    class="fixed left-0 top-0 box-border w-full flex flex-col overflow-hidden"
-    :style="{
-      height: '100vh',
-      paddingTop: topPadding,
-      paddingBottom: 'calc(184rpx + env(safe-area-inset-bottom))',
-      visibility: active ? 'visible' : 'hidden',
-      pointerEvents: active ? 'auto' : 'none',
-      zIndex: active ? 1 : 0,
-    }"
+    class="tab-pane fixed left-0 top-0 box-border w-full flex flex-col overflow-hidden"
+    :style="shellStyle"
   >
-    <view class="h-0 min-h-0 flex flex-1 flex-col px-44rpx" :class="shiftClass">
+    <view class="h-0 min-h-0 flex flex-1 flex-col px-44rpx">
       <slot />
     </view>
   </view>
 </template>
-
-<style>
-.tab-hold-right {
-  opacity: 0;
-  transform: translate3d(32rpx, 0, 0);
-}
-
-.tab-hold-left {
-  opacity: 0;
-  transform: translate3d(-32rpx, 0, 0);
-}
-
-.tab-from-right {
-  animation: tab-from-right 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.tab-from-left {
-  animation: tab-from-left 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes tab-from-right {
-  from {
-    opacity: 0;
-    transform: translate3d(32rpx, 0, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes tab-from-left {
-  from {
-    opacity: 0;
-    transform: translate3d(-32rpx, 0, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-</style>

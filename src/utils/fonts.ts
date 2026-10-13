@@ -134,6 +134,7 @@ async function bootFace(face: Face) {
     await download(face.url, filePath)
     await useLocal(face, filePath)
   }
+
 }
 
 export async function bootFonts() {

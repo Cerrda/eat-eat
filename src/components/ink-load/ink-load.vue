@@ -213,12 +213,28 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <view class="eat-load flex shrink-0 items-center justify-center" :style="boxHeight ? { height: `${boxHeight}px` } : undefined" :aria-label="props.label || '加载中'">
-    <canvas :id="cid" type="2d" class="eat-pot" style="width: 156rpx; height: 124rpx" />
+  <view class="eat-load" :style="boxHeight ? { height: `${boxHeight}px` } : undefined" :aria-label="props.label || '加载中'">
+    <view class="eat-pot-slot">
+      <canvas :id="cid" type="2d" class="eat-pot" />
+    </view>
   </view>
 </template>
 
 <style>
+.eat-load {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.eat-pot-slot {
+  width: 156rpx;
+  height: 124rpx;
+  flex: none;
+}
+
 .eat-pot {
   width: 156rpx;
   height: 124rpx;

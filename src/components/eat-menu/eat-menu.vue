@@ -15,14 +15,13 @@ import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
-import { markTabFresh } from '@/utils/tabs'
+import { markTabFresh, menuPanePose } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
 const props = defineProps<{
   active?: boolean
 }>()
 
-const alive = computed(() => props.active !== false)
 const instance = getCurrentInstance()
 let leftPage = false
 
@@ -680,6 +679,12 @@ const TRAY_OUT_MS = 200
 const trayHold = ref(false)
 const trayEnter = ref(false)
 const trayLeaving = ref(false)
+const trayPortal = computed(() => !!props.active && trayHold.value && !!board.value)
+const trayLayerStyle = computed(() => ({
+  opacity: menuPanePose.value.opacity,
+  transform: menuPanePose.value.transform,
+  transition: menuPanePose.value.transition,
+}))
 const trayFresh = ref(false)
 // 托盘浮在列表底上。外间距 16 + 边框 8 + 内边距 40 + 顶栏 68；选菜时再加间距 12 和筹码 72。
 const trayClear = computed(() => {
@@ -1164,7 +1169,9 @@ defineExpose({ refresh })
     <view class="shrink-0">
       <screen-head title="菜单" :note="bareEmpty ? '还没有上架的菜。' : ''" />
     </view>
-    <ink-load v-if="!board" label="正在摆这一餐" />
+    <view v-if="!board" class="min-h-0 w-full flex flex-1 items-center justify-center">
+      <ink-load label="正在摆这一餐" />
+    </view>
     <list-scroll
       v-else
       ref="scroller"
@@ -1412,8 +1419,11 @@ defineExpose({ refresh })
         </text>
       </view>
     </list-scroll>
-    <root-portal v-if="alive && trayHold && board">
-      <view class="fixed bottom-[calc(184rpx+env(safe-area-inset-bottom))] left-0 right-0 z-10 box-border px-32rpx pb-8rpx pt-8rpx">
+    <root-portal v-if="trayPortal">
+      <view
+        class="fixed bottom-[calc(184rpx+env(safe-area-inset-bottom))] left-0 right-0 z-10 box-border px-32rpx pb-8rpx pt-8rpx"
+        :style="trayLayerStyle"
+      >
         <view
           class="tray-card flex flex-col gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 pb-20rpx pl-28rpx pr-24rpx pt-20rpx"
           :class="trayLeaving ? 'tray-out' : trayEnter ? 'tray-in' : ''"

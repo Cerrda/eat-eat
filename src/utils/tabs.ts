@@ -4,6 +4,18 @@ export const eaterTabs = ['menu', 'orders', 'records', 'settings'] as const
 export const cookerTabs = ['todo', 'dishes', 'records', 'settings'] as const
 export type TabKey = typeof eaterTabs[number] | typeof cookerTabs[number]
 
+export interface TabPanePose {
+  opacity: string
+  transform: string
+  transition: string
+}
+
+export const menuPanePose = ref<TabPanePose>({
+  opacity: '1',
+  transform: 'none',
+  transition: 'none',
+})
+
 export const homePath = '/pages/home/index'
 export const tabKey = ref<TabKey>('menu')
 export const tabBadges = ref<Badges>({ todo: 0, orders: 0, records: 0 })

@@ -9,8 +9,8 @@ import EatOrders from '@/components/eat-orders/eat-orders.vue'
 import SettingsPane from '@/components/settings-pane/settings-pane.vue'
 import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
-import { useTopPadding } from '@/composables/useTopPadding'
 import { ensureAccount } from '@/utils/account'
+import { ensurePageFonts, waitFontLayout } from '@/utils/fonts'
 import { cookerTabs, eaterTabs, invalidateTabs, isTabFresh, noteBadges, onTabPick, tabBadges, tabKey, tabsOf } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
 
@@ -27,9 +27,10 @@ interface Pane {
   refresh: () => void
 }
 
-const topPadding = useTopPadding()
 const role = ref<Role>('eater')
 const ready = ref(false)
+const fontsOn = ref(false)
+const shown = ref(false)
 const motion = ref<'' | 'left' | 'right'>('')
 const opened = reactive<Record<TabKey, boolean>>({
   menu: false,
@@ -78,10 +79,12 @@ function showTab(key: string) {
     return
   const first = !opened[key]
   opened[key] = true
+  const direction: 'left' | 'right' = to > from ? 'right' : 'left'
+  // 方向先清空，下一帧再和目标页一起提交，避免新页先以终态画出来
   motion.value = ''
-  tabKey.value = key
   nextTick(() => {
-    motion.value = to > from ? 'right' : 'left'
+    motion.value = direction
+    tabKey.value = key
     if (!first && !isTabFresh(key))
       pane(key)?.refresh()
   })
@@ -123,35 +126,65 @@ async function boot() {
 onLoad(() => {
   void boot()
 })
+
+function delay(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms))
+}
+
+async function reveal() {
+  if (!fontsOn.value || !ready.value || shown.value)
+    return
+  await nextTick()
+  await delay(48)
+  if (!fontsOn.value || !ready.value)
+    return
+  shown.value = true
+}
+
+onMounted(async () => {
+  try {
+    await ensurePageFonts()
+    await waitFontLayout()
+  }
+  catch (error) {
+    console.error('[font] page', error)
+  }
+  fontsOn.value = true
+  await reveal()
+})
+
+watch(ready, () => {
+  void reveal()
+})
 </script>
 
 <template>
   <view class="relative h-screen w-full overflow-hidden bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
-    <template v-if="ready">
-      <tab-scroll v-if="role === 'eater' && opened.menu" :active="tabKey === 'menu'" :motion="motion">
-        <eat-menu ref="menuPane" :active="tabKey === 'menu'" />
-      </tab-scroll>
-      <tab-scroll v-if="role === 'eater' && opened.orders" :active="tabKey === 'orders'" :motion="motion">
-        <eat-orders ref="ordersPane" />
-      </tab-scroll>
-      <tab-scroll v-if="role === 'cooker' && opened.todo" :active="tabKey === 'todo'" :motion="motion">
-        <cook-todo ref="todoPane" />
-      </tab-scroll>
-      <tab-scroll v-if="role === 'cooker' && opened.dishes" :active="tabKey === 'dishes'" :motion="motion">
-        <cook-dishes ref="dishesPane" />
-      </tab-scroll>
-      <tab-scroll v-if="opened.records" :active="tabKey === 'records'" :motion="motion">
-        <cook-records ref="recordsPane" />
-      </tab-scroll>
-      <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
-        <settings-pane ref="settingsPane" />
-      </tab-scroll>
-      <tab-dock :role="role" :current="tabKey" :badges="tabBadges" @pick="showTab" />
-    </template>
-    <view v-else class="relative z-1 px-44rpx" :style="{ paddingTop: topPadding }">
-      <ink-load label="正在打开厨房" />
+    <view :class="shown ? '' : 'pointer-events-none opacity-0'">
+      <template v-if="ready">
+        <tab-scroll v-if="role === 'eater' && opened.menu" publish :active="tabKey === 'menu'" :motion="motion">
+          <eat-menu ref="menuPane" :active="tabKey === 'menu'" />
+        </tab-scroll>
+        <tab-scroll v-if="role === 'eater' && opened.orders" :active="tabKey === 'orders'" :motion="motion">
+          <eat-orders ref="ordersPane" />
+        </tab-scroll>
+        <tab-scroll v-if="role === 'cooker' && opened.todo" :active="tabKey === 'todo'" :motion="motion">
+          <cook-todo ref="todoPane" />
+        </tab-scroll>
+        <tab-scroll v-if="role === 'cooker' && opened.dishes" :active="tabKey === 'dishes'" :motion="motion">
+          <cook-dishes ref="dishesPane" />
+        </tab-scroll>
+        <tab-scroll v-if="opened.records" :active="tabKey === 'records'" :motion="motion">
+          <cook-records ref="recordsPane" />
+        </tab-scroll>
+        <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
+          <settings-pane ref="settingsPane" />
+        </tab-scroll>
+        <tab-dock :role="role" :current="tabKey" :badges="tabBadges" @pick="showTab" />
+      </template>
     </view>
+    <ink-load v-if="!shown" label="正在打开厨房" />
     <ink-toast />
     <ink-dialog />
   </view>
