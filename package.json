@@ -13,7 +13,7 @@
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "upload:mp-weixin": "unh build mp-weixin && node scripts/bump-weixin-version.mjs && minici --platform weixin && node scripts/open-weixin-codepage.mjs",
+    "upload:mp-weixin": "unh build mp-weixin && node scripts/bump-weixin-version.mjs && minici --platform weixin",
     "dishes:import": "node scripts/dishes/import.mjs",
     "postinstall": "npx simple-git-hooks"
   },
