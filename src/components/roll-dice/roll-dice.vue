@@ -3,7 +3,7 @@ const props = defineProps<{
   rolling?: boolean
 }>()
 
-const face = ref(6)
+const face = ref(5)
 const spots = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 const lit: Record<number, number[]> = {
   1: [4],

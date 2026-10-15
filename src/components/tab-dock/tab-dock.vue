@@ -1,22 +1,18 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import type { Badges, Role } from '@/api/eat'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   role: Role
   current: string
   badges: Badges
-}>()
+  leaving?: boolean
+}>(), {
+  leaving: false,
+})
 
 const emit = defineEmits<{
   pick: [key: string]
+  departed: []
 }>()
 
 const items = computed(() => {
@@ -44,6 +40,7 @@ const activeIndex = computed(() => {
 
 const LEAD_MS = 200
 const FLOW_MS = 400
+const LEAVE_MS = 240
 
 interface DockMetrics {
   width: number
@@ -65,6 +62,8 @@ const timers: ReturnType<typeof setTimeout>[] = []
 let slideToken = 0
 let arriveTimer: ReturnType<typeof setTimeout> | undefined
 let inkTimer: ReturnType<typeof setTimeout> | undefined
+let leaveTimer: ReturnType<typeof setTimeout> | undefined
+let left = false
 
 watch(activeIndex, (next, prev) => {
   if (prev == null || next === prev)
@@ -110,6 +109,43 @@ watch(phase, (value) => {
     showInkIn.value = false
 })
 
+const shellClass = computed(() => {
+  if (props.leaving)
+    return 'tab-dock-leave'
+  return arrived.value ? 'tab-dock-enter' : 'tab-dock-hold'
+})
+
+const shadowClass = computed(() => {
+  if (props.leaving)
+    return 'tab-dock-shadow-out'
+  return arrived.value ? 'tab-dock-shadow-in' : 'tab-dock-shadow-hold'
+})
+
+watch(() => props.leaving, (on) => {
+  if (!on)
+    return
+  left = false
+  if (leaveTimer)
+    clearTimeout(leaveTimer)
+  leaveTimer = setTimeout(finishLeave, LEAVE_MS + 20)
+})
+
+function finishLeave() {
+  if (left)
+    return
+  left = true
+  if (leaveTimer)
+    clearTimeout(leaveTimer)
+  leaveTimer = undefined
+  emit('departed')
+}
+
+function onMotionEnd(event: { animationName?: string, detail?: { animationName?: string } }) {
+  const name = event.detail?.animationName || event.animationName || ''
+  if (props.leaving && name.includes('tab-dock-leave'))
+    finishLeave()
+}
+
 onMounted(() => {
   arriveTimer = setTimeout(() => {
     arrived.value = true
@@ -124,6 +160,8 @@ onUnmounted(() => {
     clearTimeout(arriveTimer)
   if (inkTimer)
     clearTimeout(inkTimer)
+  if (leaveTimer)
+    clearTimeout(leaveTimer)
   clearTimers()
 })
 
@@ -173,18 +211,26 @@ function clearTimers() {
 }
 
 function open(key: string) {
-  if (key === props.current)
+  if (props.leaving || key === props.current)
     return
   emit('pick', key)
 }
 </script>
 
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
+</script>
+
 <template>
-  <view class="fixed bottom-0 left-0 right-0 z-20 px-32rpx pt-32rpx pb-[calc(32rpx+env(safe-area-inset-bottom))]">
-    <view class="relative" :class="arrived ? 'tab-dock-enter' : 'tab-dock-hold'">
+  <view class="fixed bottom-0 left-0 right-0 z-20 px-32rpx pb-[calc(32rpx+env(safe-area-inset-bottom))] pt-32rpx">
+    <view class="relative" :class="shellClass" @animationend="onMotionEnd">
       <view
         class="pointer-events-none absolute rounded-60rpx bg-#4e222d/28"
-        :class="arrived ? 'tab-dock-shadow-in' : 'tab-dock-shadow-hold'"
+        :class="shadowClass"
         style="top: 6rpx; right: -4rpx; bottom: -6rpx; left: 4rpx;"
       />
       <view class="relative box-border h-120rpx border-4rpx border-#792b3e rounded-60rpx border-solid bg-#fff9f4 p-10rpx">
@@ -196,10 +242,10 @@ function open(key: string) {
               class="flex flex-1 items-center justify-center gap-8rpx"
               @tap="open(item.key)"
             >
-              <view class="text-34rpx text-#3c2428 font-display leading-[1.15]">
+              <view class="text-34rpx text-#3c2428 leading-[1.15] font-display">
                 {{ item.label }}
               </view>
-              <view v-if="item.count" class="text-30rpx text-#792b3e font-display leading-[1.15]">
+              <view v-if="item.count" class="text-30rpx text-#792b3e leading-[1.15] font-display">
                 {{ item.count }}
               </view>
             </view>
@@ -222,10 +268,10 @@ function open(key: string) {
                   :key="item.key"
                   class="flex flex-1 items-center justify-center gap-8rpx"
                 >
-                  <view class="text-40rpx text-#fff9f4 font-display leading-[1.15]">
+                  <view class="text-40rpx text-#fff9f4 leading-[1.15] font-display">
                     {{ item.label }}
                   </view>
-                  <view v-if="item.count" class="text-30rpx text-#f6e4de font-display leading-[1.15]">
+                  <view v-if="item.count" class="text-30rpx text-#f6e4de leading-[1.15] font-display">
                     {{ item.count }}
                   </view>
                 </view>
@@ -250,6 +296,11 @@ function open(key: string) {
   animation: tab-dock-enter 320ms cubic-bezier(0.22, 1.08, 0.36, 1) both;
 }
 
+.tab-dock-leave {
+  animation: tab-dock-leave 240ms cubic-bezier(0.4, 0, 1, 1) both;
+  pointer-events: none;
+}
+
 .tab-dock-shadow-hold {
   opacity: 0;
   transform: translate3d(0, 12rpx, 0);
@@ -257,6 +308,10 @@ function open(key: string) {
 
 .tab-dock-shadow-in {
   animation: tab-dock-shadow-in 320ms cubic-bezier(0.22, 1.08, 0.36, 1) 48ms both;
+}
+
+.tab-dock-shadow-out {
+  animation: tab-dock-shadow-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 .tab-dock-slot {
@@ -354,6 +409,18 @@ function open(key: string) {
   }
 }
 
+@keyframes tab-dock-leave {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 48rpx, 0);
+  }
+}
+
 @keyframes tab-dock-shadow-in {
   from {
     opacity: 0;
@@ -363,6 +430,18 @@ function open(key: string) {
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tab-dock-shadow-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 16rpx, 0);
   }
 }
 
@@ -387,7 +466,9 @@ function open(key: string) {
   }
 
   .tab-dock-enter,
+  .tab-dock-leave,
   .tab-dock-shadow-in,
+  .tab-dock-shadow-out,
   .tab-dock-ink-in {
     animation: none;
   }

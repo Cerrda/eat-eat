@@ -191,6 +191,7 @@ export interface EatCloud {
   acceptInvite: (params: { code: string, inviteCode: string, abandonPending?: boolean }) => Promise<CloudResult<SessionView>>
   updateNickname: (params: { nickname: string }) => Promise<CloudResult<AccountView>>
   unbind: () => Promise<CloudResult<AccountView>>
+  swapRoles: () => Promise<CloudResult<AccountView>>
   listCategories: () => Promise<CloudResult<{ categories: Category[] }>>
   createCategory: (params: { name: string }) => Promise<CloudResult<Category>>
   renameCategory: (params: { categoryId: string, name: string }) => Promise<CloudResult<Category>>

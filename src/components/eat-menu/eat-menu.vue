@@ -1,11 +1,3 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import type { Category, MealBoard, MenuDish, MenuName, OrderDetail, Slot } from '@/api/eat'
 import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard, SLOT_LABEL } from '@/api/eat'
@@ -522,7 +514,7 @@ function dropDish(id: string) {
 }
 
 function dishKey(id: string) {
-  return `dish-${id.replace(/[^A-Za-z0-9_-]/g, '')}`
+  return `dish-${id.replace(/[^\w-]/g, '')}`
 }
 
 function nodeBox(selector: string) {
@@ -1157,6 +1149,14 @@ function onTrayTap() {
 defineExpose({ refresh })
 </script>
 
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
+</script>
+
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view v-if="nameProbes.length" class="tray-probe-host">
@@ -1166,13 +1166,8 @@ defineExpose({ refresh })
         </text>
       </view>
     </view>
-    <view class="shrink-0">
-      <screen-head title="菜单" :note="bareEmpty ? '还没有上架的菜。' : ''" />
-    </view>
     <list-scroll
-      v-if="board"
       ref="scroller"
-      :inset-top="bareEmpty ? 28 : 64"
       :inset-bottom="trayClear"
       :refreshing="pulling"
       :loading="loading"
@@ -1182,239 +1177,243 @@ defineExpose({ refresh })
       @refresh="onPull"
       @more="onMore"
     >
-      <view v-if="bareEmpty" class="w-full flex flex-col items-center pt-28rpx">
-        <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
-        <view class="relative z-0 w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx -mt-100rpx">
-          <text class="text-44rpx text-#3c2428 font-display">
-            等对方上架
-          </text>
+      <screen-head title="菜单" :note="bareEmpty ? '还没有上架的菜。' : ''" />
+      <template v-if="board">
+        <view v-if="bareEmpty" class="w-full flex flex-col items-center pt-28rpx">
+          <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
+          <view class="relative z-0 w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx -mt-100rpx">
+            <text class="text-44rpx text-#3c2428 font-display">
+              等对方上架
+            </text>
+          </view>
         </view>
-      </view>
-      <view v-else class="flex flex-col gap-28rpx pt-64rpx">
-        <view class="box-border min-w-0 w-full border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
-          <view class="relative flex items-stretch gap-12rpx">
-            <view
-              v-if="date"
-              class="eat-meal-wash pointer-events-none absolute bottom-0 left-0 top-0 rounded-28rpx bg-#f6e4de"
-              :style="washStyle"
-            />
-            <view
-              v-for="day in board.dates"
-              :key="day.date"
-              class="relative z-1 min-w-0 flex flex-1 flex-col items-center gap-16rpx overflow-hidden rounded-28rpx px-8rpx py-20rpx"
-            >
-              <text class="text-44rpx text-#3c2428 leading-none font-display">
-                {{ dateLabel(day.date, board.today) }}
-              </text>
-              <text class="text-24rpx text-#7a534c leading-none font-body">
-                {{ monthDay(day.date) }}
-              </text>
-              <view class="w-full flex items-center justify-center gap-8rpx">
-                <view
-                  v-for="meal in slots"
-                  :key="meal"
-                  class="h-80rpx min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx overflow-hidden rounded-24rpx"
-                  @tap="selectSlot(day.date, meal)"
-                >
-                  <text class="text-32rpx leading-none font-display" :class="mealTone(day.date, meal)">
-                    {{ slotShort[meal] }}
-                  </text>
-                  <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx leading-none font-body" :class="mealTone(day.date, meal)">
-                    已点
-                  </text>
+        <view v-else class="flex flex-col gap-28rpx pt-64rpx">
+          <view class="box-border min-w-0 w-full border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
+            <view class="relative flex items-stretch gap-12rpx">
+              <view
+                v-if="date"
+                class="eat-meal-wash pointer-events-none absolute bottom-0 left-0 top-0 rounded-28rpx bg-#f6e4de"
+                :style="washStyle"
+              />
+              <view
+                v-for="day in board.dates"
+                :key="day.date"
+                class="relative z-1 min-w-0 flex flex-1 flex-col items-center gap-16rpx overflow-hidden rounded-28rpx px-8rpx py-20rpx"
+              >
+                <text class="text-44rpx text-#3c2428 leading-none font-display">
+                  {{ dateLabel(day.date, board.today) }}
+                </text>
+                <text class="text-24rpx text-#7a534c leading-none font-body">
+                  {{ monthDay(day.date) }}
+                </text>
+                <view class="w-full flex items-center justify-center gap-8rpx">
+                  <view
+                    v-for="meal in slots"
+                    :key="meal"
+                    class="h-80rpx min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx overflow-hidden rounded-24rpx"
+                    @tap="selectSlot(day.date, meal)"
+                  >
+                    <text class="text-32rpx leading-none font-display" :class="mealTone(day.date, meal)">
+                      {{ slotShort[meal] }}
+                    </text>
+                    <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx leading-none font-body" :class="mealTone(day.date, meal)">
+                      已点
+                    </text>
+                  </view>
                 </view>
               </view>
-            </view>
-            <view v-if="pillReady" class="pointer-events-none absolute bottom-20rpx left-0 right-0 z-2 h-80rpx">
-              <view
-                class="eat-meal-pill absolute left-0 top-0 h-full overflow-hidden rounded-24rpx bg-#792b3e"
-                :class="phase ? [farSlide ? 'eat-meal-far' : 'eat-meal-near', 'eat-meal-flow', `eat-meal-${phase}`] : ''"
-                :style="pillStyle"
-              >
-                <view class="eat-meal-ink absolute left-0 top-0 h-full flex items-stretch gap-12rpx" :style="inkStyle">
-                  <view
-                    v-for="day in board.dates"
-                    :key="day.date"
-                    class="h-full min-w-0 flex flex-1 items-center gap-8rpx px-8rpx"
-                  >
+              <view v-if="pillReady" class="pointer-events-none absolute bottom-20rpx left-0 right-0 z-2 h-80rpx">
+                <view
+                  class="eat-meal-pill absolute left-0 top-0 h-full overflow-hidden rounded-24rpx bg-#792b3e"
+                  :class="phase ? [farSlide ? 'eat-meal-far' : 'eat-meal-near', 'eat-meal-flow', `eat-meal-${phase}`] : ''"
+                  :style="pillStyle"
+                >
+                  <view class="eat-meal-ink absolute left-0 top-0 h-full flex items-stretch gap-12rpx" :style="inkStyle">
                     <view
-                      v-for="meal in slots"
-                      :key="meal"
-                      class="h-full min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx"
+                      v-for="day in board.dates"
+                      :key="day.date"
+                      class="h-full min-w-0 flex flex-1 items-center gap-8rpx px-8rpx"
                     >
-                      <text class="text-32rpx text-#fbf3ea leading-none font-display">
-                        {{ slotShort[meal] }}
-                      </text>
-                      <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx text-#fbf3ea leading-none font-body">
-                        已点
-                      </text>
+                      <view
+                        v-for="meal in slots"
+                        :key="meal"
+                        class="h-full min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx"
+                      >
+                        <text class="text-32rpx text-#fbf3ea leading-none font-display">
+                          {{ slotShort[meal] }}
+                        </text>
+                        <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx text-#fbf3ea leading-none font-body">
+                          已点
+                        </text>
+                      </view>
                     </view>
                   </view>
                 </view>
               </view>
             </view>
           </view>
-        </view>
-        <view class="flex flex-col gap-20rpx">
-          <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-full border-solid bg-#fff9f4 px-28rpx">
-            <view class="i-mingcute-search-line shrink-0 text-32rpx text-#7a534c" />
-            <textarea
-              v-model="keyword"
-              disable-default-padding
-              class="h-80rpx min-w-0 flex-1 text-30rpx text-#3c2428 leading-80rpx font-body"
-              placeholder="搜菜名"
-              placeholder-class="ph-sans"
-              placeholder-style="font-size: 30rpx; line-height: 80rpx;"
-              confirm-type="search"
-              :show-confirm-bar="false"
-            />
-          </view>
-          <scroll-view scroll-x enhanced class="w-full whitespace-nowrap" :show-scrollbar="false">
-            <view class="inline-flex gap-16rpx">
-              <view
-                class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-                :class="categoryId ? 'border-#c9a297 bg-#fff9f4' : 'border-#792b3e bg-#792b3e'"
-                @tap="pickCategory('')"
-              >
-                <text class="text-28rpx leading-none font-body" :class="categoryId ? 'text-#3c2428' : 'text-#fff9f4'">
-                  全部
-                </text>
-              </view>
-              <view
-                v-for="category in categories"
-                :key="category.categoryId"
-                class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-                :class="categoryId === category.categoryId ? 'border-#792b3e bg-#792b3e' : 'border-#c9a297 bg-#fff9f4'"
-                @tap="pickCategory(category.categoryId)"
-              >
-                <text class="text-28rpx leading-none font-body" :class="categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428'">
-                  {{ category.name }}
-                </text>
-              </view>
+          <view class="flex flex-col gap-20rpx">
+            <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-full border-solid bg-#fff9f4 px-28rpx">
+              <view class="i-mingcute-search-line shrink-0 text-32rpx text-#7a534c" />
+              <!-- iOS 原生 textarea 从行盒顶部排字，行高拉满搜索条时文字会偏上 -->
+              <textarea
+                v-model="keyword"
+                disable-default-padding
+                class="h-40rpx min-h-40rpx min-w-0 flex-1 self-center p-0 text-30rpx text-#3c2428 leading-40rpx font-body"
+                placeholder="搜菜名"
+                placeholder-class="ph-sans"
+                placeholder-style="font-size: 30rpx; line-height: 40rpx;"
+                confirm-type="search"
+                :show-confirm-bar="false"
+              />
             </view>
-          </scroll-view>
-        </view>
-        <view v-if="menuTotal && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-28rpx py-20rpx">
-          <roll-dice :rolling="rolling" />
-          <view class="random-copy min-w-0 flex-1">
-            <view class="random-title" :class="roundOn ? 'random-title-up' : ''">
-              <text class="text-36rpx text-#3c2428 leading-36rpx font-display">
-                随便
+            <scroll-view scroll-x enhanced class="w-full whitespace-nowrap" :show-scrollbar="false">
+              <view class="inline-flex gap-16rpx">
+                <view
+                  class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
+                  :class="categoryId ? 'border-#c9a297 bg-#fff9f4' : 'border-#792b3e bg-#792b3e'"
+                  @tap="pickCategory('')"
+                >
+                  <text class="text-28rpx leading-none font-body" :class="categoryId ? 'text-#3c2428' : 'text-#fff9f4'">
+                    全部
+                  </text>
+                </view>
+                <view
+                  v-for="category in categories"
+                  :key="category.categoryId"
+                  class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
+                  :class="categoryId === category.categoryId ? 'border-#792b3e bg-#792b3e' : 'border-#c9a297 bg-#fff9f4'"
+                  @tap="pickCategory(category.categoryId)"
+                >
+                  <text class="text-28rpx leading-none font-body" :class="categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428'">
+                    {{ category.name }}
+                  </text>
+                </view>
+              </view>
+            </scroll-view>
+          </view>
+          <view v-if="menuTotal && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-28rpx py-20rpx">
+            <roll-dice :rolling="rolling" />
+            <view class="random-copy min-w-0 flex-1">
+              <view class="random-title" :class="roundOn ? 'random-title-up' : ''">
+                <text class="text-36rpx text-#3c2428 leading-36rpx font-display">
+                  随便
+                </text>
+              </view>
+              <text
+                class="random-note whitespace-nowrap text-24rpx text-#7a534c font-body"
+                :class="roundOn ? 'random-note-open' : ''"
+              >
+                可以留下几道菜，其余继续随机
               </text>
             </view>
-            <text
-              class="random-note whitespace-nowrap text-24rpx text-#7a534c font-body"
-              :class="roundOn ? 'random-note-open' : ''"
-            >
-              可以留下几道菜，其余继续随机
-            </text>
-          </view>
-          <view v-if="!roundOn" class="flex shrink-0 items-center gap-12rpx">
-            <view class="flex items-center gap-8rpx">
-              <view
-                class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
-                :class="wishCount <= 1 ? 'opacity-35' : ''"
-                @tap="bumpWish(-1)"
-              >
-                <text class="text-28rpx text-#3c2428 leading-none font-body">
-                  −
+            <view v-if="!roundOn" class="flex shrink-0 items-center gap-12rpx">
+              <view class="flex items-center gap-8rpx">
+                <view
+                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
+                  :class="wishCount <= 1 ? 'opacity-35' : ''"
+                  @tap="bumpWish(-1)"
+                >
+                  <text class="text-28rpx text-#3c2428 leading-none font-body">
+                    −
+                  </text>
+                </view>
+                <text class="min-w-64rpx text-center text-32rpx text-#3c2428 leading-none font-display">
+                  {{ wishCount }} 道
                 </text>
+                <view
+                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
+                  :class="wishCount >= randomRoom ? 'opacity-35' : ''"
+                  @tap="bumpWish(1)"
+                >
+                  <text class="text-28rpx text-#3c2428 leading-none font-body">
+                    +
+                  </text>
+                </view>
               </view>
-              <text class="min-w-64rpx text-center text-32rpx text-#3c2428 leading-none font-display">
-                {{ wishCount }} 道
-              </text>
               <view
-                class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
-                :class="wishCount >= randomRoom ? 'opacity-35' : ''"
-                @tap="bumpWish(1)"
+                class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e"
+                hover-class="eat-press-on"
+                :hover-stay-time="140"
+                @tap="beginRound"
               >
-                <text class="text-28rpx text-#3c2428 leading-none font-body">
-                  +
+                <text class="text-26rpx text-#fbf3ea font-medium leading-none font-body">
+                  开始
                 </text>
               </view>
             </view>
             <view
-              class="eat-press inline-flex h-64rpx w-102rpx shrink-0 items-center justify-center rounded-full bg-#792b3e"
-              hover-class="eat-press-on"
+              v-else
+              class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e"
+              :class="rollSealed ? 'opacity-35' : rolling ? 'opacity-60' : ''"
+              :hover-class="rollSealed ? 'none' : 'eat-press-on'"
               :hover-stay-time="140"
-              @tap="beginRound"
+              @tap="rollAgain"
             >
               <text class="text-26rpx text-#fbf3ea font-medium leading-none font-body">
-                开始
+                +{{ againMark }}
               </text>
             </view>
           </view>
-          <view
-            v-else
-            class="eat-press inline-flex h-64rpx w-102rpx shrink-0 items-center justify-center rounded-full bg-#792b3e"
-            :class="rollSealed ? 'opacity-35' : rolling ? 'opacity-60' : ''"
-            :hover-class="rollSealed ? 'none' : 'eat-press-on'"
-            :hover-stay-time="140"
-            @tap="rollAgain"
-          >
-            <text class="text-26rpx text-#fbf3ea font-medium leading-none font-body">
-              +{{ againMark }}
-            </text>
-          </view>
-        </view>
-        <view v-if="shown.length" class="flex flex-col">
-        <view
-          v-for="dish in shown"
-          :id="dishKey(dish.dishId)"
-          :key="dish.dishId"
-          class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
-        >
-          <view
-            class="h-144rpx w-144rpx shrink-0 rounded-36rpx"
-            :class="tadaId === dish.dishId ? 'dish-tada' : ''"
-            :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
-          >
-            <dish-cover
-              class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
-              :file-id="dish.coverFileId"
-              :name="dish.name"
-            />
-          </view>
-          <view class="min-w-0 flex flex-1 flex-col gap-6rpx">
-            <text class="text-40rpx text-#3c2428 leading-[1.15] font-display">
-              {{ dish.name }}
-            </text>
-            <text class="text-26rpx text-#7a534c font-body">
-              {{ dish.categoryName || '未分类' }}{{ freshIds.includes(dish.dishId) ? ' · 刚换上' : '' }}
-            </text>
-          </view>
-          <text
-            v-if="selectedBusy && inOrder(dish.dishId)"
-            class="shrink-0 text-28rpx text-#792b3e font-semibold font-body"
-          >
-            在这一餐
-          </text>
-          <view v-else-if="roundIds.includes(dish.dishId)" class="flex shrink-0 items-center gap-20rpx">
-            <text class="text-28rpx text-#792b3e font-semibold font-body" @tap="dropDish(dish.dishId)">
-              已加上
-            </text>
-            <text
-              class="text-28rpx font-semibold font-body"
-              :class="keptIds.includes(dish.dishId) ? 'text-#792b3e' : 'text-#7a534c'"
-              @tap="toggleKeep(dish.dishId)"
+          <view v-if="shown.length" class="flex flex-col">
+            <view
+              v-for="dish in shown"
+              :id="dishKey(dish.dishId)"
+              :key="dish.dishId"
+              class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
             >
-              {{ keptIds.includes(dish.dishId) ? '已留' : '保留' }}
-            </text>
+              <view
+                class="h-144rpx w-144rpx shrink-0 rounded-36rpx"
+                :class="tadaId === dish.dishId ? 'dish-tada' : ''"
+                :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+              >
+                <dish-cover
+                  class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
+                  :file-id="dish.coverFileId"
+                  :name="dish.name"
+                />
+              </view>
+              <view class="min-w-0 flex flex-1 flex-col gap-6rpx">
+                <text class="text-40rpx text-#3c2428 leading-[1.15] font-display">
+                  {{ dish.name }}
+                </text>
+                <text class="text-26rpx text-#7a534c font-body">
+                  {{ dish.categoryName || '未分类' }}{{ freshIds.includes(dish.dishId) ? ' · 刚换上' : '' }}
+                </text>
+              </view>
+              <text
+                v-if="selectedBusy && inOrder(dish.dishId)"
+                class="shrink-0 text-28rpx text-#792b3e font-semibold font-body"
+              >
+                在这一餐
+              </text>
+              <view v-else-if="roundIds.includes(dish.dishId)" class="flex shrink-0 items-center gap-20rpx">
+                <text class="text-28rpx text-#792b3e font-semibold font-body" @tap="dropDish(dish.dishId)">
+                  已加上
+                </text>
+                <text
+                  class="text-28rpx font-semibold font-body"
+                  :class="keptIds.includes(dish.dishId) ? 'text-#792b3e' : 'text-#7a534c'"
+                  @tap="toggleKeep(dish.dishId)"
+                >
+                  {{ keptIds.includes(dish.dishId) ? '已留' : '保留' }}
+                </text>
+              </view>
+              <text
+                v-else-if="!selectedBusy"
+                class="shrink-0 text-28rpx font-body"
+                :class="chosen(dish.dishId) ? 'text-#792b3e font-semibold' : 'text-#3c2428'"
+                @tap="toggle(dish)"
+              >
+                {{ chosen(dish.dishId) ? '已加上' : '加上' }}
+              </text>
+            </view>
           </view>
-          <text
-            v-else-if="!selectedBusy"
-            class="shrink-0 text-28rpx font-body"
-            :class="chosen(dish.dishId) ? 'text-#792b3e font-semibold' : 'text-#3c2428'"
-            @tap="toggle(dish)"
-          >
-            {{ chosen(dish.dishId) ? '已加上' : '加上' }}
+          <text v-if="!shown.length" class="text-30rpx text-#7a534c font-body">
+            没有这道菜。
           </text>
         </view>
-        </view>
-        <text v-if="!shown.length" class="text-30rpx text-#7a534c font-body">
-          没有这道菜。
-        </text>
-      </view>
+      </template>
     </list-scroll>
     <root-portal v-if="trayPortal">
       <view
@@ -1460,7 +1459,7 @@ defineExpose({ refresh })
             class="h-72rpx w-full whitespace-nowrap"
             :show-scrollbar="false"
           >
-            <view class="inline-flex h-72rpx items-center">
+            <view class="h-72rpx inline-flex items-center">
               <view
                 v-for="item in tray"
                 :key="item.key"
@@ -1468,7 +1467,7 @@ defineExpose({ refresh })
                 :class="chipPhase[item.key] === 'out' ? 'tray-chip-slot-out' : ''"
               >
                 <view
-                  class="tray-chip inline-flex items-center border-2rpx border-solid rounded-28rpx bg-#f6e4de py-16rpx pl-20rpx pr-16rpx"
+                  class="tray-chip inline-flex items-center border-2rpx rounded-28rpx border-solid bg-#f6e4de py-16rpx pl-20rpx pr-16rpx"
                   :class="[
                     keptIds.includes(item.dish.dishId) ? 'border-#792b3e' : 'border-#c9a297',
                     chipPhase[item.key] === 'in' ? 'tray-chip-in' : '',

@@ -1,11 +1,3 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import { faceOf } from '@/utils/face'
 
@@ -18,9 +10,13 @@ defineProps<{
 const markWidth = 176
 </script>
 
-<style>
-@import "../../styles/font-util.css";
-</style>
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
+</script>
 
 <template>
   <paper-pin>
@@ -43,3 +39,7 @@ const markWidth = 176
     </view>
   </paper-pin>
 </template>
+
+<style>
+@import "../../styles/font-util.css";
+</style>

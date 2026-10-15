@@ -1,16 +1,5 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: false,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import { faceOf } from '@/utils/face'
-
-const PULL_DISTANCE = 50
-const HOLD_MS = 1200
 
 const props = withDefaults(defineProps<{
   refreshing: boolean
@@ -25,11 +14,12 @@ const props = withDefaults(defineProps<{
   insetBottom: 0,
   intoView: '',
 })
-
 const emit = defineEmits<{
   refresh: []
   more: []
 }>()
+const PULL_DISTANCE = 50
+const HOLD_MS = 1200
 
 const instance = getCurrentInstance()
 const heightPx = ref('')
@@ -227,6 +217,14 @@ function scrollTo(top: number) {
 defineExpose({ readFrame, scrollTo })
 </script>
 
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: false,
+  },
+}
+</script>
+
 <template>
   <scroll-view
     class="list-scroll h-0 min-h-0 w-full flex-1"
@@ -250,27 +248,29 @@ defineExpose({ readFrame, scrollTo })
     @scroll="onScroll"
     @scrolltolower="onLower"
   >
-    <view slot="refresher" class="pull-indicator" :class="pullClass" :style="indicatorStyle">
-      <view class="pull-kit">
-        <view class="pull-arrow">
-          <view class="pull-ring">
-            <view class="pull-chevron" />
+    <template #refresher>
+      <view class="pull-indicator" :class="pullClass" :style="indicatorStyle">
+        <view class="pull-kit">
+          <view class="pull-arrow">
+            <view class="pull-ring">
+              <view class="pull-chevron" />
+            </view>
           </view>
+          <view class="pull-spin">
+            <ink-spin />
+          </view>
+          <text class="pull-copy pull-copy-pull" :class="faceOf('下拉刷新', 'sans')">
+            下拉刷新
+          </text>
+          <text class="pull-copy pull-copy-ready" :class="faceOf('松手刷新', 'sans')">
+            松手刷新
+          </text>
+          <text class="pull-copy pull-copy-load" :class="faceOf('正在刷新', 'sans')">
+            正在刷新
+          </text>
         </view>
-        <view class="pull-spin">
-          <ink-spin />
-        </view>
-        <text class="pull-copy pull-copy-pull" :class="faceOf('下拉刷新', 'sans')">
-          下拉刷新
-        </text>
-        <text class="pull-copy pull-copy-ready" :class="faceOf('松手刷新', 'sans')">
-          松手刷新
-        </text>
-        <text class="pull-copy pull-copy-load" :class="faceOf('正在刷新', 'sans')">
-          正在刷新
-        </text>
       </view>
-    </view>
+    </template>
     <view class="pull-body box-border pr-28rpx" :style="bodyStyle">
       <slot />
       <view v-if="loading" class="flex items-center justify-center gap-16rpx py-32rpx">

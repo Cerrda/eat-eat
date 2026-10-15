@@ -932,6 +932,40 @@ function createEatService(deps) {
     return accountView(await reload(user._id))
   }
 
+  async function swapRoles() {
+    const user = await requireUser()
+    const kitchen = await requireActive(user)
+    if (!isMember(kitchen, user) || !kitchen.cookerOpenid || !kitchen.eaterOpenid)
+      throw new EatError('NO_KITCHEN', '还没有厨房')
+    const cooker = await findOne('eat-users', { openid: kitchen.cookerOpenid })
+    const eater = await findOne('eat-users', { openid: kitchen.eaterOpenid })
+    if (!cooker || !eater)
+      throw new EatError('NO_KITCHEN', '还没有厨房')
+    const changed = await store.update('eat-kitchens', {
+      _id: kitchen._id,
+      status: 'active',
+      cookerOpenid: kitchen.cookerOpenid,
+      eaterOpenid: kitchen.eaterOpenid,
+    }, {
+      cookerOpenid: eater.openid,
+      eaterOpenid: cooker.openid,
+      cookerUserId: eater._id,
+      eaterUserId: cooker._id,
+      updatedAt: now(),
+    })
+    if (changed !== 1)
+      throw new EatError('VALIDATION', '刚刚已经换过了')
+    await store.update('eat-users', { _id: cooker._id }, {
+      role: 'eater',
+      updatedAt: now(),
+    })
+    await store.update('eat-users', { _id: eater._id }, {
+      role: 'cooker',
+      updatedAt: now(),
+    })
+    return accountView(await reload(user._id))
+  }
+
   async function categoryMap(kitchenId) {
     const rows = await store.find('eat-categories', { kitchenId }, 100)
     return new Map(rows.map(category => [category._id, category.name]))
@@ -1742,6 +1776,7 @@ function createEatService(deps) {
     acceptInvite,
     updateNickname,
     unbind,
+    swapRoles,
     listCategories,
     createCategory,
     renameCategory,

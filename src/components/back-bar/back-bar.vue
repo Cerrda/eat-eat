@@ -1,11 +1,3 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import { faceOf } from '@/utils/face'
 
@@ -24,17 +16,13 @@ function back() {
 }
 </script>
 
-<style>
-@import "../../styles/font-util.css";
-
-.eat-back-mark {
-  transition: transform 140ms cubic-bezier(0.22, 1.08, 0.36, 1);
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
 }
-
-.eat-back-on .eat-back-mark {
-  transform: translate3d(-6rpx, 0, 0);
-}
-</style>
+</script>
 
 <template>
   <view class="eat-back inline-flex items-center self-start gap-16rpx" hover-class="eat-back-on" :hover-stay-time="140" @tap="back">
@@ -46,3 +34,15 @@ function back() {
     </text>
   </view>
 </template>
+
+<style>
+@import "../../styles/font-util.css";
+
+.eat-back-mark {
+  transition: transform 140ms cubic-bezier(0.22, 1.08, 0.36, 1);
+}
+
+.eat-back-on .eat-back-mark {
+  transform: translate3d(-6rpx, 0, 0);
+}
+</style>

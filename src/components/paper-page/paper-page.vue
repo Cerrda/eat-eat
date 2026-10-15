@@ -1,11 +1,3 @@
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-  },
-}
-</script>
-
 <script setup lang="ts">
 import { useTopPadding } from '@/composables/useTopPadding'
 
@@ -18,6 +10,14 @@ onMounted(() => {
   else
     uni.hideShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] })
 })
+</script>
+
+<script lang="ts">
+export default {
+  options: {
+    virtualHost: true,
+  },
+}
 </script>
 
 <template>

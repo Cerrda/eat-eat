@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { Role } from '@/api/eat'
+import type { AccountView, Role } from '@/api/eat'
 import type { TabKey } from '@/utils/tabs'
 import CookDishes from '@/components/cook-dishes/cook-dishes.vue'
 import CookRecords from '@/components/cook-records/cook-records.vue'
 import CookTodo from '@/components/cook-todo/cook-todo.vue'
 import EatMenu from '@/components/eat-menu/eat-menu.vue'
 import EatOrders from '@/components/eat-orders/eat-orders.vue'
-import SettingsPane from '@/components/settings-pane/settings-pane.vue'
 import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
 import { ensureAccount } from '@/utils/account'
@@ -28,6 +27,10 @@ interface Pane {
 
 const role = ref<Role>('eater')
 const ready = ref(false)
+const dockShown = ref(true)
+const dockLeaving = ref(false)
+const settingsSnapshot = ref<AccountView | null>(null)
+let pendingRole: Role | '' = ''
 const motion = ref<'' | 'left' | 'right'>('')
 const opened = reactive<Record<TabKey, boolean>>({
   menu: false,
@@ -103,6 +106,41 @@ onShow(() => {
   nextTick(() => pane(tabKey.value)?.refresh())
 })
 
+function onSwapped(view: AccountView) {
+  settingsSnapshot.value = view
+  invalidateTabs()
+  opened.menu = false
+  opened.orders = false
+  opened.todo = false
+  opened.dishes = false
+  opened.records = false
+  if (view.role !== 'cooker' && view.role !== 'eater')
+    return
+  if (view.role === role.value || dockLeaving.value) {
+    if (!dockLeaving.value)
+      noteBadges(view.badges)
+    return
+  }
+  pendingRole = view.role
+  dockLeaving.value = true
+}
+
+function onDockDeparted() {
+  if (!dockLeaving.value)
+    return
+  const next = pendingRole
+  pendingRole = ''
+  dockLeaving.value = false
+  dockShown.value = false
+  if (next === 'cooker' || next === 'eater')
+    role.value = next
+  if (settingsSnapshot.value)
+    noteBadges(settingsSnapshot.value.badges)
+  nextTick(() => {
+    dockShown.value = true
+  })
+}
+
 async function boot() {
   try {
     const view = await ensureAccount({ next: 'home' })
@@ -128,7 +166,7 @@ onLoad(() => {
 <template>
   <view class="relative h-screen w-full overflow-hidden bg-#fbf3ea">
     <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
-    <view >
+    <view>
       <template v-if="ready">
         <tab-scroll v-if="role === 'eater' && opened.menu" publish :active="tabKey === 'menu'" :motion="motion">
           <eat-menu ref="menuPane" :active="tabKey === 'menu'" />
@@ -146,9 +184,17 @@ onLoad(() => {
           <cook-records ref="recordsPane" />
         </tab-scroll>
         <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
-          <settings-pane ref="settingsPane" />
+          <settings-pane ref="settingsPane" :snapshot="settingsSnapshot" :locked="dockLeaving" @swapped="onSwapped" />
         </tab-scroll>
-        <tab-dock :role="role" :current="tabKey" :badges="tabBadges" @pick="showTab" />
+        <tab-dock
+          v-if="dockShown"
+          :role="role"
+          :current="tabKey"
+          :badges="tabBadges"
+          :leaving="dockLeaving"
+          @pick="showTab"
+          @departed="onDockDeparted"
+        />
       </template>
     </view>
     <ink-toast />

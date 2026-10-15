@@ -295,6 +295,50 @@ describe('绑定后的厨房', () => {
     return ctx
   }
 
+  it('还没绑定不能互换', async () => {
+    const ctx = setup()
+    await ctx.use('openid-cooker')
+    await expect(ctx.eat.swapRoles()).rejects.toMatchObject({ errCode: 'NO_KITCHEN' })
+  })
+
+  it('互换角色后两边对调，进行中的订单还在', async () => {
+    const ctx = await kitchen()
+    await ctx.use('openid-cooker')
+    await ctx.eat.updateNickname({ nickname: '阿明' })
+    const dish = await ctx.eat.publishDish({
+      name: '番茄炒蛋',
+      coverFileId: 'cloud://cover',
+    })
+    const board = await ctx.eat.mealBoard()
+    await ctx.use('openid-eater')
+    const order = await ctx.eat.createOrder({
+      date: board.today,
+      slot: 'noon',
+      dishIds: [dish.dishId],
+    })
+    const swapped = await ctx.eat.swapRoles()
+    expect(swapped.role).toBe('cooker')
+    expect(swapped.partnerRole).toBe('eater')
+    expect(swapped.nickname).toBe('厨神')
+    expect(swapped.partnerNickname).toBe('阿明')
+    const todo = await ctx.eat.listTodo({})
+    expect(todo.orders.map(item => item.orderId)).toContain(order.orderId)
+
+    await ctx.use('openid-cooker')
+    const former = await ctx.eat.me()
+    expect(former.role).toBe('eater')
+    expect(former.partnerRole).toBe('cooker')
+    expect(former.nickname).toBe('阿明')
+    expect(former.partnerNickname).toBe('厨神')
+    await expect(ctx.eat.listTodo({})).rejects.toMatchObject({ errCode: 'FORBIDDEN' })
+    const orders = await ctx.eat.listOrders({})
+    expect(orders.orders.map(item => item.orderId)).toContain(order.orderId)
+
+    const kitchens = await ctx.store.find('eat-kitchens', { status: 'active' }, 5)
+    expect(kitchens[0].cookerOpenid).toBe('openid-eater')
+    expect(kitchens[0].eaterOpenid).toBe('openid-cooker')
+  })
+
   it('没封面不能上架', async () => {
     const ctx = await kitchen()
     await ctx.use('openid-cooker')

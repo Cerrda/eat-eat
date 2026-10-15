@@ -213,6 +213,10 @@ export function unbind() {
   return callEat(eat => eat.unbind())
 }
 
+export function swapRoles() {
+  return callEat(eat => eat.swapRoles())
+}
+
 export function listCategories() {
   return callEat(eat => eat.listCategories())
 }

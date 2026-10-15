@@ -12,6 +12,7 @@ const methods = [
   'acceptInvite',
   'updateNickname',
   'unbind',
+  'swapRoles',
   'listCategories',
   'createCategory',
   'renameCategory',
