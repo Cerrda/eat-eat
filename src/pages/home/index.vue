@@ -6,6 +6,7 @@ import CookRecords from '@/components/cook-records/cook-records.vue'
 import CookTodo from '@/components/cook-todo/cook-todo.vue'
 import EatMenu from '@/components/eat-menu/eat-menu.vue'
 import EatOrders from '@/components/eat-orders/eat-orders.vue'
+import SettingsPane from '@/components/settings-pane/settings-pane.vue'
 import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
 import { ensureAccount } from '@/utils/account'
@@ -45,7 +46,7 @@ const ordersPane = ref<Pane | null>(null)
 const recordsPane = ref<Pane | null>(null)
 const todoPane = ref<Pane | null>(null)
 const dishesPane = ref<Pane | null>(null)
-const settingsPane = ref<Pane | null>(null)
+const settingsRef = ref<Pane | null>(null)
 
 function knownTab(key: string): key is TabKey {
   return (eaterTabs as readonly string[]).includes(key) || (cookerTabs as readonly string[]).includes(key)
@@ -61,7 +62,7 @@ function pane(key: TabKey) {
   if (key === 'dishes')
     return dishesPane.value
   if (key === 'settings')
-    return settingsPane.value
+    return settingsRef.value
   return recordsPane.value
 }
 
@@ -184,7 +185,7 @@ onLoad(() => {
           <cook-records ref="recordsPane" />
         </tab-scroll>
         <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
-          <settings-pane ref="settingsPane" :snapshot="settingsSnapshot" :locked="dockLeaving" @swapped="onSwapped" />
+          <SettingsPane ref="settingsRef" :snapshot="settingsSnapshot" :locked="dockLeaving" @swapped="onSwapped" />
         </tab-scroll>
         <tab-dock
           v-if="dockShown"
