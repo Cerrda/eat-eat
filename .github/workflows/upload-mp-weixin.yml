@@ -1,0 +1,75 @@
+name: Upload mp-weixin
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upload-mp-weixin
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm i
+
+      - name: 写入上传密钥
+        env:
+          WEIXIN_UPLOAD_PRIVATE_KEY: ${{ secrets.WEIXIN_UPLOAD_PRIVATE_KEY }}
+        run: |
+          node --input-type=module <<'EOF'
+          import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+          import { dirname } from 'node:path'
+
+          const key = process.env.WEIXIN_UPLOAD_PRIVATE_KEY ?? ''
+          if (!key.trim()) {
+            console.error('缺少 GitHub Secret：WEIXIN_UPLOAD_PRIVATE_KEY')
+            process.exit(1)
+          }
+
+          const config = JSON.parse(readFileSync('.minicirc', 'utf8'))
+          const file = config.weixin?.privateKeyPath
+          if (!file) {
+            console.error('.minicirc 里没有 weixin.privateKeyPath')
+            process.exit(1)
+          }
+
+          mkdirSync(dirname(file), { recursive: true })
+          writeFileSync(file, key.endsWith('\n') ? key : `${key}\n`)
+          console.log(`已写入 ${file}`)
+          EOF
+
+      - name: 构建并上传
+        run: pnpm upload:mp-weixin
+
+      - name: 回写版本号
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .minicirc
+          if git diff --cached --quiet; then
+            echo "版本号没有变化"
+            exit 0
+          fi
+          git commit -m "chore: 回写微信上传版本号 [skip ci]"
+          git pull --rebase origin main
+          git push
