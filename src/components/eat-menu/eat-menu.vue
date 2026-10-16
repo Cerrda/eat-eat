@@ -243,18 +243,27 @@ function ensureSelection() {
     void selectSlot(date.value, slot.value)
     return
   }
-  for (const day of board.value.dates) {
-    for (const meal of slots) {
-      if (!busyOf(day.date, meal)) {
-        date.value = day.date
-        slot.value = meal
-        return
-      }
-    }
+  const pick = openSlot()
+  if (pick)
+    void selectSlot(pick.date, pick.meal)
+}
+
+function openSlot() {
+  const days = board.value?.dates
+  if (!days?.length)
+    return null
+  const line: Array<{ date: string, meal: Slot }> = []
+  for (const day of days) {
+    for (const meal of slots)
+      line.push({ date: day.date, meal })
   }
-  const first = board.value.dates[0]
-  if (first)
-    void selectSlot(first.date, 'morning')
+  const tomorrow = days.find(day => day.offset === 1)
+  const start = tomorrow
+    ? line.findIndex(item => item.date === tomorrow.date && item.meal === 'noon')
+    : 0
+  const from = start < 0 ? 0 : start
+  const turned = [...line.slice(from), ...line.slice(0, from)]
+  return turned.find(item => !busyOf(item.date, item.meal)) || turned[0] || null
 }
 
 async function selectSlot(day: string, meal: Slot) {
