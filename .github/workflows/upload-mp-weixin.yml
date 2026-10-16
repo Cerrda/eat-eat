@@ -58,6 +58,23 @@ jobs:
           console.log(`已写入 ${file}`)
           EOF
 
+      - name: 写入 uniCloud 凭证
+        env:
+          UNICLOUD_ENV_LOCAL: ${{ secrets.UNICLOUD_ENV_LOCAL }}
+        run: |
+          node --input-type=module <<'EOF'
+          import { writeFileSync } from 'node:fs'
+
+          const body = process.env.UNICLOUD_ENV_LOCAL ?? ''
+          if (!body.includes('UNICLOUD_SPACE_ID=')) {
+            console.error('缺少 GitHub Secret：UNICLOUD_ENV_LOCAL')
+            process.exit(1)
+          }
+
+          writeFileSync('.env.unicloud.local', body.endsWith('\n') ? body : `${body}\n`)
+          console.log('已写入 .env.unicloud.local')
+          EOF
+
       - name: 构建并上传
         run: pnpm upload:mp-weixin
 
