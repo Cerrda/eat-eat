@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import type { AccountView, RecordCard } from '@/api/eat'
+import type { CloudImageSize } from '@/utils/files'
 import { dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
+import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
+import { useCoverZoom } from '@/composables/useCoverZoom'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
+
+const props = defineProps<{
+  active?: boolean
+}>()
+
+const {
+  coverZoom,
+  heldId,
+  domId,
+  remember,
+  release,
+  open: openZoom,
+} = useCoverZoom(() => props.active !== false)
 
 const account = ref<AccountView | null>(null)
 const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
@@ -92,6 +108,27 @@ function wideTiles(count: number) {
   return shown === 2 || shown === 4
 }
 
+function photoKey(recordId: string, index: number) {
+  return `${recordId}-${index}`
+}
+
+function photoAt(count: number, rowIndex: number, column: number) {
+  const cols = wideTiles(count) ? 2 : 3
+  return rowIndex * cols + column
+}
+
+function openPhoto(record: RecordCard, index: number, from: Exclude<CloudImageSize, 'raw'>) {
+  const fileId = record.photoFileIds[index]
+  if (!fileId)
+    return
+  void openZoom({
+    id: photoKey(record.recordId, index),
+    fileId,
+    from,
+    sharp: from === 'cover' ? 'raw' : 'cover',
+  })
+}
+
 defineExpose({ refresh })
 </script>
 
@@ -151,22 +188,38 @@ export default {
                 {{ SLOT_LABEL[record.slot] }}
               </text>
             </view>
-            <view v-if="record.photoFileIds.length === 1" class="relative h-336rpx w-full">
+            <view
+              v-if="record.photoFileIds.length === 1"
+              :id="domId(photoKey(record.recordId, 0))"
+              class="relative h-336rpx w-full"
+              @tap.stop="openPhoto(record, 0, 'cover')"
+            >
               <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
               <view class="absolute inset-0 overflow-hidden rounded-36rpx">
-                <dish-cover class="h-full w-full" :file-id="record.photoFileIds[0]" name="照" size="cover" />
+                <dish-cover
+                  class="h-full w-full"
+                  :file-id="record.photoFileIds[0]"
+                  name="照"
+                  size="cover"
+                  :held="heldId === photoKey(record.recordId, 0)"
+                  @size="remember(photoKey(record.recordId, 0), $event)"
+                />
               </view>
               <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
             </view>
             <view v-else-if="record.photoFileIds.length" class="flex flex-col gap-16rpx">
               <view v-for="(row, rowIndex) in photoRows(record.photoFileIds)" :key="rowIndex" class="flex gap-16rpx">
                 <view
-                  v-for="photo in row"
-                  :key="photo"
+                  v-for="(photo, column) in row"
+                  :key="`${rowIndex}-${column}`"
                   :class="wideTiles(record.photoFileIds.length) ? 'w-[calc((100%-16rpx)/2)]' : 'w-[calc((100%-32rpx)/3)]'"
                 >
                   <view class="relative pt-full">
-                    <view class="absolute inset-0">
+                    <view
+                      :id="domId(photoKey(record.recordId, photoAt(record.photoFileIds.length, rowIndex, column)))"
+                      class="absolute inset-0"
+                      @tap.stop="openPhoto(record, photoAt(record.photoFileIds.length, rowIndex, column), wideTiles(record.photoFileIds.length) ? 'tile' : 'thumb')"
+                    >
                       <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
                       <view class="absolute inset-0 overflow-hidden rounded-36rpx">
                         <dish-cover
@@ -174,6 +227,8 @@ export default {
                           :file-id="photo"
                           name="照"
                           :size="wideTiles(record.photoFileIds.length) ? 'tile' : 'thumb'"
+                          :held="heldId === photoKey(record.recordId, photoAt(record.photoFileIds.length, rowIndex, column))"
+                          @size="remember(photoKey(record.recordId, photoAt(record.photoFileIds.length, rowIndex, column)), $event)"
                         />
                       </view>
                       <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
@@ -192,5 +247,6 @@ export default {
         </view>
       </template>
     </list-scroll>
+    <CoverZoom ref="coverZoom" @idle="release" />
   </view>
 </template>

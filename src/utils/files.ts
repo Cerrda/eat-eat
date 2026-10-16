@@ -1,5 +1,4 @@
 import { EatRequestError } from '@/api/eat'
-import { ask } from '@/utils/ui'
 
 const urlCache = new Map<string, string>()
 
@@ -12,16 +11,16 @@ interface TempFileItem {
 export type CloudImageSize = 'thumb' | 'tile' | 'cover' | 'raw'
 
 const IMAGE_FIT = {
-  thumb: { w: 480, q: 70 },
-  tile: { w: 720, q: 75 },
-  cover: { w: 1280, q: 80 },
+  thumb: { w: 400, q: 65 },
+  tile: { w: 600, q: 72 },
+  cover: { w: 1280, q: 75 },
 } as const
 
 export function fitCloudImageUrl(url: string, size: CloudImageSize = 'thumb') {
   if (size === 'raw' || !/^https?:\/\//.test(url) || url.includes('x-oss-process='))
     return url
   const { w, q } = IMAGE_FIT[size]
-  const process = `x-oss-process=image/auto-orient,1/resize,m_lfit,w_${w},limit_1/quality,q_${q}/format,jpg`
+  const process = `x-oss-process=image/auto-orient,1/resize,m_lfit,w_${w},limit_1/quality,q_${q}/format,avif`
   return `${url}${url.includes('?') ? '&' : '?'}${process}`
 }
 

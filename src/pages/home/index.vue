@@ -173,7 +173,7 @@ onLoad(() => {
           <eat-menu ref="menuPane" :active="tabKey === 'menu'" />
         </tab-scroll>
         <tab-scroll v-if="role === 'eater' && opened.orders" :active="tabKey === 'orders'" :motion="motion">
-          <eat-orders ref="ordersPane" />
+          <eat-orders ref="ordersPane" :active="tabKey === 'orders'" />
         </tab-scroll>
         <tab-scroll v-if="role === 'cooker' && opened.todo" :active="tabKey === 'todo'" :motion="motion">
           <cook-todo ref="todoPane" />
@@ -182,7 +182,7 @@ onLoad(() => {
           <cook-dishes ref="dishesPane" />
         </tab-scroll>
         <tab-scroll v-if="opened.records" :active="tabKey === 'records'" :motion="motion">
-          <cook-records ref="recordsPane" />
+          <cook-records ref="recordsPane" :active="tabKey === 'records'" />
         </tab-scroll>
         <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
           <SettingsPane ref="settingsRef" :snapshot="settingsSnapshot" :locked="dockLeaving" @swapped="onSwapped" />

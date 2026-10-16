@@ -18,11 +18,101 @@ const emit = defineEmits<{
   size: [aspect: number]
 }>()
 
+const instance = getCurrentInstance()
 const shown = ref('')
+const near = ref(false)
 let ticket = 0
 let usedOriginal = false
+let observer: { disconnect: () => void } | undefined
+let probe: ReturnType<typeof setTimeout> | undefined
+const probeDelays = [48, 160, 360, 700]
 
-watch(() => [props.src, props.fileId, props.size] as const, async ([src, fileId, size]) => {
+/** 大约提前半屏开始拉图，滚到跟前时封面已经在。 */
+function aheadPx() {
+  return Math.round((uni.getWindowInfo().windowHeight || 0) * 0.5)
+}
+
+function stopWatch() {
+  observer?.disconnect()
+  observer = undefined
+  if (probe) {
+    clearTimeout(probe)
+    probe = undefined
+  }
+}
+
+function reveal() {
+  if (near.value)
+    return
+  near.value = true
+  stopWatch()
+}
+
+function placeOf(box: { top?: number, bottom?: number, height?: number } | null) {
+  const height = Number(box?.height || 0)
+  if (!box || height <= 0)
+    return 'unknown' as const
+  const top = Number(box.top || 0)
+  const bottom = Number(box.bottom ?? top + height)
+  const ahead = aheadPx()
+  const windowHeight = uni.getWindowInfo().windowHeight || 0
+  if (bottom > -ahead && top < windowHeight + ahead)
+    return 'near' as const
+  return 'far' as const
+}
+
+function measure(proxy: NonNullable<typeof instance>['proxy'], attempt: number) {
+  if (!proxy || near.value)
+    return
+  uni.createSelectorQuery().in(proxy).select('.dish-cover').boundingClientRect((rect) => {
+    if (near.value)
+      return
+    const box = rect && !Array.isArray(rect) ? rect : null
+    const place = placeOf(box)
+    if (place === 'near') {
+      reveal()
+      return
+    }
+    if (place === 'far')
+      return
+    const next = attempt + 1
+    if (next < probeDelays.length)
+      probe = setTimeout(() => measure(proxy, next), probeDelays[next] - probeDelays[attempt])
+  }).exec()
+}
+
+function arm() {
+  const proxy = instance?.proxy
+  if (!proxy) {
+    reveal()
+    return
+  }
+  const ahead = aheadPx()
+  const created = uni.createIntersectionObserver(proxy, { thresholds: [0], initialRatio: 0 })
+  observer = created
+  created.relativeToViewport({ top: ahead, bottom: ahead }).observe('.dish-cover', (result) => {
+    if (result.intersectionRatio > 0)
+      reveal()
+  })
+  probe = setTimeout(() => measure(proxy, 0), probeDelays[0])
+}
+
+onMounted(() => {
+  nextTick(arm)
+})
+
+onUnmounted(() => {
+  ticket += 1
+  stopWatch()
+})
+
+watch(() => [props.src, props.fileId, props.size, near.value] as const, ([src, fileId, size, ready]) => {
+  if (!ready)
+    return
+  void paint(src, fileId, size)
+})
+
+async function paint(src: string | undefined, fileId: string | undefined, size: Exclude<CloudImageSize, 'raw'>) {
   const current = ++ticket
   usedOriginal = false
   if (src) {
@@ -32,7 +122,7 @@ watch(() => [props.src, props.fileId, props.size] as const, async ([src, fileId,
   const url = await resolveFileUrl(fileId, size)
   if (current === ticket)
     shown.value = url
-}, { immediate: true })
+}
 
 function noteSize(event: { detail?: { width?: number | string, height?: number | string } }) {
   const width = Number(event.detail?.width || 0)

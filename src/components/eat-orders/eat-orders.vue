@@ -1,12 +1,27 @@
 <script setup lang="ts">
-import type { AccountView, OrderDetail } from '@/api/eat'
+import type { AccountView, OrderDetail, OrderItem } from '@/api/eat'
 import { dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
+import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
+import { useCoverZoom } from '@/composables/useCoverZoom'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
 import { showError } from '@/utils/ui'
+
+const props = defineProps<{
+  active?: boolean
+}>()
+
+const {
+  coverZoom,
+  heldId,
+  domId,
+  remember,
+  release,
+  open: openZoom,
+} = useCoverZoom(() => props.active !== false)
 
 const account = ref<AccountView | null>(null)
 const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
@@ -51,6 +66,22 @@ async function onPull() {
 
 function openOrder(order: OrderDetail) {
   uni.navigateTo({ url: `/pages/eat/order?id=${order.orderId}` })
+}
+
+function itemKey(order: OrderDetail, item: OrderItem) {
+  return `${order.orderId}-${item.dishId}`
+}
+
+function previewItem(order: OrderDetail, item: OrderItem) {
+  if (!item.coverFileId) {
+    openOrder(order)
+    return
+  }
+  void openZoom({
+    id: itemKey(order, item),
+    fileId: item.coverFileId,
+    radius: 26,
+  })
 }
 
 function openMenu() {
@@ -150,13 +181,17 @@ export default {
               class="flex items-center gap-24rpx py-12rpx"
             >
               <view
+                :id="domId(itemKey(order, item))"
                 class="h-128rpx w-128rpx shrink-0 rounded-32rpx"
                 :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+                @tap.stop="previewItem(order, item)"
               >
                 <dish-cover
                   class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-32rpx border-solid"
                   :file-id="item.coverFileId"
                   :name="item.name"
+                  :held="heldId === itemKey(order, item)"
+                  @size="remember(itemKey(order, item), $event)"
                 />
               </view>
               <view class="min-w-0 flex-1">
@@ -181,5 +216,6 @@ export default {
         </view>
       </template>
     </list-scroll>
+    <CoverZoom ref="coverZoom" @idle="release" />
   </view>
 </template>

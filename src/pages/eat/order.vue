@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { AccountView, OrderDetail } from '@/api/eat'
+import type { AccountView, OrderDetail, OrderItem } from '@/api/eat'
 import { dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
+import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
+import { useCoverZoom } from '@/composables/useCoverZoom'
 import { ensureAccount } from '@/utils/account'
 import { menuIntent } from '@/utils/draft'
 import { faceOf } from '@/utils/face'
@@ -16,6 +18,15 @@ definePage({
     backgroundColor: '#FBF3EA',
   },
 })
+
+const {
+  coverZoom,
+  heldId,
+  domId,
+  remember,
+  release,
+  open: openZoom,
+} = useCoverZoom()
 
 const orderId = ref('')
 const account = ref<AccountView | null>(null)
@@ -72,6 +83,12 @@ const quoteLabel = computed(() => {
   return `${account.value?.partnerNickname || '厨神'}留下的话`
 })
 
+function previewItem(item: OrderItem) {
+  if (!item.coverFileId)
+    return
+  void openZoom({ id: item.dishId, fileId: item.coverFileId })
+}
+
 function cancel() {
   uni.navigateTo({ url: `/pages/eat/cancel?id=${orderId.value}` })
 }
@@ -102,13 +119,17 @@ function reorder() {
           :class="index === order.items.length - 1 ? 'border-b-4rpx' : ''"
         >
           <view
+            :id="domId(item.dishId)"
             class="h-128rpx w-128rpx shrink-0 rounded-36rpx"
             :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+            @tap="previewItem(item)"
           >
             <dish-cover
               class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
               :file-id="item.coverFileId"
               :name="item.name"
+              :held="heldId === item.dishId"
+              @size="remember(item.dishId, $event)"
             />
           </view>
           <view class="min-w-0 flex-1">
@@ -152,7 +173,7 @@ function reorder() {
       </view>
       <view
         v-if="canChange"
-        class="eat-press box-border w-full flex items-center justify-center rounded-36rpx border-4rpx border-#c9a297 border-solid bg-#fff9f4 px-32rpx py-30rpx"
+        class="eat-press box-border w-full flex items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-32rpx py-30rpx"
         hover-class="eat-press-on"
         :hover-stay-time="140"
         @tap="cancel"
@@ -175,5 +196,6 @@ function reorder() {
         </view>
       </view>
     </view>
+    <CoverZoom ref="coverZoom" @idle="release" />
   </paper-page>
 </template>
