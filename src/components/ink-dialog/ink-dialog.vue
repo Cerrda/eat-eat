@@ -70,8 +70,9 @@ onUnmounted(() => {
 watch(visible, (on) => {
   if (!dialogEditable.value)
     return
-  if (on)
+  if (on) {
     uni.onKeyboardHeightChange(onKeyboard)
+  }
   else {
     keyboard.value = 0
     uni.offKeyboardHeightChange(onKeyboard)
@@ -146,55 +147,67 @@ watch(active, (on) => {
         class="relative border-4rpx border-#792b3e rounded-44rpx border-solid bg-#fff9f4 px-44rpx py-44rpx"
         :class="shown ? 'ink-dialog-in' : 'ink-dialog-out'"
       >
-      <view class="flex flex-col gap-32rpx">
-        <text class="block text-64rpx text-#3c2428 leading-[1.15] font-display">
-          {{ dialogTitle }}
-        </text>
-        <text v-if="dialogContent" class="block text-30rpx text-#7a534c leading-[1.6] font-body">
-          {{ dialogContent }}
-        </text>
-        <view v-if="dialogEditable" class="flex flex-col gap-16rpx">
-          <view class="border-4rpx border-#c9a297 rounded-28rpx border-solid bg-#fbf3ea px-28rpx py-24rpx">
-            <textarea
-              v-if="fieldLive"
-              v-model="dialogDraft"
-              class="h-52rpx w-full text-36rpx text-#3c2428 leading-52rpx font-body"
-              disable-default-padding
-              :focus="fieldLive"
-              :placeholder="dialogPlaceholder"
-              placeholder-class="ph-sans"
-              placeholder-style="font-size: 36rpx; line-height: 52rpx;"
-              confirm-type="done"
-              :show-confirm-bar="false"
-              :adjust-position="false"
-              :cursor-spacing="24"
-              @confirm="confirm"
-            />
-            <text
-              v-else
-              class="block h-52rpx text-36rpx leading-52rpx font-body"
-              :class="dialogDraft ? 'text-#3c2428' : 'text-#c9a297'"
-            >
-              {{ dialogDraft || dialogPlaceholder }}
-            </text>
-          </view>
-          <text v-if="dialogPlaceholder" class="block text-right text-26rpx text-#7a534c font-body">
-            {{ dialogPlaceholder }}
+        <view class="flex flex-col gap-32rpx">
+          <text class="block text-64rpx text-#3c2428 leading-[1.15] font-display">
+            {{ dialogTitle }}
           </text>
-        </view>
-        <view v-if="dialogShowCancel" class="flex items-stretch gap-16rpx">
-          <view
-            class="ink-dialog-btn box-border flex flex-1 items-center justify-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx py-24rpx"
-            hover-class="ink-dialog-press"
-            :hover-stay-time="140"
-            @tap.stop="cancel"
-          >
-            <text class="text-30rpx text-#3c2428 font-medium font-body">
-              {{ dialogCancelText }}
+          <text v-if="dialogContent" class="block text-30rpx text-#7a534c leading-[1.6] font-body">
+            {{ dialogContent }}
+          </text>
+          <view v-if="dialogEditable" class="flex flex-col gap-16rpx">
+            <view class="border-4rpx border-#c9a297 rounded-28rpx border-solid bg-#fbf3ea px-28rpx py-24rpx">
+              <textarea
+                v-if="fieldLive"
+                v-model="dialogDraft"
+                class="h-52rpx w-full text-36rpx text-#3c2428 leading-52rpx font-body"
+                disable-default-padding
+                :focus="fieldLive"
+                :placeholder="dialogPlaceholder"
+                placeholder-class="ph-sans"
+                placeholder-style="font-size: 36rpx; line-height: 52rpx;"
+                confirm-type="done"
+                :show-confirm-bar="false"
+                :adjust-position="false"
+                :cursor-spacing="24"
+                @confirm="confirm"
+              />
+              <text
+                v-else
+                class="block h-52rpx text-36rpx leading-52rpx font-body"
+                :class="dialogDraft ? 'text-#3c2428' : 'text-#c9a297'"
+              >
+                {{ dialogDraft || dialogPlaceholder }}
+              </text>
+            </view>
+            <text v-if="dialogPlaceholder" class="block text-right text-26rpx text-#7a534c font-body">
+              {{ dialogPlaceholder }}
             </text>
           </view>
+          <view v-if="dialogShowCancel" class="flex items-stretch gap-16rpx">
+            <view
+              class="ink-dialog-btn box-border flex flex-1 items-center justify-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx py-24rpx"
+              hover-class="ink-dialog-press"
+              :hover-stay-time="140"
+              @tap.stop="cancel"
+            >
+              <text class="text-30rpx text-#3c2428 font-medium font-body">
+                {{ dialogCancelText }}
+              </text>
+            </view>
+            <view
+              class="ink-dialog-btn flex flex-1 items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
+              hover-class="ink-dialog-press"
+              :hover-stay-time="140"
+              @tap.stop="confirm"
+            >
+              <text class="text-30rpx text-#fbf3ea font-medium font-body">
+                {{ dialogConfirmText }}
+              </text>
+            </view>
+          </view>
           <view
-            class="ink-dialog-btn flex flex-1 items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
+            v-else
+            class="ink-dialog-btn flex items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
             hover-class="ink-dialog-press"
             :hover-stay-time="140"
             @tap.stop="confirm"
@@ -204,24 +217,14 @@ watch(active, (on) => {
             </text>
           </view>
         </view>
-        <view
-          v-else
-          class="ink-dialog-btn flex items-center justify-center rounded-36rpx bg-#792b3e px-32rpx py-24rpx"
-          hover-class="ink-dialog-press"
-          :hover-stay-time="140"
-          @tap.stop="confirm"
-        >
-          <text class="text-30rpx text-#fbf3ea font-medium font-body">
-            {{ dialogConfirmText }}
-          </text>
-        </view>
-      </view>
       </view>
     </view>
   </view>
 </template>
 
 <style>
+@import "../../styles/scrollbar.css";
+
 .ink-dialog-btn {
   transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
 }

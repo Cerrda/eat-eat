@@ -229,6 +229,7 @@ export default {
   <scroll-view
     class="list-scroll h-0 min-h-0 w-full flex-1"
     :style="scrollStyle"
+    enhanced
     :show-scrollbar="false"
     :bounces="false"
     scroll-y
@@ -289,6 +290,8 @@ export default {
 </template>
 
 <style>
+@import "../../styles/scrollbar.css";
+
 :host {
   display: flex;
   flex: 1;

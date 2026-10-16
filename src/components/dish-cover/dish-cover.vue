@@ -8,9 +8,15 @@ const props = withDefaults(defineProps<{
   src?: string
   name?: string
   size?: Exclude<CloudImageSize, 'raw'>
+  held?: boolean
 }>(), {
   size: 'thumb',
+  held: false,
 })
+
+const emit = defineEmits<{
+  size: [aspect: number]
+}>()
 
 const shown = ref('')
 let ticket = 0
@@ -28,6 +34,13 @@ watch(() => [props.src, props.fileId, props.size] as const, async ([src, fileId,
     shown.value = url
 }, { immediate: true })
 
+function noteSize(event: { detail?: { width?: number | string, height?: number | string } }) {
+  const width = Number(event.detail?.width || 0)
+  const height = Number(event.detail?.height || 0)
+  if (width > 0 && height > 0)
+    emit('size', width / height)
+}
+
 async function useOriginal() {
   if (usedOriginal || props.src || !props.fileId)
     return
@@ -43,7 +56,15 @@ const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
 
 <template>
   <view class="dish-cover">
-    <image v-if="shown" class="dish-cover__img" :src="shown" mode="aspectFill" @error="useOriginal" />
+    <image
+      v-if="shown"
+      class="dish-cover__img"
+      :class="held ? 'dish-cover__held' : ''"
+      :src="shown"
+      mode="aspectFill"
+      @load="noteSize"
+      @error="useOriginal"
+    />
     <view v-else class="dish-cover__mark">
       <text class="text-40rpx text-#792b3e" :class="faceOf(mark, 'serif')">
         {{ mark }}
@@ -86,5 +107,9 @@ const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.dish-cover__held {
+  opacity: 0;
 }
 </style>

@@ -237,3 +237,7 @@ export default {
     </list-scroll>
   </view>
 </template>
+
+<style>
+@import "../../styles/scrollbar.css";
+</style>

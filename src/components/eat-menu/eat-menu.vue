@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { Category, MealBoard, MenuDish, MenuName, OrderDetail, Slot } from '@/api/eat'
+import type { CoverZoomOrigin } from '@/components/cover-zoom/cover-zoom.vue'
 import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard, SLOT_LABEL } from '@/api/eat'
+import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
 import { ensureAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
-import { primeFileUrls } from '@/utils/files'
+import { primeFileUrls, resolveFileUrl } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { markTabFresh, menuPanePose } from '@/utils/tabs'
@@ -515,6 +517,93 @@ function dropDish(id: string) {
 
 function dishKey(id: string) {
   return `dish-${id.replace(/[^\w-]/g, '')}`
+}
+
+function coverKey(id: string) {
+  return `cover-${id.replace(/[^\w-]/g, '')}`
+}
+
+const coverZoom = ref<InstanceType<typeof CoverZoom> | null>(null)
+const heldId = ref('')
+const coverAspect = new Map<string, number>()
+let coverToken = 0
+
+function rememberCover(id: string, aspect: number) {
+  if (aspect > 0)
+    coverAspect.set(id, aspect)
+}
+
+function releaseCover() {
+  heldId.value = ''
+}
+
+function imageRatio(src: string) {
+  return new Promise<number>((resolve) => {
+    uni.getImageInfo({
+      src,
+      success(result) {
+        resolve(result.width > 0 && result.height > 0 ? result.width / result.height : 0)
+      },
+      fail() {
+        resolve(0)
+      },
+    })
+  })
+}
+
+function coverBox(id: string) {
+  const proxy = instance?.proxy
+  if (!proxy)
+    return Promise.resolve(null)
+  return new Promise<CoverZoomOrigin | null>((resolve) => {
+    uni.createSelectorQuery().in(proxy).select(`#${coverKey(id)}`).boundingClientRect((rect) => {
+      const box = rect && !Array.isArray(rect) ? rect : null
+      if (!box || !box.width || !box.height || box.left == null || box.top == null) {
+        resolve(null)
+        return
+      }
+      const inset = uni.upx2px(6)
+      resolve({
+        left: box.left + inset,
+        top: box.top + inset,
+        width: Math.max(1, box.width - inset * 2),
+        height: Math.max(1, box.height - inset * 2),
+        radius: uni.upx2px(30),
+      })
+    }).exec()
+  })
+}
+
+async function openCover(dish: MenuDish) {
+  if (!props.active || !dish.coverFileId || !coverZoom.value)
+    return
+  const token = ++coverToken
+  const origin = await coverBox(dish.dishId)
+  if (!origin || token !== coverToken || !props.active)
+    return
+  const [src, sharp] = await Promise.all([
+    resolveFileUrl(dish.coverFileId, 'thumb'),
+    resolveFileUrl(dish.coverFileId, 'cover'),
+  ])
+  if (!src || token !== coverToken || !props.active)
+    return
+  let aspect = coverAspect.get(dish.dishId) || 0
+  if (aspect <= 0)
+    aspect = await imageRatio(src)
+  if (token !== coverToken || !props.active)
+    return
+  heldId.value = dish.dishId
+  void coverZoom.value.open({
+    src,
+    sharp: sharp && sharp !== src ? sharp : '',
+    aspect: aspect > 0 ? aspect : 1,
+    origin,
+  })
+}
+
+function closeCover() {
+  coverToken += 1
+  coverZoom.value?.shut()
 }
 
 function nodeBox(selector: string) {
@@ -1033,6 +1122,15 @@ watch([date, slot], () => {
   placePill(animate)
 })
 
+watch(() => props.active, (on) => {
+  if (!on)
+    closeCover()
+})
+
+onHide(() => {
+  closeCover()
+})
+
 onUnmounted(() => {
   leftPage = true
   clearSlideTimers()
@@ -1363,14 +1461,18 @@ export default {
               class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
             >
               <view
+                :id="coverKey(dish.dishId)"
                 class="h-144rpx w-144rpx shrink-0 rounded-36rpx"
                 :class="tadaId === dish.dishId ? 'dish-tada' : ''"
                 :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+                @tap.stop="openCover(dish)"
               >
                 <dish-cover
                   class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
                   :file-id="dish.coverFileId"
                   :name="dish.name"
+                  :held="heldId === dish.dishId"
+                  @size="rememberCover(dish.dishId, $event)"
                 />
               </view>
               <view class="min-w-0 flex flex-1 flex-col gap-6rpx">
@@ -1530,10 +1632,13 @@ export default {
         </view>
       </view>
     </root-portal>
+    <CoverZoom ref="coverZoom" @idle="releaseCover" />
   </view>
 </template>
 
 <style>
+@import "../../styles/scrollbar.css";
+
 .eat-meal-wash {
   transition: transform 340ms cubic-bezier(0.22, 1.06, 0.36, 1) 50ms;
 }

@@ -168,7 +168,7 @@ export default {
 
 <template>
   <view class="h-full min-h-0 flex flex-1 flex-col">
-    <scroll-view scroll-y class="h-0 min-h-0 w-full flex-1" :show-scrollbar="false">
+    <scroll-view scroll-y enhanced class="h-0 min-h-0 w-full flex-1" :show-scrollbar="false">
       <screen-head title="设置" />
       <view v-if="account" class="flex flex-col gap-32rpx pt-32rpx">
         <view :key="ledgerKey" class="flex flex-col">
@@ -241,4 +241,5 @@ export default {
 
 <style>
 @import "../../styles/motion.css";
+@import "../../styles/scrollbar.css";
 </style>
