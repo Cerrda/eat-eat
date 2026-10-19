@@ -276,12 +276,12 @@ export default {
       <slot />
       <view v-if="loading" class="flex items-center justify-center gap-16rpx py-32rpx">
         <ink-spin />
-        <text class="text-26rpx text-#7a534c" :class="faceOf('正在往下翻', 'sans')">
+        <text class="text-26rpx text-muted" :class="faceOf('正在往下翻', 'sans')">
           正在往下翻
         </text>
       </view>
       <view v-else-if="finished && total > 10" class="flex items-center justify-center py-32rpx">
-        <text class="text-26rpx text-#7a534c" :class="faceOf('没有更多了', 'sans')">
+        <text class="text-26rpx text-muted" :class="faceOf('没有更多了', 'sans')">
           没有更多了
         </text>
       </view>
@@ -357,7 +357,7 @@ export default {
   justify-content: center;
   width: 40rpx;
   height: 40rpx;
-  border: 3rpx solid #792b3e;
+  border: 3rpx solid var(--accent);
   border-radius: 50%;
 }
 
@@ -365,8 +365,8 @@ export default {
   width: 10rpx;
   height: 10rpx;
   margin-top: -6rpx;
-  border-right: 3rpx solid #792b3e;
-  border-bottom: 3rpx solid #792b3e;
+  border-right: 3rpx solid var(--accent);
+  border-bottom: 3rpx solid var(--accent);
   transform: rotate(45deg);
 }
 
@@ -379,7 +379,7 @@ export default {
   display: none;
   font-size: 26rpx;
   line-height: 1;
-  color: #7a534c;
+  color: var(--muted);
 }
 
 .pull-copy-pull {

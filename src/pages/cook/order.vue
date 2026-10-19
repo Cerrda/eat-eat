@@ -6,6 +6,7 @@ import { useCoverZoom } from '@/composables/useCoverZoom'
 import { ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
+import { pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -131,21 +132,22 @@ function cancel() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-32rpx">
       <back-bar label="这一餐" fallback="/pages/home/index" />
       <template v-if="order">
-        <text class="text-30rpx text-#3c2428 font-semibold leading-[1.15]">
+        <text class="text-30rpx text-ink font-semibold leading-[1.15]">
           {{ headline }}
         </text>
-        <text class="text-30rpx text-#792b3e" :class="faceOf(statusText, 'mono')">
+        <text class="text-30rpx text-accent" :class="faceOf(statusText, 'mono')">
           {{ statusText }}
         </text>
         <view v-if="order.items.length" class="flex flex-col">
           <view
             v-for="(item, index) in order.items"
             :key="item.dishId"
-            class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-28rpx"
+            class="flex items-center gap-24rpx border-0 border-t-4rpx border-line border-solid py-28rpx"
             @tap="openRecipe(item.dishId)"
           >
             <view
@@ -154,7 +156,7 @@ function cancel() {
               @tap.stop="previewItem(item)"
             >
               <dish-cover
-                class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
+                class="box-border h-full w-full border-6rpx border-photo rounded-36rpx border-solid"
                 :file-id="item.coverFileId"
                 :name="item.name"
                 :held="heldId === item.dishId"
@@ -162,55 +164,55 @@ function cancel() {
               />
             </view>
             <view class="min-w-0 flex flex-1 flex-col gap-8rpx">
-              <text class="text-40rpx text-#3c2428 leading-[1.15]" :class="faceOf(item.name, 'serif')">
+              <text class="text-40rpx text-ink leading-[1.15]" :class="faceOf(item.name, 'serif')">
                 {{ item.name }}
               </text>
-              <text v-if="categories[index]" class="text-26rpx text-#7a534c" :class="faceOf(categories[index], 'sans')">
+              <text v-if="categories[index]" class="text-26rpx text-muted" :class="faceOf(categories[index], 'sans')">
                 {{ categories[index] }}
               </text>
             </view>
           </view>
         </view>
-        <view v-if="order.note" class="flex flex-col gap-8rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-28rpx pr-4rpx">
-          <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf(`${account?.partnerNickname || '食神'}留下的话`, 'mono')">
+        <view v-if="order.note" class="flex flex-col gap-8rpx border-0 border-l-4rpx border-accent border-solid py-12rpx pl-28rpx pr-4rpx">
+          <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf(`${account?.partnerNickname || '食神'}留下的话`, 'mono')">
             {{ account?.partnerNickname || '食神' }}留下的话
           </text>
-          <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(order.note, 'serif')">
+          <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf(order.note, 'serif')">
             {{ order.note }}
           </text>
         </view>
         <view v-if="order.status === 'pending'" class="flex items-center gap-20rpx">
-          <view class="box-border flex items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-44rpx py-30rpx" @tap="reject">
-            <text class="text-30rpx text-#3c2428 font-medium leading-none" :class="faceOf('拒绝', 'sans')">
+          <view class="box-border flex items-center justify-center border-4rpx border-line rounded-36rpx border-solid bg-cream px-44rpx py-30rpx" @tap="reject">
+            <text class="text-30rpx text-ink font-medium leading-none" :class="faceOf('拒绝', 'sans')">
               拒绝
             </text>
           </view>
           <view
             class="box-border flex flex-1 items-center justify-center gap-16rpx rounded-52rpx px-32rpx py-30rpx"
-            :class="pending ? 'bg-#a24c5c' : 'bg-#792b3e'"
+            :class="pending ? 'bg-accent-busy' : 'bg-accent'"
             @tap="accept"
           >
             <ink-spin v-if="pending" tone="paper" />
-            <text class="text-30rpx text-#fbf3ea font-medium leading-none" :class="faceOf(pending ? '正在接下' : '接下这一餐', 'sans')">
+            <text class="text-30rpx text-paper font-medium leading-none" :class="faceOf(pending ? '正在接下' : '接下这一餐', 'sans')">
               {{ pending ? '正在接下' : '接下这一餐' }}
             </text>
           </view>
         </view>
         <view
           v-else-if="statusText === '已完成' && !order.recorded"
-          class="box-border flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
+          class="box-border flex items-center justify-center rounded-52rpx bg-accent px-32rpx py-30rpx"
           @tap="writeRecord"
         >
-          <text class="text-30rpx text-#fbf3ea font-medium leading-none" :class="faceOf('补上', 'sans')">
+          <text class="text-30rpx text-paper font-medium leading-none" :class="faceOf('补上', 'sans')">
             补上
           </text>
         </view>
         <view
           v-if="order.status === 'accepted'"
-          class="box-border flex items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-44rpx py-30rpx"
+          class="box-border flex items-center justify-center border-4rpx border-line rounded-36rpx border-solid bg-cream px-44rpx py-30rpx"
           @tap="cancel"
         >
-          <text class="text-30rpx text-#3c2428 font-medium leading-none" :class="faceOf('取消这一餐', 'sans')">
+          <text class="text-30rpx text-ink font-medium leading-none" :class="faceOf('取消这一餐', 'sans')">
             取消这一餐
           </text>
         </view>

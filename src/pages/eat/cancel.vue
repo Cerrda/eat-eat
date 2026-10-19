@@ -4,6 +4,7 @@ import { cancelOrder, dateLabel, getOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { showHint } from '@/utils/hint'
+import { pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -65,21 +66,22 @@ async function submit() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar label="取消" fallback="/pages/home/index" />
-      <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
+      <text v-if="order" class="text-30rpx text-muted leading-[1.5]" :class="faceOf(headline, 'sans')">
         {{ headline }}
       </text>
-      <view class="rounded-28rpx bg-#fff9f4 px-28rpx py-24rpx">
+      <view class="rounded-28rpx bg-cream px-28rpx py-24rpx">
         <textarea
           v-model="note"
-          class="h-180rpx w-full text-36rpx text-#3c2428 font-body"
+          class="h-180rpx w-full text-36rpx text-ink font-body"
           :maxlength="40"
           placeholder="什么？不吃了？为什么？"
           placeholder-class="ph"
         />
-        <text class="block text-right text-26rpx text-#7a534c font-body">
+        <text class="block text-right text-26rpx text-muted font-body">
           {{ note.length }} / 40
         </text>
       </view>
@@ -92,6 +94,6 @@ async function submit() {
 
 <style>
 .ph {
-  color: #c9a297;
+  color: var(--line);
 }
 </style>

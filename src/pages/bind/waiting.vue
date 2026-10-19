@@ -2,6 +2,7 @@
 import type { AccountView } from '@/api/eat'
 import { useCapsuleClearance } from '@/composables/useTopPadding'
 import { beginChoose, ensureAccount } from '@/utils/account'
+import { art, pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -39,30 +40,31 @@ onShareAppMessage(() => ({
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view :style="{ paddingTop: clearance }">
       <view v-if="account" class="flex flex-col gap-42rpx">
         <view class="eat-rise">
-          <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+          <text class="text-42rpx text-ink font-normal leading-[1.15] font-display italic">
             EatEat
           </text>
         </view>
         <view class="eat-rise eat-delay-1 flex flex-col gap-19rpx">
-          <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+          <text class="text-58rpx text-ink font-normal leading-[1.15] font-display">
             {{ title }}
           </text>
-          <text class="text-27rpx text-#7a534c leading-[1.55] font-body">
+          <text class="text-27rpx text-muted leading-[1.55] font-body">
             灯还亮着。对方点开，就能进来。
           </text>
         </view>
         <view class="eat-float flex justify-center pt-4rpx">
-          <image class="w-362rpx" src="/static/house.png" mode="widthFix" />
+          <image class="w-362rpx" :src="art('house')" mode="widthFix" />
         </view>
-        <view class="eat-rise eat-delay-3 box-border flex flex-col gap-12rpx border-2rpx border-#c9a297 rounded-35rpx border-solid bg-#fff9f4 px-35rpx py-31rpx">
-          <text class="text-25rpx text-#792b3e leading-[1.45] font-body">
+        <view class="eat-rise eat-delay-3 box-border flex flex-col gap-12rpx border-2rpx border-line rounded-35rpx border-solid bg-cream px-35rpx py-31rpx">
+          <text class="text-25rpx text-accent leading-[1.45] font-body">
             邀请码
           </text>
-          <text class="text-54rpx text-#3c2428 leading-[1.15] tracking-[4rpx] font-mono">
+          <text class="text-54rpx text-ink leading-[1.15] tracking-[4rpx] font-mono">
             {{ account.inviteCode }}
           </text>
         </view>
@@ -70,16 +72,16 @@ onShareAppMessage(() => ({
           再转发给微信好友
         </stamp-button>
         <view class="flex flex-col gap-31rpx pt-35rpx">
-          <view class="h-2rpx w-full bg-#3c2428" />
+          <view class="h-2rpx w-full bg-ink" />
           <view class="flex items-center py-19rpx" @tap="rechoose">
-            <text class="text-29rpx text-#7a534c leading-[1.45] font-body">
+            <text class="text-29rpx text-muted leading-[1.45] font-body">
               选错了这边，
             </text>
             <view class="flex flex-col gap-6rpx">
-              <text class="text-29rpx text-#792b3e leading-[1.45] font-body">
+              <text class="text-29rpx text-accent leading-[1.45] font-body">
                 回到选择
               </text>
-              <view class="h-2rpx w-full rounded-2rpx bg-#792b3e" />
+              <view class="h-2rpx w-full rounded-2rpx bg-accent" />
             </view>
           </view>
         </view>

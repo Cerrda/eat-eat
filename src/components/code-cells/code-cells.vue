@@ -32,10 +32,10 @@ function onInput(event: { detail: { value: string } }) {
       <view
         v-for="index in 6"
         :key="index"
-        class="box-border h-112rpx min-w-0 flex flex-1 items-center justify-center border-4rpx border-solid rounded-35rpx bg-#fff9f4"
-        :class="invalid ? 'border-#9c342c' : 'border-#c9a297'"
+        class="box-border h-112rpx min-w-0 flex flex-1 items-center justify-center border-4rpx border-solid rounded-35rpx bg-cream"
+        :class="invalid ? 'border-danger' : 'border-line'"
       >
-        <text class="text-42rpx text-#3c2428 leading-[1.15] font-mono">
+        <text class="text-42rpx text-ink leading-[1.15] font-mono">
           {{ chars[index - 1] || '' }}
         </text>
       </view>

@@ -5,6 +5,7 @@ import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
 import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
 import { ensureAccount } from '@/utils/account'
+import { art, themeVars } from '@/utils/theme'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
@@ -696,11 +697,10 @@ const trayHold = ref(false)
 const trayEnter = ref(false)
 const trayLeaving = ref(false)
 const trayPortal = computed(() => !!props.active && trayHold.value && !!board.value)
-const trayLayerStyle = computed(() => ({
-  opacity: menuPanePose.value.opacity,
-  transform: menuPanePose.value.transform,
-  transition: menuPanePose.value.transition,
-}))
+const trayLayerStyle = computed(() => {
+  const pose = menuPanePose.value
+  return `${themeVars.value};opacity:${pose.opacity};transform:${pose.transform};transition:${pose.transition}`
+})
 const trayFresh = ref(false)
 // 托盘浮在列表底上。外间距 16 + 边框 8 + 内边距 40 + 顶栏 68；选菜时再加间距 12 和筹码 72。
 const trayClear = computed(() => {
@@ -994,8 +994,8 @@ watch(() => tray.value.map(item => item.key), (keys) => {
 
 function mealTone(day: string, meal: Slot) {
   if (busyOf(day, meal))
-    return 'text-#9c342c'
-  return 'text-#7a534c'
+    return 'text-booked'
+  return 'text-muted'
 }
 
 interface MealMetrics {
@@ -1012,14 +1012,16 @@ interface MealPose {
   width: number
 }
 
-const phase = ref<'' | 'stretch' | 'settle'>('')
+const flowing = ref(false)
 const farSlide = ref(false)
 const pose = ref<MealPose>({ left: 0, width: 0 })
 const pillReady = ref(false)
 const shownDay = ref(-1)
-const slideTimers: ReturnType<typeof setTimeout>[] = []
 let animateNext = false
 let slideToken = 0
+let frame: ReturnType<typeof setTimeout> | undefined
+const stretchEase = unitBezier(0.12, 0.72, 0.18, 1)
+const settleEase = unitBezier(0.22, 1.06, 0.36, 1)
 
 const dayIndex = computed(() => {
   const days = board.value?.dates
@@ -1059,7 +1061,8 @@ watch([date, slot], () => {
 
 onUnmounted(() => {
   leftPage = true
-  clearSlideTimers()
+  slideToken += 1
+  stopFrame()
   if (rollTimer)
     clearTimeout(rollTimer)
   if (trayTimer)
@@ -1111,56 +1114,137 @@ function placePill(animate: boolean) {
   const nextMeal = slots.indexOf(slot.value)
   if (nextDay < 0 || nextMeal < 0)
     return
-  const target = mealPose(nextDay, nextMeal, mealMetrics(days.length))
+  const metrics = mealMetrics(days.length)
+  const target = mealPose(nextDay, nextMeal, metrics)
   const far = shownDay.value >= 0 && shownDay.value !== nextDay
   shownDay.value = nextDay
   if (!pillReady.value || !animate) {
-    clearSlideTimers()
     slideToken += 1
-    phase.value = ''
+    stopFrame()
+    flowing.value = false
     pose.value = target
     pillReady.value = true
     return
   }
   if (Math.abs(pose.value.left - target.left) < 0.5 && Math.abs(pose.value.width - target.width) < 0.5)
     return
-  slidePill({ ...pose.value }, target, far)
+  slidePill({ ...pose.value }, target, far, metrics.inner)
 }
 
-function slidePill(from: MealPose, target: MealPose, far: boolean) {
+function slidePill(from: MealPose, target: MealPose, far: boolean, track: number) {
   const token = ++slideToken
-  clearSlideTimers()
-  phase.value = ''
-  farSlide.value = far
+  stopFrame()
+  const peak = stretchPose(from, target)
   const lead = far ? 200 : 150
   const settle = far ? 200 : 170
-  later(() => {
+  flowing.value = false
+  farSlide.value = far
+  nextTick(() => {
     if (token !== slideToken)
       return
-    pose.value = stretchPose(from, target)
-    phase.value = 'stretch'
-    later(() => {
-      if (token !== slideToken)
-        return
-      pose.value = target
-      phase.value = 'settle'
-    }, lead)
-    later(() => {
-      if (token !== slideToken)
-        return
-      phase.value = ''
-    }, lead + settle + 24)
-  }, 32)
+    flowing.value = true
+    play(token, from, peak, target, track, lead, settle)
+  })
 }
 
-function later(fn: () => void, ms: number) {
-  slideTimers.push(setTimeout(fn, ms))
+function mixPose(from: MealPose, to: MealPose, t: number): MealPose {
+  const width = from.width + (to.width - from.width) * t
+  const fromRight = from.left + from.width
+  const toRight = to.left + to.width
+  if (Math.abs(fromRight - toRight) < 0.5)
+    return { left: toRight - width, width }
+  if (Math.abs(from.left - to.left) < 0.5)
+    return { left: to.left, width }
+  return {
+    left: from.left + (to.left - from.left) * t,
+    width,
+  }
 }
 
-function clearSlideTimers() {
-  for (const id of slideTimers)
-    clearTimeout(id)
-  slideTimers.length = 0
+function contain(next: MealPose, track: number): MealPose {
+  let left = next.left
+  let width = Math.max(1, next.width)
+  if (left < 0) {
+    width += left
+    left = 0
+  }
+  const overflow = left + width - track
+  if (overflow > 0)
+    width -= overflow
+  return { left, width: Math.max(1, width) }
+}
+
+function play(token: number, from: MealPose, peak: MealPose, to: MealPose, track: number, lead: number, settle: number) {
+  const started = Date.now()
+  const total = lead + settle
+  const step = () => {
+    frame = undefined
+    if (token !== slideToken)
+      return
+    const elapsed = Date.now() - started
+    if (elapsed < lead) {
+      pose.value = contain(mixPose(from, peak, stretchEase(elapsed / lead)), track)
+      frame = setTimeout(step, 16)
+      return
+    }
+    if (elapsed < total) {
+      pose.value = contain(mixPose(peak, to, settleEase((elapsed - lead) / settle)), track)
+      frame = setTimeout(step, 16)
+      return
+    }
+    pose.value = to
+    flowing.value = false
+  }
+  step()
+}
+
+function stopFrame() {
+  if (!frame)
+    return
+  clearTimeout(frame)
+  frame = undefined
+}
+
+function unitBezier(x1: number, y1: number, x2: number, y2: number) {
+  const cx = 3 * x1
+  const bx = 3 * (x2 - x1) - cx
+  const ax = 1 - cx - bx
+  const cy = 3 * y1
+  const by = 3 * (y2 - y1) - cy
+  const ay = 1 - cy - by
+  const sampleX = (t: number) => ((ax * t + bx) * t + cx) * t
+  const sampleY = (t: number) => ((ay * t + by) * t + cy) * t
+  const slopeX = (t: number) => (3 * ax * t + 2 * bx) * t + cx
+  return (x: number) => {
+    if (x <= 0)
+      return 0
+    if (x >= 1)
+      return 1
+    let t = x
+    for (let i = 0; i < 8; i++) {
+      const dx = sampleX(t) - x
+      if (Math.abs(dx) < 1e-4)
+        return sampleY(t)
+      const slope = slopeX(t)
+      if (Math.abs(slope) < 1e-4)
+        break
+      t -= dx / slope
+    }
+    let lo = 0
+    let hi = 1
+    t = x
+    for (let i = 0; i < 12; i++) {
+      const dx = sampleX(t) - x
+      if (Math.abs(dx) < 1e-4)
+        break
+      if (dx > 0)
+        hi = t
+      else
+        lo = t
+      t = (lo + hi) / 2
+    }
+    return sampleY(Math.min(1, Math.max(0, t)))
+  }
 }
 
 function onTrayTap() {
@@ -1185,7 +1269,7 @@ export default {
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <view v-if="nameProbes.length" class="tray-probe-host">
       <view v-for="(label, index) in nameProbes" :key="index" class="tray-probe">
-        <text class="whitespace-nowrap text-28rpx text-#3c2428 leading-none font-display">
+        <text class="whitespace-nowrap text-28rpx text-ink leading-none font-display">
           {{ label }}
         </text>
       </view>
@@ -1204,19 +1288,19 @@ export default {
       <screen-head title="菜单" :note="bareEmpty ? '还没有上架的菜。' : ''" />
       <template v-if="board">
         <view v-if="bareEmpty" class="w-full flex flex-col items-center pt-28rpx">
-          <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
-          <view class="relative z-0 w-456rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-36rpx pt-128rpx -mt-100rpx">
-            <text class="text-44rpx text-#3c2428 font-display">
+          <image class="relative z-1 h-248rpx w-264rpx" :src="art('cook-tomato')" mode="aspectFit" />
+          <view class="relative z-0 w-456rpx flex items-center justify-center border-2rpx border-line rounded-40rpx border-solid bg-cream px-32rpx pb-36rpx pt-128rpx -mt-100rpx">
+            <text class="text-44rpx text-ink font-display">
               等对方上架
             </text>
           </view>
         </view>
         <view v-else class="flex flex-col gap-28rpx pt-64rpx">
-          <view class="box-border min-w-0 w-full border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-16rpx">
+          <view class="box-border min-w-0 w-full border-4rpx border-line rounded-36rpx border-solid bg-cream p-16rpx">
             <view class="relative flex items-stretch gap-12rpx">
               <view
                 v-if="date"
-                class="eat-meal-wash pointer-events-none absolute bottom-0 left-0 top-0 rounded-28rpx bg-#f6e4de"
+                class="eat-meal-wash pointer-events-none absolute bottom-0 left-0 top-0 rounded-28rpx bg-wash"
                 :style="washStyle"
               />
               <view
@@ -1224,10 +1308,10 @@ export default {
                 :key="day.date"
                 class="relative z-1 min-w-0 flex flex-1 flex-col items-center gap-16rpx overflow-hidden rounded-28rpx px-8rpx py-20rpx"
               >
-                <text class="text-44rpx text-#3c2428 leading-none font-display">
+                <text class="text-44rpx text-ink leading-none font-display">
                   {{ dateLabel(day.date, board.today) }}
                 </text>
-                <text class="text-24rpx text-#7a534c leading-none font-body">
+                <text class="text-24rpx text-muted leading-none font-body">
                   {{ monthDay(day.date) }}
                 </text>
                 <view class="w-full flex items-center justify-center gap-8rpx">
@@ -1248,8 +1332,8 @@ export default {
               </view>
               <view v-if="pillReady" class="pointer-events-none absolute bottom-20rpx left-0 right-0 z-2 h-80rpx">
                 <view
-                  class="eat-meal-pill absolute left-0 top-0 h-full overflow-hidden rounded-24rpx bg-#792b3e"
-                  :class="phase ? [farSlide ? 'eat-meal-far' : 'eat-meal-near', 'eat-meal-flow', `eat-meal-${phase}`] : ''"
+                  class="eat-meal-pill absolute left-0 top-0 h-full overflow-hidden rounded-24rpx bg-accent"
+                  :class="flowing ? [farSlide ? 'eat-meal-far' : 'eat-meal-near', 'eat-meal-flow'] : ''"
                   :style="pillStyle"
                 >
                   <view class="eat-meal-ink absolute left-0 top-0 h-full flex items-stretch gap-12rpx" :style="inkStyle">
@@ -1263,10 +1347,10 @@ export default {
                         :key="meal"
                         class="h-full min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx"
                       >
-                        <text class="text-32rpx text-#fbf3ea leading-none font-display">
+                        <text class="text-32rpx text-paper leading-none font-display">
                           {{ slotShort[meal] }}
                         </text>
-                        <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx text-#fbf3ea leading-none font-body">
+                        <text v-if="busyOf(day.date, meal)" class="whitespace-nowrap text-22rpx text-paper leading-none font-body">
                           已点
                         </text>
                       </view>
@@ -1277,13 +1361,13 @@ export default {
             </view>
           </view>
           <view class="flex flex-col gap-20rpx">
-            <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-full border-solid bg-#fff9f4 px-28rpx">
-              <view class="i-mingcute-search-line shrink-0 text-32rpx text-#7a534c" />
+            <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-line rounded-full border-solid bg-cream px-28rpx">
+              <view class="i-mingcute-search-line shrink-0 text-32rpx text-muted" />
               <!-- iOS 原生 textarea 从行盒顶部排字，行高拉满搜索条时文字会偏上 -->
               <textarea
                 v-model="keyword"
                 disable-default-padding
-                class="h-40rpx min-h-40rpx min-w-0 flex-1 self-center p-0 text-30rpx text-#3c2428 leading-40rpx font-body"
+                class="h-40rpx min-h-40rpx min-w-0 flex-1 self-center p-0 text-30rpx text-ink leading-40rpx font-body"
                 placeholder="搜菜名"
                 placeholder-class="ph-sans"
                 placeholder-style="font-size: 30rpx; line-height: 40rpx;"
@@ -1295,10 +1379,10 @@ export default {
               <view class="inline-flex gap-16rpx">
                 <view
                   class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-                  :class="categoryId ? 'border-#c9a297 bg-#fff9f4' : 'border-#792b3e bg-#792b3e'"
+                  :class="categoryId ? 'border-line bg-cream' : 'border-accent bg-accent'"
                   @tap="pickCategory('')"
                 >
-                  <text class="text-28rpx leading-none font-body" :class="categoryId ? 'text-#3c2428' : 'text-#fff9f4'">
+                  <text class="text-28rpx leading-none font-body" :class="categoryId ? 'text-ink' : 'text-on-accent'">
                     全部
                   </text>
                 </view>
@@ -1306,26 +1390,26 @@ export default {
                   v-for="category in categories"
                   :key="category.categoryId"
                   class="inline-flex items-center justify-center border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-                  :class="categoryId === category.categoryId ? 'border-#792b3e bg-#792b3e' : 'border-#c9a297 bg-#fff9f4'"
+                  :class="categoryId === category.categoryId ? 'border-accent bg-accent' : 'border-line bg-cream'"
                   @tap="pickCategory(category.categoryId)"
                 >
-                  <text class="text-28rpx leading-none font-body" :class="categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428'">
+                  <text class="text-28rpx leading-none font-body" :class="categoryId === category.categoryId ? 'text-on-accent' : 'text-ink'">
                     {{ category.name }}
                   </text>
                 </view>
               </view>
             </scroll-view>
           </view>
-          <view v-if="menuTotal && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-28rpx py-20rpx">
+          <view v-if="menuTotal && !selectedBusy" class="box-border flex items-center gap-16rpx border-2rpx border-line rounded-36rpx border-solid bg-cream px-28rpx py-20rpx">
             <roll-dice :rolling="rolling" />
             <view class="random-copy min-w-0 flex-1">
               <view class="random-title" :class="roundOn ? 'random-title-up' : ''">
-                <text class="text-36rpx text-#3c2428 leading-36rpx font-display">
+                <text class="text-36rpx text-ink leading-36rpx font-display">
                   随便
                 </text>
               </view>
               <text
-                class="random-note whitespace-nowrap text-24rpx text-#7a534c font-body"
+                class="random-note whitespace-nowrap text-24rpx text-muted font-body"
                 :class="roundOn ? 'random-note-open' : ''"
               >
                 可以留下几道菜，其余继续随机
@@ -1334,47 +1418,47 @@ export default {
             <view v-if="!roundOn" class="flex shrink-0 items-center gap-12rpx">
               <view class="flex items-center gap-8rpx">
                 <view
-                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
+                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-line rounded-full border-solid"
                   :class="wishCount <= 1 ? 'opacity-35' : ''"
                   @tap="bumpWish(-1)"
                 >
-                  <text class="text-28rpx text-#3c2428 leading-none font-body">
+                  <text class="text-28rpx text-ink leading-none font-body">
                     −
                   </text>
                 </view>
-                <text class="min-w-64rpx text-center text-32rpx text-#3c2428 leading-none font-display">
+                <text class="min-w-64rpx text-center text-32rpx text-ink leading-none font-display">
                   {{ wishCount }} 道
                 </text>
                 <view
-                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-#c9a297 rounded-full border-solid"
+                  class="h-48rpx w-48rpx flex items-center justify-center border-2rpx border-line rounded-full border-solid"
                   :class="wishCount >= randomRoom ? 'opacity-35' : ''"
                   @tap="bumpWish(1)"
                 >
-                  <text class="text-28rpx text-#3c2428 leading-none font-body">
+                  <text class="text-28rpx text-ink leading-none font-body">
                     +
                   </text>
                 </view>
               </view>
               <view
-                class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e"
+                class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-accent"
                 hover-class="eat-press-on"
                 :hover-stay-time="140"
                 @tap="beginRound"
               >
-                <text class="text-26rpx text-#fbf3ea font-medium leading-none font-body">
+                <text class="text-26rpx text-paper font-medium leading-none font-body">
                   开始
                 </text>
               </view>
             </view>
             <view
               v-else
-              class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e"
+              class="eat-press h-64rpx w-102rpx inline-flex shrink-0 items-center justify-center rounded-full bg-accent"
               :class="rollSealed ? 'opacity-35' : rolling ? 'opacity-60' : ''"
               :hover-class="rollSealed ? 'none' : 'eat-press-on'"
               :hover-stay-time="140"
               @tap="rollAgain"
             >
-              <text class="text-26rpx text-#fbf3ea font-medium leading-none font-body">
+              <text class="text-26rpx text-paper font-medium leading-none font-body">
                 +{{ againMark }}
               </text>
             </view>
@@ -1384,7 +1468,7 @@ export default {
               v-for="dish in shown"
               :id="dishKey(dish.dishId)"
               :key="dish.dishId"
-              class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
+              class="flex items-center gap-24rpx border-0 border-t-4rpx border-line border-solid py-24rpx"
             >
               <view
                 :id="domId(dish.dishId)"
@@ -1394,7 +1478,7 @@ export default {
                 @tap.stop="openCover(dish)"
               >
                 <dish-cover
-                  class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
+                  class="box-border h-full w-full border-6rpx border-photo rounded-36rpx border-solid"
                   :file-id="dish.coverFileId"
                   :name="dish.name"
                   :held="heldId === dish.dishId"
@@ -1402,26 +1486,26 @@ export default {
                 />
               </view>
               <view class="min-w-0 flex flex-1 flex-col gap-6rpx">
-                <text class="text-40rpx text-#3c2428 leading-[1.15] font-display">
+                <text class="text-40rpx text-ink leading-[1.15] font-display">
                   {{ dish.name }}
                 </text>
-                <text class="text-26rpx text-#7a534c font-body">
+                <text class="text-26rpx text-muted font-body">
                   {{ dish.categoryName || '未分类' }}{{ freshIds.includes(dish.dishId) ? ' · 刚换上' : '' }}
                 </text>
               </view>
               <text
                 v-if="selectedBusy && inOrder(dish.dishId)"
-                class="shrink-0 text-28rpx text-#792b3e font-semibold font-body"
+                class="shrink-0 text-28rpx text-accent font-semibold font-body"
               >
                 在这一餐
               </text>
               <view v-else-if="roundIds.includes(dish.dishId)" class="flex shrink-0 items-center gap-20rpx">
-                <text class="text-28rpx text-#792b3e font-semibold font-body" @tap="dropDish(dish.dishId)">
+                <text class="text-28rpx text-accent font-semibold font-body" @tap="dropDish(dish.dishId)">
                   已加上
                 </text>
                 <text
                   class="text-28rpx font-semibold font-body"
-                  :class="keptIds.includes(dish.dishId) ? 'text-#792b3e' : 'text-#7a534c'"
+                  :class="keptIds.includes(dish.dishId) ? 'text-accent' : 'text-muted'"
                   @tap="toggleKeep(dish.dishId)"
                 >
                   {{ keptIds.includes(dish.dishId) ? '已留' : '保留' }}
@@ -1430,14 +1514,14 @@ export default {
               <text
                 v-else-if="!selectedBusy"
                 class="shrink-0 text-28rpx font-body"
-                :class="chosen(dish.dishId) ? 'text-#792b3e font-semibold' : 'text-#3c2428'"
+                :class="chosen(dish.dishId) ? 'text-accent font-semibold' : 'text-ink'"
                 @tap="toggle(dish)"
               >
                 {{ chosen(dish.dishId) ? '已加上' : '加上' }}
               </text>
             </view>
           </view>
-          <text v-if="!shown.length" class="text-30rpx text-#7a534c font-body">
+          <text v-if="!shown.length" class="text-30rpx text-muted font-body">
             没有这道菜。
           </text>
         </view>
@@ -1449,33 +1533,33 @@ export default {
         :style="trayLayerStyle"
       >
         <view
-          class="tray-card flex flex-col gap-12rpx border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 pb-20rpx pl-28rpx pr-24rpx pt-20rpx"
+          class="tray-card flex flex-col gap-12rpx border-4rpx border-line rounded-36rpx border-solid bg-cream pb-20rpx pl-28rpx pr-24rpx pt-20rpx"
           :class="trayLeaving ? 'tray-out' : trayEnter ? 'tray-in' : ''"
         >
           <view class="flex items-center justify-between gap-24rpx">
             <view v-if="selectedBusy" class="min-w-0 flex flex-1 flex-col gap-8rpx">
-              <text class="text-32rpx text-#3c2428 leading-none font-display">
+              <text class="text-32rpx text-ink leading-none font-display">
                 {{ `${dateLabel(date, board.today)} · ${SLOT_LABEL[slot]}` }}
               </text>
-              <text class="text-26rpx text-#7a534c leading-none font-body">
+              <text class="text-26rpx text-muted leading-none font-body">
                 进行中，不能再开一笔
               </text>
             </view>
             <view v-else class="min-w-0 flex items-center gap-16rpx">
-              <text class="text-32rpx text-#3c2428 leading-none font-display">
+              <text class="text-32rpx text-ink leading-none font-display">
                 已选
               </text>
-              <text class="text-26rpx text-#7a534c leading-none font-body">
+              <text class="text-26rpx text-muted leading-none font-body">
                 {{ `${picked.length} 道` }}
               </text>
             </view>
             <view
-              class="eat-press inline-flex shrink-0 items-center justify-center rounded-full bg-#792b3e px-28rpx py-20rpx"
+              class="eat-press inline-flex shrink-0 items-center justify-center rounded-full bg-accent px-28rpx py-20rpx"
               hover-class="eat-press-on"
               :hover-stay-time="140"
               @tap="onTrayTap"
             >
-              <text class="whitespace-nowrap text-28rpx text-#fbf3ea font-medium leading-none font-body">
+              <text class="whitespace-nowrap text-28rpx text-paper font-medium leading-none font-body">
                 {{ selectedBusy ? '查看已点的这一餐' : '去确认' }}
               </text>
             </view>
@@ -1495,9 +1579,9 @@ export default {
                 :class="chipPhase[item.key] === 'out' ? 'tray-chip-slot-out' : ''"
               >
                 <view
-                  class="tray-chip inline-flex items-center border-2rpx rounded-28rpx border-solid bg-#f6e4de py-16rpx pl-20rpx pr-16rpx"
+                  class="tray-chip inline-flex items-center border-2rpx rounded-28rpx border-solid bg-wash py-16rpx pl-20rpx pr-16rpx"
                   :class="[
-                    keptIds.includes(item.dish.dishId) ? 'border-#792b3e' : 'border-#c9a297',
+                    keptIds.includes(item.dish.dishId) ? 'border-accent' : 'border-line',
                     chipPhase[item.key] === 'in' ? 'tray-chip-in' : '',
                   ]"
                   :style="chipWait(item.key)"
@@ -1505,7 +1589,7 @@ export default {
                 >
                   <text
                     class="mr-8rpx whitespace-nowrap text-22rpx font-semibold leading-none font-body"
-                    :class="item.rolled ? 'text-#792b3e' : 'text-#7a534c'"
+                    :class="item.rolled ? 'text-accent' : 'text-muted'"
                   >
                     {{ item.rolled ? '随机' : '自选' }}
                   </text>
@@ -1519,19 +1603,19 @@ export default {
                     :style="nameBox(item.key)"
                   >
                     <view class="tray-name-sizer">
-                      <text class="whitespace-nowrap text-28rpx text-#3c2428 leading-none font-display">
+                      <text class="whitespace-nowrap text-28rpx text-ink leading-none font-display">
                         {{ nameFrom[item.key] || item.dish.name }}
                       </text>
                     </view>
                     <view v-if="nameFrom[item.key]" class="tray-name-reel">
                       <view class="tray-name-strip" :class="nameOn[item.key] ? 'tray-name-strip-on' : ''">
                         <view class="tray-name-line">
-                          <text class="whitespace-nowrap text-28rpx text-#3c2428 leading-none font-display">
+                          <text class="whitespace-nowrap text-28rpx text-ink leading-none font-display">
                             {{ nameFrom[item.key] }}
                           </text>
                         </view>
                         <view class="tray-name-line">
-                          <text class="whitespace-nowrap text-28rpx text-#3c2428 leading-none font-display">
+                          <text class="whitespace-nowrap text-28rpx text-ink leading-none font-display">
                             {{ item.dish.name }}
                           </text>
                         </view>
@@ -1542,12 +1626,12 @@ export default {
                     class="tray-keep"
                     :class="keptIds.includes(item.dish.dishId) ? 'tray-keep-on' : ''"
                   >
-                    <text class="whitespace-nowrap text-24rpx text-#792b3e font-semibold leading-none font-body">
+                    <text class="whitespace-nowrap text-24rpx text-accent font-semibold leading-none font-body">
                       留
                     </text>
                   </view>
                   <view class="ml-12rpx h-32rpx w-32rpx flex shrink-0 items-center justify-center" @tap.stop="dropDish(item.dish.dishId)">
-                    <text class="text-28rpx text-#7a534c leading-none font-body">
+                    <text class="text-28rpx text-muted leading-none font-body">
                       ×
                     </text>
                   </view>
@@ -1572,26 +1656,6 @@ export default {
 .eat-meal-pill,
 .eat-meal-ink {
   will-change: transform;
-}
-
-.eat-meal-near.eat-meal-stretch,
-.eat-meal-near.eat-meal-stretch .eat-meal-ink {
-  transition: transform 150ms cubic-bezier(0.12, 0.72, 0.18, 1), width 150ms cubic-bezier(0.12, 0.72, 0.18, 1);
-}
-
-.eat-meal-near.eat-meal-settle,
-.eat-meal-near.eat-meal-settle .eat-meal-ink {
-  transition: transform 170ms cubic-bezier(0.22, 1.06, 0.36, 1), width 170ms cubic-bezier(0.22, 1.06, 0.36, 1);
-}
-
-.eat-meal-far.eat-meal-stretch,
-.eat-meal-far.eat-meal-stretch .eat-meal-ink {
-  transition: transform 200ms cubic-bezier(0.12, 0.72, 0.18, 1), width 200ms cubic-bezier(0.12, 0.72, 0.18, 1);
-}
-
-.eat-meal-far.eat-meal-settle,
-.eat-meal-far.eat-meal-settle .eat-meal-ink {
-  transition: transform 200ms cubic-bezier(0.22, 1.06, 0.36, 1), width 200ms cubic-bezier(0.22, 1.06, 0.36, 1);
 }
 
 .eat-meal-near.eat-meal-flow {
@@ -1657,7 +1721,7 @@ export default {
 }
 
 .tray-card {
-  box-shadow: 6rpx 8rpx 0 rgba(78, 34, 45, 0.28);
+  box-shadow: 6rpx 8rpx 0 var(--shade-28);
 }
 
 .tray-in {

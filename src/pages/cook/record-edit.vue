@@ -5,6 +5,7 @@ import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
 import { showHint } from '@/utils/hint'
+import { pageStyle } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 definePage({
@@ -240,46 +241,47 @@ async function submit() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar :label="backLabel" fallback="/pages/home/index" />
       <template v-if="ready">
         <view class="flex flex-col items-start gap-4rpx">
-          <text class="text-72rpx text-#3c2428 leading-[1.15]" :class="faceOf('记下这餐', 'serif')">
+          <text class="text-72rpx text-ink leading-[1.15]" :class="faceOf('记下这餐', 'serif')">
             记下这餐
           </text>
           <ink-underline :width="176" />
         </view>
-        <view class="box-border flex border-0 border-y-4rpx border-#c9a297 border-solid py-24rpx">
+        <view class="box-border flex border-0 border-y-4rpx border-line border-solid py-24rpx">
           <view class="min-w-0 flex flex-1 flex-col gap-8rpx">
-            <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('日期', 'mono')">
+            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('日期', 'mono')">
               日期
             </text>
             <picker v-if="!locked" mode="date" :value="date" @change="onDate">
-              <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
+              <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
                 {{ dateLabel(date, today) }}
               </text>
             </picker>
-            <text v-else class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
+            <text v-else class="text-44rpx text-ink leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
               {{ dateLabel(date, today) }}
             </text>
           </view>
-          <view class="box-border min-w-0 flex flex-1 flex-col gap-8rpx border-0 border-l-4rpx border-#c9a297 border-solid pl-24rpx">
-            <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('餐次', 'mono')">
+          <view class="box-border min-w-0 flex flex-1 flex-col gap-8rpx border-0 border-l-4rpx border-line border-solid pl-24rpx">
+            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('餐次', 'mono')">
               餐次
             </text>
             <picker v-if="!locked" :range="slotLabels" @change="onSlot">
-              <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
+              <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
                 {{ SLOT_LABEL[slot] }}
               </text>
             </picker>
-            <text v-else class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
+            <text v-else class="text-44rpx text-ink leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
               {{ SLOT_LABEL[slot] }}
             </text>
           </view>
         </view>
         <view v-if="mealDishes.length" class="flex flex-col gap-4rpx">
-          <text class="text-26rpx text-#792b3e leading-[1.15]" :class="faceOf(mealLabel, 'mono')">
+          <text class="text-26rpx text-accent leading-[1.15]" :class="faceOf(mealLabel, 'mono')">
             {{ mealLabel }}
           </text>
           <view
@@ -292,41 +294,41 @@ async function submit() {
               :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
             >
               <dish-cover
-                class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-28rpx border-solid"
+                class="box-border h-full w-full border-6rpx border-photo rounded-28rpx border-solid"
                 :file-id="dish.coverFileId"
                 :name="dish.name"
               />
             </view>
-            <text class="min-w-0 flex-1 text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+            <text class="min-w-0 flex-1 text-36rpx text-ink leading-[1.15]" :class="faceOf(dish.name, 'serif')">
               {{ dish.name }}
             </text>
           </view>
         </view>
         <view class="flex flex-wrap items-start gap-16rpx">
           <view v-for="photo in photos" :key="photo" class="relative h-208rpx w-208rpx shrink-0" @tap="removePhoto(photo)">
-            <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
+            <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-shade-28" />
             <view class="absolute inset-0 overflow-hidden rounded-36rpx">
               <dish-cover class="h-full w-full" :file-id="photo" name="照" />
             </view>
-            <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
+            <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-photo rounded-36rpx border-solid" />
           </view>
           <view
             v-if="photos.length < photoLimit"
-            class="box-border h-208rpx w-208rpx flex shrink-0 items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid"
+            class="box-border h-208rpx w-208rpx flex shrink-0 items-center justify-center border-4rpx border-line rounded-36rpx border-solid"
             @tap="addPhoto"
           >
-            <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf(uploading ? '正在加上' : '加一张', 'sans')">
+            <text class="text-26rpx text-muted leading-[1.15]" :class="faceOf(uploading ? '正在加上' : '加一张', 'sans')">
               {{ uploading ? '正在加上' : '加一张' }}
             </text>
           </view>
         </view>
-        <text class="text-26rpx text-#7a534c leading-[1.15]" :class="faceOf(`${photos.length} / ${photoLimit} 张`, 'sans')">
+        <text class="text-26rpx text-muted leading-[1.15]" :class="faceOf(`${photos.length} / ${photoLimit} 张`, 'sans')">
           {{ photos.length }} / {{ photoLimit }} 张
         </text>
-        <view class="box-border h-240rpx flex flex-col justify-between border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 p-28rpx">
+        <view class="box-border h-240rpx flex flex-col justify-between border-4rpx border-line rounded-36rpx border-solid bg-cream p-28rpx">
           <textarea
             v-model="text"
-            class="box-border h-128rpx w-full text-40rpx text-#3c2428 leading-[1.15]"
+            class="box-border h-128rpx w-full text-40rpx text-ink leading-[1.15]"
             :class="faceOf(text, 'serif')"
             :maxlength="300"
             disable-default-padding
@@ -334,14 +336,14 @@ async function submit() {
             placeholder-class="ph-serif"
             :show-confirm-bar="false"
           />
-          <text class="block text-right text-30rpx text-#7a534c leading-[1.15]" :class="faceOf(`${text.length} / 300`, 'mono')">
+          <text class="block text-right text-30rpx text-muted leading-[1.15]" :class="faceOf(`${text.length} / 300`, 'mono')">
             {{ text.length }} / 300
           </text>
         </view>
         <stamp-button :disabled="pending" :busy="pending" @button-tap="submit">
           {{ pending ? '正在记下' : '记下' }}
         </stamp-button>
-        <text v-if="recordId" class="py-8rpx text-center text-28rpx text-#9c342c" :class="faceOf('删除这餐', 'sans')" @tap="remove">
+        <text v-if="recordId" class="py-8rpx text-center text-28rpx text-danger" :class="faceOf('删除这餐', 'sans')" @tap="remove">
           删除这餐
         </text>
       </template>

@@ -3,6 +3,7 @@ import type { Category } from '@/api/eat'
 import { createCategory, deleteCategory, listCategories, renameCategory } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
+import { pageStyle } from '@/utils/theme'
 import { ask, askText, showError } from '@/utils/ui'
 
 definePage({
@@ -131,50 +132,51 @@ async function add(event?: FieldEvent) {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-32rpx">
       <back-bar label="菜品" fallback="/pages/home/index" />
       <template v-if="ready">
         <view class="flex flex-col items-start">
-          <text class="text-72rpx text-#3c2428 leading-[1.2]" :class="faceOf('分类', 'serif')">
+          <text class="text-72rpx text-ink leading-[1.2]" :class="faceOf('分类', 'serif')">
             分类
           </text>
           <ink-underline class="mt-8rpx" :width="176" />
-          <text v-if="!categories.length" class="mt-28rpx text-32rpx text-#7a534c leading-[1.5]" :class="faceOf('还没有分类', 'sans')">
+          <text v-if="!categories.length" class="mt-28rpx text-32rpx text-muted leading-[1.5]" :class="faceOf('还没有分类', 'sans')">
             还没有分类
           </text>
         </view>
         <view
           v-for="category in categories"
           :key="category.categoryId"
-          class="flex items-center justify-between gap-16rpx rounded-36rpx bg-#fff9f4 px-32rpx py-28rpx"
+          class="flex items-center justify-between gap-16rpx rounded-36rpx bg-cream px-32rpx py-28rpx"
         >
-          <text class="min-w-0 flex-1 text-44rpx text-#3c2428" :class="faceOf(category.name, 'serif')">
+          <text class="min-w-0 flex-1 text-44rpx text-ink" :class="faceOf(category.name, 'serif')">
             {{ category.name }}
           </text>
-          <text class="text-28rpx text-#7a534c" :class="faceOf(category.count ? `${category.count} 道` : '还没有菜', 'mono')">
+          <text class="text-28rpx text-muted" :class="faceOf(category.count ? `${category.count} 道` : '还没有菜', 'mono')">
             {{ category.count ? `${category.count} 道` : '还没有菜' }}
           </text>
-          <text class="text-28rpx text-#792b3e" :class="faceOf('改名', 'sans')" @tap="rename(category)">
+          <text class="text-28rpx text-accent" :class="faceOf('改名', 'sans')" @tap="rename(category)">
             改名
           </text>
           <text
             v-if="!category.count"
-            class="text-28rpx text-#9c342c"
+            class="text-28rpx text-danger"
             :class="faceOf('删除', 'sans')"
             @tap="remove(category)"
           >
             删除
           </text>
         </view>
-        <text class="mt-8rpx text-28rpx text-#792b3e" :class="faceOf('新分类', 'mono')">
+        <text class="mt-8rpx text-28rpx text-accent" :class="faceOf('新分类', 'mono')">
           新分类
         </text>
         <view class="flex items-center gap-16rpx">
           <textarea
             :key="boxKey"
             disable-default-padding
-            class="h-80rpx flex-1 rounded-full bg-#fff9f4 px-28rpx text-32rpx text-#3c2428 leading-80rpx"
+            class="h-80rpx flex-1 rounded-full bg-cream px-28rpx text-32rpx text-ink leading-80rpx"
             :class="faceOf('新分类', 'sans')"
             placeholder="1 到 6 个字"
             placeholder-class="ph-sans"
@@ -188,11 +190,11 @@ async function add(event?: FieldEvent) {
           />
           <view
             class="flex items-center gap-16rpx rounded-full px-28rpx py-16rpx"
-            :class="pending ? 'bg-#a24c5c' : 'bg-#792b3e'"
+            :class="pending ? 'bg-accent-busy' : 'bg-accent'"
             @tap="add"
           >
             <ink-spin v-if="pending" tone="paper" />
-            <text class="text-30rpx text-#fbf3ea" :class="faceOf(pending ? '正在加上' : '加上', 'sans')">
+            <text class="text-30rpx text-paper" :class="faceOf(pending ? '正在加上' : '加上', 'sans')">
               {{ pending ? '正在加上' : '加上' }}
             </text>
           </view>

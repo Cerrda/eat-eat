@@ -9,6 +9,7 @@ import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { withinMenu } from '@/utils/format'
 import { openTab, returnHome } from '@/utils/tabs'
+import { pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -104,10 +105,11 @@ function reorder() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view v-if="order && account" class="flex flex-col gap-28rpx">
       <back-bar label="订单" fallback="/pages/home/index" />
-      <text class="text-72rpx text-#3c2428 leading-[1.15]" :class="faceOf(headline, 'serif')">
+      <text class="text-72rpx text-ink leading-[1.15]" :class="faceOf(headline, 'serif')">
         {{ headline }}
       </text>
       <ink-underline :width="176" />
@@ -115,7 +117,7 @@ function reorder() {
         <view
           v-for="(item, index) in order.items"
           :key="item.dishId"
-          class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx"
+          class="flex items-center gap-24rpx border-0 border-t-4rpx border-line border-solid py-24rpx"
           :class="index === order.items.length - 1 ? 'border-b-4rpx' : ''"
         >
           <view
@@ -125,7 +127,7 @@ function reorder() {
             @tap="previewItem(item)"
           >
             <dish-cover
-              class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-36rpx border-solid"
+              class="box-border h-full w-full border-6rpx border-photo rounded-36rpx border-solid"
               :file-id="item.coverFileId"
               :name="item.name"
               :held="heldId === item.dishId"
@@ -133,7 +135,7 @@ function reorder() {
             />
           </view>
           <view class="min-w-0 flex-1">
-            <text class="text-40rpx text-#3c2428 leading-[1.15]" :class="faceOf(item.name, 'serif')">
+            <text class="text-40rpx text-ink leading-[1.15]" :class="faceOf(item.name, 'serif')">
               {{ item.name }}
             </text>
           </view>
@@ -143,7 +145,7 @@ function reorder() {
         <text
           v-for="item in order.items"
           :key="item.dishId"
-          class="text-32rpx text-#3c2428 leading-[1.375]"
+          class="text-32rpx text-ink leading-[1.375]"
           :class="faceOf(item.name, 'sans')"
         >
           {{ item.name }}
@@ -151,46 +153,46 @@ function reorder() {
       </view>
       <view
         v-if="canChange && order.note"
-        class="flex flex-col gap-8rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-28rpx pr-4rpx"
+        class="flex flex-col gap-8rpx border-0 border-l-4rpx border-accent border-solid py-12rpx pl-28rpx pr-4rpx"
       >
-        <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[2rpx]" :class="faceOf('备注', 'mono')">
+        <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf('备注', 'mono')">
           备注
         </text>
-        <text class="text-40rpx text-#3c2428 leading-[1.15]" :class="faceOf(order.note, 'serif')">
+        <text class="text-40rpx text-ink leading-[1.15]" :class="faceOf(order.note, 'serif')">
           {{ order.note }}
         </text>
       </view>
       <view
         v-else-if="quote"
-        class="flex flex-col gap-16rpx border-0 border-l-4rpx border-#792b3e border-solid py-12rpx pl-28rpx pr-4rpx"
+        class="flex flex-col gap-16rpx border-0 border-l-4rpx border-accent border-solid py-12rpx pl-28rpx pr-4rpx"
       >
-        <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[2rpx]" :class="faceOf(quoteLabel, 'mono')">
+        <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf(quoteLabel, 'mono')">
           {{ quoteLabel }}
         </text>
-        <text class="text-52rpx text-#3c2428 leading-[1.15]" :class="faceOf(quote, 'serif')">
+        <text class="text-52rpx text-ink leading-[1.15]" :class="faceOf(quote, 'serif')">
           {{ quote }}
         </text>
       </view>
       <view
         v-if="canChange"
-        class="eat-press box-border w-full flex items-center justify-center border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 px-32rpx py-30rpx"
+        class="eat-press box-border w-full flex items-center justify-center border-4rpx border-line rounded-36rpx border-solid bg-cream px-32rpx py-30rpx"
         hover-class="eat-press-on"
         :hover-stay-time="140"
         @tap="cancel"
       >
-        <text class="text-30rpx text-#3c2428 font-medium" :class="faceOf('取消这一餐', 'sans')">
+        <text class="text-30rpx text-ink font-medium" :class="faceOf('取消这一餐', 'sans')">
           取消这一餐
         </text>
       </view>
       <view v-else-if="canReorder" class="relative">
-        <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-52rpx bg-#4e222d/35" />
+        <view class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-52rpx bg-shade-35" />
         <view
-          class="eat-stamp-face relative box-border w-full flex items-center justify-center rounded-52rpx bg-#792b3e px-32rpx py-30rpx"
+          class="eat-stamp-face relative box-border w-full flex items-center justify-center rounded-52rpx bg-accent px-32rpx py-30rpx"
           hover-class="translate-x-6rpx translate-y-8rpx"
           :hover-stay-time="160"
           @tap="reorder"
         >
-          <text class="text-30rpx text-#fbf3ea font-medium" :class="faceOf('重新点这一餐', 'sans')">
+          <text class="text-30rpx text-paper font-medium" :class="faceOf('重新点这一餐', 'sans')">
             重新点这一餐
           </text>
         </view>

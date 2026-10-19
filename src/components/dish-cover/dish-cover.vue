@@ -156,7 +156,7 @@ const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
       @error="useOriginal"
     />
     <view v-else class="dish-cover__mark">
-      <text class="text-40rpx text-#792b3e" :class="faceOf(mark, 'serif')">
+      <text class="text-40rpx text-accent" :class="faceOf(mark, 'serif')">
         {{ mark }}
       </text>
     </view>
@@ -179,7 +179,7 @@ const mark = computed(() => Array.from(props.name || '菜')[0] || '菜')
   bottom: 0;
   left: 0;
   overflow: hidden;
-  background: #f6e4de;
+  background: var(--wash);
 }
 
 .dish-cover__img,

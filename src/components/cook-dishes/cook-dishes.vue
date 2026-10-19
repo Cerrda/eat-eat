@@ -4,6 +4,7 @@ import type { DishCard } from '@/api/types'
 import { listCategories, listDishes } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount } from '@/utils/account'
+import { art } from '@/utils/theme'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine } from '@/utils/format'
@@ -147,30 +148,30 @@ export default {
       <screen-head title="菜品" :note="bareEmpty ? '还没有菜' : ''" />
       <template v-if="ready">
         <view v-if="bareEmpty" class="w-full flex flex-col items-center pb-16rpx pt-32rpx">
-          <image class="relative z-1 h-248rpx w-264rpx" src="/static/cook-tomato.png" mode="aspectFit" />
-          <view class="relative z-0 w-456rpx flex items-center justify-center gap-12rpx border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-48rpx pt-164rpx -mt-148rpx" @tap="createDish">
-            <text class="text-44rpx text-#792b3e leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
+          <image class="relative z-1 h-248rpx w-264rpx" :src="art('cook-tomato')" mode="aspectFit" />
+          <view class="relative z-0 w-456rpx flex items-center justify-center gap-12rpx border-2rpx border-line rounded-40rpx border-solid bg-cream px-32rpx pb-48rpx pt-164rpx -mt-148rpx" @tap="createDish">
+            <text class="text-44rpx text-accent leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
               新增菜品
             </text>
-            <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+            <text class="text-44rpx text-accent leading-none" :class="faceOf('›', 'sans')">
               ›
             </text>
           </view>
         </view>
         <view v-else class="flex flex-col gap-32rpx pt-32rpx">
-          <view class="border-0 border-y-4rpx border-#c9a297 border-solid py-32rpx" @tap="createDish">
-            <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
+          <view class="border-0 border-y-4rpx border-line border-solid py-32rpx" @tap="createDish">
+            <text class="text-36rpx text-ink leading-[1.15]" :class="faceOf('新增菜品', 'serif')">
               新增菜品
             </text>
           </view>
           <view class="flex flex-col gap-20rpx">
-            <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-#c9a297 rounded-full border-solid bg-#fff9f4 px-28rpx">
-              <view class="i-mingcute-search-line shrink-0 text-32rpx text-#7a534c" />
+            <view class="box-border h-84rpx flex items-center gap-16rpx border-2rpx border-line rounded-full border-solid bg-cream px-28rpx">
+              <view class="i-mingcute-search-line shrink-0 text-32rpx text-muted" />
               <!-- iOS 原生 textarea 从行盒顶部排字，行高拉满搜索条时文字会偏上 -->
               <textarea
                 v-model="keyword"
                 disable-default-padding
-                class="h-40rpx min-h-40rpx min-w-0 flex-1 self-center p-0 text-30rpx text-#3c2428 leading-40rpx"
+                class="h-40rpx min-h-40rpx min-w-0 flex-1 self-center p-0 text-30rpx text-ink leading-40rpx"
                 :class="faceOf(keyword, 'sans')"
                 placeholder="搜菜名"
                 placeholder-class="ph-sans"
@@ -178,7 +179,7 @@ export default {
                 confirm-type="search"
                 :show-confirm-bar="false"
               />
-              <text class="shrink-0 text-28rpx text-#792b3e" :class="faceOf('管理分类', 'mono')" @tap="openCategories">
+              <text class="shrink-0 text-28rpx text-accent" :class="faceOf('管理分类', 'mono')" @tap="openCategories">
                 管理分类
               </text>
             </view>
@@ -186,10 +187,10 @@ export default {
               <view class="inline-flex gap-16rpx">
                 <view
                   class="box-border border-2rpx rounded-full border-solid px-24rpx py-14rpx"
-                  :class="categoryId ? 'border-#c9a297 bg-#fff9f4' : 'border-#792b3e bg-#792b3e'"
+                  :class="categoryId ? 'border-line bg-cream' : 'border-accent bg-accent'"
                   @tap="pickCategory('')"
                 >
-                  <text class="text-28rpx" :class="[categoryId ? 'text-#3c2428' : 'text-#fff9f4', faceOf('全部', 'sans')]">
+                  <text class="text-28rpx" :class="[categoryId ? 'text-ink' : 'text-on-accent', faceOf('全部', 'sans')]">
                     全部
                   </text>
                 </view>
@@ -197,12 +198,12 @@ export default {
                   v-for="category in categories"
                   :key="category.categoryId"
                   class="box-border border-2rpx rounded-full border-solid px-24rpx py-14rpx"
-                  :class="categoryId === category.categoryId ? 'border-#792b3e bg-#792b3e' : 'border-#c9a297 bg-#fff9f4'"
+                  :class="categoryId === category.categoryId ? 'border-accent bg-accent' : 'border-line bg-cream'"
                   @tap="pickCategory(category.categoryId)"
                 >
                   <text
                     class="text-28rpx"
-                    :class="[categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428', faceOf(category.name, 'sans')]"
+                    :class="[categoryId === category.categoryId ? 'text-on-accent' : 'text-ink', faceOf(category.name, 'sans')]"
                   >
                     {{ category.name }}
                   </text>
@@ -211,25 +212,25 @@ export default {
             </scroll-view>
           </view>
           <view v-if="shown.length" class="flex flex-col">
-            <view v-for="dish in shown" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx" @tap="editDish(dish)">
+            <view v-for="dish in shown" :key="dish.dishId" class="flex items-center gap-24rpx border-0 border-t-4rpx border-line border-solid py-24rpx" @tap="editDish(dish)">
               <view class="relative h-120rpx w-118rpx shrink-0 -mb-8rpx -mr-6rpx">
-                <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-#4e222d/28" />
+                <view class="absolute left-6rpx top-8rpx h-112rpx w-112rpx rounded-36rpx bg-shade-28" />
                 <view class="absolute left-0 top-0 h-112rpx w-112rpx overflow-hidden rounded-36rpx">
                   <dish-cover class="h-full w-full" :file-id="dish.coverFileId" :name="dish.name" />
                 </view>
-                <view class="pointer-events-none absolute left-0 top-0 z-1 box-border h-112rpx w-112rpx border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
+                <view class="pointer-events-none absolute left-0 top-0 z-1 box-border h-112rpx w-112rpx border-6rpx border-photo rounded-36rpx border-solid" />
               </view>
               <view class="min-w-0 flex flex-1 flex-col gap-4rpx">
-                <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+                <text class="text-36rpx text-ink leading-[1.15]" :class="faceOf(dish.name, 'serif')">
                   {{ dish.name }}
                 </text>
-                <text class="text-28rpx text-#7a534c" :class="faceOf(dish.categoryName || '未分类', 'sans')">
+                <text class="text-28rpx text-muted" :class="faceOf(dish.categoryName || '未分类', 'sans')">
                   {{ dish.categoryName || '未分类' }}
                 </text>
               </view>
             </view>
           </view>
-          <text v-if="emptyCopy && !shown.length" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">
+          <text v-if="emptyCopy && !shown.length" class="text-30rpx text-muted leading-[1.5]" :class="faceOf(emptyCopy, 'sans')">
             {{ emptyCopy }}
           </text>
         </view>

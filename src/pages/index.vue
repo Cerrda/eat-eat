@@ -4,6 +4,7 @@ import { createInvite, EatRequestError } from '@/api/eat'
 import { useTopPadding } from '@/composables/useTopPadding'
 import { endChoose, isChoosing, loadAccount, reloadMe, routeAccount } from '@/utils/account'
 import { normalizeCode } from '@/utils/format'
+import { art, pageStyle, themeClass } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 definePage({
@@ -91,24 +92,25 @@ function fillCode() {
 </script>
 
 <template>
-  <view v-if="ready" class="relative min-h-screen w-full bg-#fbf3ea">
-    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
+  <page-meta :page-style="pageStyle" />
+  <view v-if="ready" class="relative min-h-screen w-full bg-paper" :class="themeClass">
+    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" :src="art('paper')" mode="aspectFill" />
     <view
       class="relative z-1 box-border flex flex-col gap-42rpx px-42rpx pb-[calc(54rpx+env(safe-area-inset-bottom))]"
       :style="{ paddingTop: topPadding }"
     >
       <view class="eat-rise flex items-center">
-        <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+        <text class="text-42rpx text-ink font-normal leading-[1.15] font-display italic">
           EatEat
         </text>
       </view>
 
       <view class="eat-pop eat-delay-1 flex justify-center">
-        <image class="w-404rpx" src="/static/pot.png" mode="widthFix" />
+        <image class="w-404rpx" :src="art('pot')" mode="widthFix" />
       </view>
 
-      <view class="eat-rise eat-delay-2 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
-        <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+      <view class="eat-rise eat-delay-2 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-line border-solid pb-15rpx pt-42rpx">
+        <text class="block text-58rpx text-ink font-normal leading-[1.15] font-display">
           我来做饭
         </text>
         <stamp-button :disabled="pending !== ''" :busy="pending === 'cooker'" @button-tap="generate('cooker')">
@@ -116,8 +118,8 @@ function fillCode() {
         </stamp-button>
       </view>
 
-      <view class="eat-rise eat-delay-3 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
-        <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+      <view class="eat-rise eat-delay-3 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-line border-solid pb-15rpx pt-42rpx">
+        <text class="block text-58rpx text-ink font-normal leading-[1.15] font-display">
           我来点餐
         </text>
         <stamp-button :disabled="pending !== ''" :busy="pending === 'eater'" @button-tap="generate('eater')">
@@ -125,8 +127,8 @@ function fillCode() {
         </stamp-button>
       </view>
 
-      <view class="eat-rise eat-delay-4 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-15rpx pt-42rpx">
-        <text class="block text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+      <view class="eat-rise eat-delay-4 box-border flex flex-col gap-23rpx border-0 border-t-4rpx border-line border-solid pb-15rpx pt-42rpx">
+        <text class="block text-58rpx text-ink font-normal leading-[1.15] font-display">
           我有邀请码
         </text>
         <stamp-button :disabled="pending !== ''" @button-tap="fillCode">
@@ -137,8 +139,8 @@ function fillCode() {
     <ink-toast />
     <ink-dialog />
   </view>
-  <view v-else class="relative min-h-screen w-full bg-#fbf3ea">
-    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
+  <view v-else class="relative min-h-screen w-full bg-paper" :class="themeClass">
+    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" :src="art('paper')" mode="aspectFill" />
     <ink-toast />
     <ink-dialog />
   </view>

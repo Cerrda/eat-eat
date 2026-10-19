@@ -37,21 +37,21 @@ withDefaults(defineProps<{
 }
 
 .eat-notch-paper {
-  border-top-color: #fbf3ea;
-  border-right-color: #fbf3ea;
-  border-bottom-color: #fbf3ea;
+  border-top-color: var(--paper);
+  border-right-color: var(--paper);
+  border-bottom-color: var(--paper);
 }
 
 .eat-notch-wine {
-  border-top-color: #792b3e;
-  border-right-color: #792b3e;
-  border-bottom-color: #792b3e;
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .eat-notch-muted {
-  border-top-color: #7a534c;
-  border-right-color: #7a534c;
-  border-bottom-color: #7a534c;
+  border-top-color: var(--muted);
+  border-right-color: var(--muted);
+  border-bottom-color: var(--muted);
 }
 
 @keyframes eat-notch {

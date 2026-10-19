@@ -6,6 +6,7 @@ import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
+import { art } from '@/utils/theme'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
@@ -168,8 +169,8 @@ export default {
       @more="onMore"
     >
       <screen-head title="记录" :note="account && !total ? '还没有记下的一餐' : ''">
-        <view v-if="account && total" class="eat-press shrink-0 rounded-full bg-#792b3e px-24rpx py-20rpx shadow-[6rpx_8rpx_0_#4E222D59]" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
-          <text class="text-26rpx text-#fbf3ea font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
+        <view v-if="account && total" class="eat-press shrink-0 rounded-full bg-accent px-24rpx py-20rpx shadow-stamp" hover-class="eat-press-on" :hover-stay-time="140" @tap="createOne">
+          <text class="text-26rpx text-paper font-medium leading-[1.15]" :class="faceOf('记下这餐', 'sans')">
             记下这餐
           </text>
         </view>
@@ -177,35 +178,35 @@ export default {
       <template v-if="account">
         <view v-if="!total" class="w-full flex justify-center pb-16rpx pt-32rpx">
           <view class="relative h-336rpx w-456rpx" @tap="createOne">
-            <view class="absolute left-0 top-84rpx box-border h-244rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-44rpx">
+            <view class="absolute left-0 top-84rpx box-border h-244rpx w-full flex items-end justify-center border-2rpx border-line rounded-40rpx border-solid bg-cream px-32rpx pb-44rpx">
               <view class="flex items-center gap-12rpx">
-                <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('记下这餐', 'serif')">
+                <text class="text-44rpx text-accent leading-none" :class="faceOf('记下这餐', 'serif')">
                   记下这餐
                 </text>
-                <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+                <text class="text-44rpx text-accent leading-none" :class="faceOf('›', 'sans')">
                   ›
                 </text>
               </view>
             </view>
-            <image class="pointer-events-none absolute left-120rpx top-0 z-1 h-216rpx w-216rpx" src="/static/cook-seal.png" mode="aspectFit" />
+            <image class="pointer-events-none absolute left-120rpx top-0 z-1 h-216rpx w-216rpx" :src="art('cook-seal')" mode="aspectFit" />
           </view>
         </view>
         <view v-else class="flex flex-col gap-32rpx pt-32rpx">
           <view
             v-for="record in shown"
             :key="record.recordId"
-            class="flex flex-col gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-16rpx pt-32rpx"
+            class="flex flex-col gap-24rpx border-0 border-t-4rpx border-line border-solid pb-16rpx pt-32rpx"
             @tap="editOne(record)"
           >
             <view class="flex items-center justify-between">
-              <text class="text-60rpx text-#792b3e leading-[1.15]" :class="faceOf(when(record), 'mono')">
+              <text class="text-60rpx text-accent leading-[1.15]" :class="faceOf(when(record), 'mono')">
                 {{ when(record) }}
               </text>
-              <text class="text-30rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[record.slot], 'serif')">
+              <text class="text-30rpx text-ink leading-[1.15]" :class="faceOf(SLOT_LABEL[record.slot], 'serif')">
                 {{ SLOT_LABEL[record.slot] }}
               </text>
             </view>
-            <text v-if="record.authorName" class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(`${record.authorName}记下`, 'serif')">
+            <text v-if="record.authorName" class="text-36rpx text-ink leading-[1.15]" :class="faceOf(`${record.authorName}记下`, 'serif')">
               {{ record.authorName }}记下
             </text>
             <view v-if="record.dishes.length" class="flex flex-col">
@@ -221,14 +222,14 @@ export default {
                   @tap.stop="openDish(record, dish)"
                 >
                   <dish-cover
-                    class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-28rpx border-solid"
+                    class="box-border h-full w-full border-6rpx border-photo rounded-28rpx border-solid"
                     :file-id="dish.coverFileId"
                     :name="dish.name"
                     :held="heldId === dishKey(record.recordId, dish.dishId)"
                     @size="remember(dishKey(record.recordId, dish.dishId), $event)"
                   />
                 </view>
-                <text class="min-w-0 flex-1 text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+                <text class="min-w-0 flex-1 text-36rpx text-ink leading-[1.15]" :class="faceOf(dish.name, 'serif')">
                   {{ dish.name }}
                 </text>
               </view>
@@ -239,7 +240,7 @@ export default {
               class="relative h-336rpx w-full"
               @tap.stop="openPhoto(record, 0, 'cover')"
             >
-              <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
+              <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-shade-28" />
               <view class="absolute inset-0 overflow-hidden rounded-36rpx">
                 <dish-cover
                   class="h-full w-full"
@@ -250,7 +251,7 @@ export default {
                   @size="remember(photoKey(record.recordId, 0), $event)"
                 />
               </view>
-              <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
+              <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-photo rounded-36rpx border-solid" />
             </view>
             <view v-else-if="record.photoFileIds.length" class="flex flex-col gap-16rpx">
               <view v-for="(row, rowIndex) in photoRows(record.photoFileIds)" :key="rowIndex" class="flex gap-16rpx">
@@ -265,7 +266,7 @@ export default {
                       class="absolute inset-0"
                       @tap.stop="openPhoto(record, photoAt(record.photoFileIds.length, rowIndex, column), wideTiles(record.photoFileIds.length) ? 'tile' : 'thumb')"
                     >
-                      <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-#4e222d/28" />
+                      <view class="absolute left-6rpx top-8rpx h-full w-full rounded-36rpx bg-shade-28" />
                       <view class="absolute inset-0 overflow-hidden rounded-36rpx">
                         <dish-cover
                           class="h-full w-full"
@@ -276,13 +277,13 @@ export default {
                           @size="remember(photoKey(record.recordId, photoAt(record.photoFileIds.length, rowIndex, column)), $event)"
                         />
                       </view>
-                      <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-#fff9f4 rounded-36rpx border-solid" />
+                      <view class="pointer-events-none absolute inset-0 z-1 box-border border-6rpx border-photo rounded-36rpx border-solid" />
                     </view>
                   </view>
                 </view>
               </view>
             </view>
-            <text v-if="record.text" class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(record.text, 'serif')">
+            <text v-if="record.text" class="text-44rpx text-ink leading-[1.15]" :class="faceOf(record.text, 'serif')">
               {{ record.text }}
             </text>
           </view>

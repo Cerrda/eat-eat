@@ -4,6 +4,7 @@ import { refreshInvite } from '@/api/eat'
 import { useCapsuleClearance } from '@/composables/useTopPadding'
 import { beginChoose, ensureAccount, rememberAccount } from '@/utils/account'
 import { copyHint } from '@/utils/hint'
+import { pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -66,30 +67,31 @@ function copyCode() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view :style="{ paddingTop: clearance }">
       <view v-if="account" class="flex flex-col gap-38rpx">
         <view class="eat-rise">
-          <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+          <text class="text-42rpx text-ink font-normal leading-[1.15] font-display italic">
             EatEat
           </text>
         </view>
         <view class="eat-rise eat-delay-1 flex flex-col gap-19rpx">
           <view class="flex flex-col">
-            <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+            <text class="text-58rpx text-ink font-normal leading-[1.15] font-display">
               把这间厨房
             </text>
-            <text class="text-58rpx text-#3c2428 font-normal leading-[1.15] font-display">
+            <text class="text-58rpx text-ink font-normal leading-[1.15] font-display">
               交给对方
             </text>
           </view>
-          <text class="text-27rpx text-#7a534c leading-[1.55] font-body">
+          <text class="text-27rpx text-muted leading-[1.55] font-body">
             对方点开这条，就能进来。
           </text>
         </view>
         <view class="eat-pop eat-delay-2 flex flex-col gap-12rpx">
           <code-cells :model-value="account.inviteCode" readonly />
-          <text v-if="account.inviteExpired" class="text-27rpx text-#7a534c leading-[1.55] font-body">
+          <text v-if="account.inviteExpired" class="text-27rpx text-muted leading-[1.55] font-body">
             这个码已经过期了。
           </text>
         </view>
@@ -102,23 +104,23 @@ function copyCode() {
           </stamp-button>
         </view>
         <view class="flex flex-col gap-31rpx pt-35rpx">
-          <view class="h-2rpx w-full bg-#3c2428" />
+          <view class="h-2rpx w-full bg-ink" />
           <view class="flex flex-col gap-4rpx">
             <view class="flex items-center gap-12rpx py-19rpx" @tap="refresh">
               <ink-spin v-if="pending === 'refresh'" tone="muted" />
-              <text class="text-29rpx text-#3c2428 leading-[1.45] font-body">
+              <text class="text-29rpx text-ink leading-[1.45] font-body">
                 {{ pending === 'refresh' ? '正在换一个' : '换一个邀请码' }}
               </text>
             </view>
             <view class="flex items-center py-19rpx" @tap="rechoose">
-              <text class="text-29rpx text-#7a534c leading-[1.45] font-body">
+              <text class="text-29rpx text-muted leading-[1.45] font-body">
                 选错了这边，
               </text>
               <view class="flex flex-col gap-6rpx">
-                <text class="text-29rpx text-#792b3e leading-[1.45] font-body">
+                <text class="text-29rpx text-accent leading-[1.45] font-body">
                   回到选择
                 </text>
-                <view class="h-2rpx w-full rounded-2rpx bg-#792b3e" />
+                <view class="h-2rpx w-full rounded-2rpx bg-accent" />
               </view>
             </view>
           </view>

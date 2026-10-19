@@ -4,6 +4,7 @@ import { dateLabel, getOrder, rejectOrder, SLOT_LABEL } from '@/api/eat'
 import { ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { showHint } from '@/utils/hint'
+import { pageStyle } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -68,17 +69,18 @@ async function submit() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-32rpx">
       <back-bar label="拒绝" fallback="/pages/home/index" />
-      <text v-if="order" class="text-30rpx text-#7a534c leading-[1.5]" :class="faceOf(headline, 'sans')">
+      <text v-if="order" class="text-30rpx text-muted leading-[1.5]" :class="faceOf(headline, 'sans')">
         {{ headline }}
       </text>
-      <view class="box-border h-300rpx flex flex-col justify-between rounded-28rpx bg-#fff9f4 px-28rpx py-28rpx">
+      <view class="box-border h-300rpx flex flex-col justify-between rounded-28rpx bg-cream px-28rpx py-28rpx">
         <textarea
           v-model="note"
           disable-default-padding
-          class="box-border h-180rpx w-full text-44rpx text-#3c2428 leading-80rpx"
+          class="box-border h-180rpx w-full text-44rpx text-ink leading-80rpx"
           :class="faceOf(note, 'serif')"
           :maxlength="40"
           placeholder="你怎么忍心拒绝的呀！！！"
@@ -86,7 +88,7 @@ async function submit() {
           placeholder-style="font-size: 44rpx; line-height: 80rpx;"
           :show-confirm-bar="false"
         />
-        <text class="block text-right text-30rpx text-#7a534c" :class="faceOf(`${note.length} / 40`, 'mono')">
+        <text class="block text-right text-30rpx text-muted" :class="faceOf(`${note.length} / 40`, 'mono')">
           {{ note.length }} / 40
         </text>
       </view>

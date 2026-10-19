@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTopPadding } from '@/composables/useTopPadding'
+import { art, themeClass } from '@/utils/theme'
 
 const topPadding = useTopPadding()
 
@@ -21,10 +22,10 @@ export default {
 </script>
 
 <template>
-  <view class="relative w-full bg-#fbf3ea">
+  <view class="relative w-full bg-paper" :class="themeClass">
     <image
       class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full"
-      src="/static/paper.jpg"
+      :src="art('paper')"
       mode="aspectFill"
     />
     <view

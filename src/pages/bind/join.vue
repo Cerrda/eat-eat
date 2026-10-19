@@ -4,6 +4,7 @@ import { acceptInvite, EatRequestError, previewInvite } from '@/api/eat'
 import { useCapsuleClearance } from '@/composables/useTopPadding'
 import { loadAccount, rememberAccount, routeAccount } from '@/utils/account'
 import { normalizeCode } from '@/utils/format'
+import { pageStyle } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 definePage({
@@ -152,28 +153,29 @@ async function backHome() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-31rpx" :style="{ paddingTop: `calc(${clearance} + 13rpx)` }">
-      <text class="text-42rpx text-#3c2428 font-normal leading-[1.15] font-display italic">
+      <text class="text-42rpx text-ink font-normal leading-[1.15] font-display italic">
         EatEat
       </text>
-      <text class="text-38rpx text-#3c2428 font-normal leading-[1.45] font-body">
+      <text class="text-38rpx text-ink font-normal leading-[1.45] font-body">
         填写邀请码
       </text>
       <code-cells v-model="code" :readonly="mode === 'confirm' || mode === 'taken'" :invalid="mode === 'invalid'" />
 
       <view v-if="showResult" class="eat-rise flex flex-col gap-31rpx">
-        <view class="box-border flex flex-col gap-12rpx border-0 border-b-4rpx border-t-4rpx border-#c9a297 border-solid py-31rpx">
+        <view class="box-border flex flex-col gap-12rpx border-0 border-b-4rpx border-t-4rpx border-line border-solid py-31rpx">
           <text
             class="text-27rpx leading-[1.15] tracking-[2rpx] font-mono"
-            :class="mode === 'invalid' ? 'text-#9c342c' : 'text-#792b3e'"
+            :class="mode === 'invalid' ? 'text-danger' : 'text-accent'"
           >
             {{ eyebrow }}
           </text>
-          <text class="text-54rpx text-#3c2428 font-normal leading-[1.15] font-display">
+          <text class="text-54rpx text-ink font-normal leading-[1.15] font-display">
             {{ roleHeading }}
           </text>
-          <text v-if="detail" class="text-29rpx text-#7a534c leading-[1.5] font-body">
+          <text v-if="detail" class="text-29rpx text-muted leading-[1.5] font-body">
             {{ detail }}
           </text>
         </view>
@@ -187,12 +189,11 @@ async function backHome() {
           回到我的厨房
         </stamp-button>
         <view v-if="mode === 'confirm'" @tap="reset">
-          <text class="text-27rpx text-#7a534c leading-[1.45] font-body">
+          <text class="text-27rpx text-muted leading-[1.45] font-body">
             不是这间厨房
           </text>
         </view>
       </view>
-
     </view>
   </paper-page>
 </template>

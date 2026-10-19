@@ -11,6 +11,7 @@ import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
 import { ensureAccount } from '@/utils/account'
 import { cookerTabs, eaterTabs, invalidateTabs, isTabFresh, noteBadges, onTabPick, tabBadges, tabKey, tabsOf } from '@/utils/tabs'
+import { art, pageStyle, themeClass } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
@@ -165,8 +166,9 @@ onLoad(() => {
 </script>
 
 <template>
-  <view class="relative h-screen w-full overflow-hidden bg-#fbf3ea">
-    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" src="/static/paper.jpg" mode="aspectFill" />
+  <page-meta :page-style="pageStyle" />
+  <view class="relative h-screen w-full overflow-hidden bg-paper" :class="themeClass">
+    <image class="pointer-events-none fixed left-0 top-0 z-0 h-screen w-full" :src="art('paper')" mode="aspectFill" />
     <view>
       <template v-if="ready">
         <tab-scroll v-if="role === 'eater' && opened.menu" publish :active="tabKey === 'menu'" :motion="motion">

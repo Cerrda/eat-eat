@@ -5,6 +5,7 @@ import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImage, ignoredCancel, primeFileUrls, resolveFileUrl, uploadImage } from '@/utils/files'
 import { keepOneLine, splitPieces } from '@/utils/format'
+import { pageStyle } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 function stepLines(value: string) {
@@ -137,15 +138,16 @@ async function remove() {
 </script>
 
 <template>
+  <page-meta :page-style="pageStyle" />
   <paper-page>
     <view class="flex flex-col gap-28rpx">
       <back-bar label="编辑" fallback="/pages/home/index" />
       <template v-if="booted">
         <textarea
           v-model="name"
-          auto-height
-          disable-default-padding
-          class="min-h-74rpx w-full text-64rpx text-#3c2428 leading-74rpx"
+
+          disable-default-padding auto-height
+          class="min-h-74rpx w-full text-64rpx text-ink leading-74rpx"
           :class="faceOf(name, 'serif')"
           :maxlength="20"
           placeholder="写下这道菜"
@@ -154,10 +156,10 @@ async function remove() {
         />
         <view class="flex flex-col gap-16rpx py-24rpx">
           <view class="flex items-center justify-between">
-            <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('分类', 'mono')">
+            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('分类', 'mono')">
               分类
             </text>
-            <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('管理分类', 'mono')" @tap="openCategories">
+            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('管理分类', 'mono')" @tap="openCategories">
               管理分类
             </text>
           </view>
@@ -166,46 +168,46 @@ async function remove() {
               v-for="category in categories"
               :key="category.categoryId"
               class="box-border border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-              :class="categoryId === category.categoryId ? 'border-#792b3e bg-#792b3e' : 'border-#c9a297 bg-#fff9f4'"
+              :class="categoryId === category.categoryId ? 'border-accent bg-accent' : 'border-line bg-cream'"
               @tap="categoryId = category.categoryId"
             >
-              <text class="text-28rpx" :class="[categoryId === category.categoryId ? 'text-#fff9f4' : 'text-#3c2428', faceOf(category.name, 'sans')]">
+              <text class="text-28rpx" :class="[categoryId === category.categoryId ? 'text-on-accent' : 'text-ink', faceOf(category.name, 'sans')]">
                 {{ category.name }}
               </text>
             </view>
             <view
               class="box-border border-2rpx rounded-32rpx border-solid px-24rpx py-14rpx"
-              :class="categoryId ? 'border-#c9a297 bg-#fff9f4' : 'border-#792b3e bg-#792b3e'"
+              :class="categoryId ? 'border-line bg-cream' : 'border-accent bg-accent'"
               @tap="categoryId = ''"
             >
-              <text class="text-28rpx" :class="[categoryId ? 'text-#3c2428' : 'text-#fff9f4', faceOf('先不归', 'sans')]">
+              <text class="text-28rpx" :class="[categoryId ? 'text-ink' : 'text-on-accent', faceOf('先不归', 'sans')]">
                 先不归
               </text>
             </view>
           </view>
         </view>
-        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
-          <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[1.6rpx]" :class="faceOf('食材', 'mono')">
+        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-line border-solid py-24rpx">
+          <text class="text-28rpx text-accent leading-[1.15] tracking-[1.6rpx]" :class="faceOf('食材', 'mono')">
             食材
           </text>
           <textarea
             v-model="ingredients"
             auto-height
             disable-default-padding
-            class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
+            class="min-h-46rpx w-full text-32rpx text-ink leading-[1.45]"
             :class="faceOf(ingredients, 'sans')"
             placeholder="请输入食材，一个食材一行"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
         </view>
-        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
+        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-line border-solid py-24rpx">
           <view class="flex items-center justify-between">
-            <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[1.6rpx]" :class="faceOf('步骤', 'mono')">
+            <text class="text-28rpx text-accent leading-[1.15] tracking-[1.6rpx]" :class="faceOf('步骤', 'mono')">
               步骤
             </text>
             <text
-              class="text-28rpx text-#7a534c"
+              class="text-28rpx text-muted"
               :class="faceOf(stepsOpen ? '收起' : '展开', 'sans')"
               @tap="stepsOpen = !stepsOpen"
             >
@@ -217,33 +219,33 @@ async function remove() {
             v-model="stepsText"
             auto-height
             disable-default-padding
-            class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
+            class="min-h-46rpx w-full text-32rpx text-ink leading-[1.45]"
             :class="faceOf(stepsText, 'sans')"
             placeholder="请输入制作步骤，一步一行"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
         </view>
-        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-#c9a297 border-solid py-24rpx">
-          <text class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf('来源链接', 'mono')">
+        <view class="flex flex-col gap-8rpx border-0 border-t-4rpx border-line border-solid py-24rpx">
+          <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('来源链接', 'mono')">
             来源链接
           </text>
           <textarea
             v-model="sourceUrl"
             auto-height
             disable-default-padding
-            class="min-h-46rpx w-full text-32rpx text-#3c2428 leading-[1.45]"
+            class="min-h-46rpx w-full text-32rpx text-ink leading-[1.45]"
             :class="faceOf(sourceUrl, 'sans')"
             placeholder="请输入小红书或抖音链接"
             placeholder-class="ph-sans"
             :show-confirm-bar="false"
           />
         </view>
-        <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[2rpx]" :class="faceOf('封面', 'mono')">
+        <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf('封面', 'mono')">
           封面
         </text>
         <view class="flex items-center gap-28rpx">
-          <view class="relative box-border h-296rpx w-296rpx shrink-0 overflow-hidden border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4">
+          <view class="relative box-border h-296rpx w-296rpx shrink-0 overflow-hidden border-4rpx border-line rounded-36rpx border-solid bg-cream">
             <dish-cover
               v-if="localCover || coverFileId"
               class="absolute inset-0 h-full w-full"
@@ -254,19 +256,19 @@ async function remove() {
             />
             <view v-else class="h-full flex flex-col items-center justify-center gap-12rpx">
               <image class="h-56rpx w-56rpx" src="/static/icons/cover-image.png" mode="aspectFit" />
-              <text class="text-26rpx text-#7a534c" :class="faceOf('上传封面', 'sans')">
+              <text class="text-26rpx text-muted" :class="faceOf('上传封面', 'sans')">
                 上传封面
               </text>
             </view>
           </view>
           <view class="min-w-0 flex flex-1 flex-col gap-16rpx">
-            <view class="box-border border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 py-24rpx text-center" @tap="pickCover('album')">
-              <text class="text-28rpx text-#3c2428" :class="faceOf('从相册选', 'sans')">
+            <view class="box-border border-4rpx border-line rounded-36rpx border-solid bg-cream py-24rpx text-center" @tap="pickCover('album')">
+              <text class="text-28rpx text-ink" :class="faceOf('从相册选', 'sans')">
                 从相册选
               </text>
             </view>
-            <view class="box-border border-4rpx border-#c9a297 rounded-36rpx border-solid bg-#fff9f4 py-24rpx text-center" @tap="pickCover('camera')">
-              <text class="text-28rpx text-#3c2428" :class="faceOf('拍一张', 'sans')">
+            <view class="box-border border-4rpx border-line rounded-36rpx border-solid bg-cream py-24rpx text-center" @tap="pickCover('camera')">
+              <text class="text-28rpx text-ink" :class="faceOf('拍一张', 'sans')">
                 拍一张
               </text>
             </view>
@@ -277,7 +279,7 @@ async function remove() {
         </stamp-button>
         <view v-if="dishId" class="flex items-center justify-center gap-16rpx py-8rpx" @tap="remove">
           <ink-spin v-if="pending === 'delete'" tone="muted" />
-          <text class="text-28rpx text-#9c342c" :class="faceOf(pending === 'delete' ? '正在删除' : '删除', 'sans')">
+          <text class="text-28rpx text-danger" :class="faceOf(pending === 'delete' ? '正在删除' : '删除', 'sans')">
             {{ pending === 'delete' ? '正在删除' : '删除' }}
           </text>
         </view>

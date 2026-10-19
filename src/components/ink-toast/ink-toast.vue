@@ -48,15 +48,15 @@ watch(active, (on) => {
   <view v-if="visible" class="pointer-events-none fixed left-0 right-0 top-536rpx z-30 flex justify-center px-64rpx">
     <view class="relative max-w-full">
       <view
-        class="pointer-events-none absolute rounded-44rpx bg-#4e222d/35"
+        class="pointer-events-none absolute rounded-44rpx bg-shade-35"
         :class="active ? 'ink-toast-shadow-in' : 'ink-toast-shadow-out'"
         style="top: 8rpx; right: -6rpx; bottom: -8rpx; left: 6rpx;"
       />
       <view
-        class="relative box-border border-2rpx border-#792b3e rounded-44rpx border-solid bg-#fff9f4 px-32rpx py-22rpx"
+        class="relative box-border border-2rpx border-accent rounded-44rpx border-solid bg-cream px-32rpx py-22rpx"
         :class="active ? 'ink-toast-in' : 'ink-toast-out'"
       >
-        <text class="text-center text-30rpx text-#3c2428 font-medium leading-normal font-body">
+        <text class="text-center text-30rpx text-ink font-medium leading-normal font-body">
           {{ hintText }}
         </text>
       </view>

@@ -43,7 +43,7 @@ function onTap() {
   <view class="relative">
     <view
       v-if="variant === 'solid' && !busy && !flat"
-      class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-full bg-#4e222d/35"
+      class="absolute bottom--8rpx left-6rpx right--6rpx top-8rpx rounded-full bg-shade-35"
     />
     <button
       v-if="openType"
@@ -51,7 +51,7 @@ function onTap() {
       :class="[
         shellClass,
         faceClass,
-        variant === 'solid' ? 'border-#792b3e bg-#792b3e text-#fbf3ea' : 'border-#c9a297 bg-#fff9f4 text-#3c2428',
+        variant === 'solid' ? 'border-accent bg-accent text-paper' : 'border-line bg-cream text-ink',
       ]"
       :open-type="openType"
       :disabled="disabled"
@@ -66,8 +66,8 @@ function onTap() {
       :class="[
         shellClass,
         variant === 'solid'
-          ? (busy ? 'border-#a24c5c bg-#a24c5c' : 'border-#792b3e bg-#792b3e')
-          : 'border-#c9a297 bg-#fff9f4',
+          ? (busy ? 'border-accent-busy bg-accent-busy' : 'border-accent bg-accent')
+          : 'border-line bg-cream',
         disabled && !busy ? 'opacity-60' : '',
       ]"
       :hover-class="disabled || busy ? 'none' : pressClass"
@@ -80,7 +80,7 @@ function onTap() {
           class="font-body"
           :class="[
             faceClass,
-            variant === 'solid' ? 'text-#fbf3ea' : (busy ? 'text-#7a534c' : 'text-#3c2428'),
+            variant === 'solid' ? 'text-paper' : (busy ? 'text-muted' : 'text-ink'),
           ]"
         >
           <slot />

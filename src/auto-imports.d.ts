@@ -10,6 +10,8 @@ declare global {
   const LIST_PAGE_SIZE: typeof import('./composables/usePaged')['LIST_PAGE_SIZE']
   const accountPath: typeof import('./utils/account')['accountPath']
   const addDays: typeof import('./utils/format')['addDays']
+  const applyChrome: typeof import('./utils/theme')['applyChrome']
+  const art: typeof import('./utils/theme')['art']
   const ask: typeof import('./utils/ui')['ask']
   const askCookRemind: typeof import('./utils/subscribe')['askCookRemind']
   const askText: typeof import('./utils/ui')['askText']
@@ -134,6 +136,7 @@ declare global {
   const openTab: typeof import('./utils/tabs')['openTab']
   const orderDraft: typeof import('./utils/draft')['orderDraft']
   const pageRoute: typeof import('./utils/hint')['pageRoute']
+  const pageStyle: typeof import('./utils/theme')['pageStyle']
   const patchBadges: typeof import('./utils/account')['patchBadges']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
   const peekAccount: typeof import('./utils/account')['peekAccount']
@@ -165,6 +168,7 @@ declare global {
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const returnHome: typeof import('./utils/tabs')['returnHome']
   const routeAccount: typeof import('./utils/account')['routeAccount']
+  const setTheme: typeof import('./utils/theme')['setTheme']
   const settleDialog: typeof import('./utils/ui')['settleDialog']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
@@ -183,6 +187,9 @@ declare global {
   const tell: typeof import('./utils/ui')['tell']
   const templateRef: typeof import('@vueuse/core')['templateRef']
   const textLength: typeof import('./utils/format')['textLength']
+  const theme: typeof import('./utils/theme')['theme']
+  const themeClass: typeof import('./utils/theme')['themeClass']
+  const themeVars: typeof import('./utils/theme')['themeVars']
   const throttledRef: typeof import('@vueuse/core')['throttledRef']
   const throttledWatch: typeof import('@vueuse/core')['throttledWatch']
   const toRaw: typeof import('vue')['toRaw']
@@ -415,6 +422,9 @@ declare global {
   export type { TabKey, TabPanePose } from './utils/tabs'
   import('./utils/tabs')
   // @ts-ignore
+  export type { ThemeName, ArtName } from './utils/theme'
+  import('./utils/theme')
+  // @ts-ignore
   export type { DialogResult } from './utils/ui'
   import('./utils/ui')
 }
@@ -428,6 +438,8 @@ declare module 'vue' {
     readonly LIST_PAGE_SIZE: UnwrapRef<typeof import('./composables/usePaged')['LIST_PAGE_SIZE']>
     readonly accountPath: UnwrapRef<typeof import('./utils/account')['accountPath']>
     readonly addDays: UnwrapRef<typeof import('./utils/format')['addDays']>
+    readonly applyChrome: UnwrapRef<typeof import('./utils/theme')['applyChrome']>
+    readonly art: UnwrapRef<typeof import('./utils/theme')['art']>
     readonly ask: UnwrapRef<typeof import('./utils/ui')['ask']>
     readonly askCookRemind: UnwrapRef<typeof import('./utils/subscribe')['askCookRemind']>
     readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
@@ -551,6 +563,7 @@ declare module 'vue' {
     readonly openTab: UnwrapRef<typeof import('./utils/tabs')['openTab']>
     readonly orderDraft: UnwrapRef<typeof import('./utils/draft')['orderDraft']>
     readonly pageRoute: UnwrapRef<typeof import('./utils/hint')['pageRoute']>
+    readonly pageStyle: UnwrapRef<typeof import('./utils/theme')['pageStyle']>
     readonly patchBadges: UnwrapRef<typeof import('./utils/account')['patchBadges']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly peekAccount: UnwrapRef<typeof import('./utils/account')['peekAccount']>
@@ -582,6 +595,7 @@ declare module 'vue' {
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly returnHome: UnwrapRef<typeof import('./utils/tabs')['returnHome']>
     readonly routeAccount: UnwrapRef<typeof import('./utils/account')['routeAccount']>
+    readonly setTheme: UnwrapRef<typeof import('./utils/theme')['setTheme']>
     readonly settleDialog: UnwrapRef<typeof import('./utils/ui')['settleDialog']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
@@ -598,6 +612,9 @@ declare module 'vue' {
     readonly tell: UnwrapRef<typeof import('./utils/ui')['tell']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly textLength: UnwrapRef<typeof import('./utils/format')['textLength']>
+    readonly theme: UnwrapRef<typeof import('./utils/theme')['theme']>
+    readonly themeClass: UnwrapRef<typeof import('./utils/theme')['themeClass']>
+    readonly themeVars: UnwrapRef<typeof import('./utils/theme')['themeVars']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
     readonly throttledWatch: UnwrapRef<typeof import('@vueuse/core')['throttledWatch']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>

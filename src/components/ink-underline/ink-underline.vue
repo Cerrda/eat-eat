@@ -9,7 +9,7 @@ const height = computed(() => (props.width * 59) / 349)
 
 <template>
   <view
-    class="ink-underline block bg-#792b3e"
+    class="ink-underline block bg-accent"
     :style="{ width: `${width}rpx`, height: `${height}rpx` }"
   />
 </template>

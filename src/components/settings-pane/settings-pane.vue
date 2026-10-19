@@ -6,6 +6,7 @@ import { faceOf } from '@/utils/face'
 import { keepOneLine, textLength } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
+import { setTheme, theme } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 const props = defineProps<{
@@ -21,14 +22,18 @@ const ledgerKey = ref(0)
 const fieldOn = ref(true)
 keepOneLine(nickname)
 const pending = ref<'swap' | 'leave' | ''>('')
+const inkGo = ref(false)
 let accountToken = 0
 let holdNickname = false
-const partnerLine = computed(() => {
-  const name = account.value?.partnerNickname || ''
+let inkToken = 0
+let inkTimer: ReturnType<typeof setTimeout> | undefined
+const selfRole = computed(() => {
+  const role = account.value?.role
+  return role === 'cooker' || role === 'eater' ? ROLE_LABEL[role] : ''
+})
+const partnerRoleText = computed(() => {
   const role = account.value?.partnerRole
-  if (role !== 'cooker' && role !== 'eater')
-    return name
-  return `${name}  ·  ${ROLE_LABEL[role]}`
+  return role === 'cooker' || role === 'eater' ? ROLE_LABEL[role] : ''
 })
 function applyAccount(view: AccountView) {
   accountToken += 1
@@ -110,6 +115,32 @@ async function saveNickname() {
   }
 }
 
+function pickTheme(next: 'light' | 'dark') {
+  if (theme.value === next)
+    return
+  const token = ++inkToken
+  if (inkTimer)
+    clearTimeout(inkTimer)
+  inkGo.value = false
+  setTheme(next)
+  nextTick(() => {
+    if (token !== inkToken)
+      return
+    inkGo.value = true
+    inkTimer = setTimeout(() => {
+      if (token !== inkToken)
+        return
+      inkGo.value = false
+      inkTimer = undefined
+    }, 300)
+  })
+}
+
+onUnmounted(() => {
+  if (inkTimer)
+    clearTimeout(inkTimer)
+})
+
 async function swap() {
   if (pending.value || props.locked)
     return
@@ -170,14 +201,33 @@ export default {
   <view class="h-full min-h-0 flex flex-1 flex-col">
     <scroll-view scroll-y enhanced class="h-0 min-h-0 w-full flex-1" :show-scrollbar="false">
       <screen-head title="设置" />
-      <view v-if="account" class="flex flex-col gap-32rpx pt-32rpx">
+      <view v-if="account" class="flex flex-col gap-56rpx pt-48rpx">
+        <view class="flex items-center justify-center gap-96rpx">
+          <view class="flex flex-col items-center">
+            <text class="text-64rpx text-ink leading-[1.15]" :class="faceOf(account.nickname, 'serif')">
+              {{ account.nickname }}
+            </text>
+            <text class="text-32rpx text-muted leading-[1.8]" :class="faceOf(selfRole, 'serif')">
+              {{ selfRole }}
+            </text>
+          </view>
+          <view class="h-72rpx w-4rpx shrink-0 bg-accent" />
+          <view class="flex flex-col items-center">
+            <text class="text-64rpx text-ink leading-[1.15]" :class="faceOf(account.partnerNickname || '', 'serif')">
+              {{ account.partnerNickname }}
+            </text>
+            <text class="text-32rpx text-muted leading-[1.8]" :class="faceOf(partnerRoleText, 'serif')">
+              {{ partnerRoleText }}
+            </text>
+          </view>
+        </view>
         <view :key="ledgerKey" class="flex flex-col">
-          <view class="flex flex-col gap-12rpx border-0 border-t-4rpx border-#c9a297 border-solid py-32rpx">
+          <view class="flex flex-col gap-12rpx border-0 border-t-4rpx border-rule border-solid py-32rpx">
             <view class="flex items-center justify-between">
-              <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[2rpx]" :class="faceOf('称呼', 'mono')">
+              <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf('称呼', 'mono')">
                 称呼
               </text>
-              <text class="text-30rpx text-#7a534c" :class="faceOf(`${textLength(nickname)} / 8`, 'mono')">
+              <text class="text-30rpx text-muted" :class="faceOf(`${textLength(nickname)} / 8`, 'mono')">
                 {{ textLength(nickname) }} / 8
               </text>
             </view>
@@ -186,7 +236,7 @@ export default {
               :key="ledgerKey"
               v-model="nickname"
               disable-default-padding
-              class="h-64rpx w-full text-52rpx text-#3c2428 leading-64rpx"
+              class="h-64rpx w-full text-52rpx text-ink leading-64rpx"
               :class="faceOf(nickname, 'serif')"
               :maxlength="8"
               confirm-type="done"
@@ -195,18 +245,40 @@ export default {
               @confirm="saveNickname"
             />
           </view>
-          <view class="box-border flex flex-col gap-12rpx border-0 border-b-4rpx border-t-4rpx border-#c9a297 border-solid py-32rpx">
-            <text class="text-28rpx text-#792b3e leading-[1.15] tracking-[2rpx]" :class="faceOf('绑定对象', 'mono')">
-              绑定对象
+          <view class="flex flex-col gap-24rpx border-0 border-y-4rpx border-rule border-solid py-32rpx">
+            <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf('外观', 'mono')">
+              外观
             </text>
-            <text class="text-52rpx text-#3c2428 leading-[1.15]" :class="faceOf(partnerLine, 'serif')">
-              {{ partnerLine }}
-            </text>
+            <view
+              class="eat-press relative h-96rpx flex overflow-hidden border-4rpx border-rule rounded-36rpx border-solid"
+              hover-class="eat-press-on"
+              :hover-stay-time="140"
+            >
+              <view class="theme-switch-ink" :class="theme === 'dark' ? 'theme-switch-ink-dark' : ''">
+                <view class="theme-switch-ink-body" :class="inkGo ? 'theme-switch-ink-go' : ''" />
+              </view>
+              <view class="relative z-1 flex flex-1 items-center justify-center" @tap="pickTheme('light')">
+                <text
+                  class="theme-switch-label text-32rpx leading-none"
+                  :class="[faceOf('浅色', 'serif'), theme === 'light' ? 'text-on-accent' : 'text-muted']"
+                >
+                  浅色
+                </text>
+              </view>
+              <view class="relative z-1 flex flex-1 items-center justify-center" @tap="pickTheme('dark')">
+                <text
+                  class="theme-switch-label text-32rpx leading-none"
+                  :class="[faceOf('深色', 'serif'), theme === 'dark' ? 'text-on-accent' : 'text-muted']"
+                >
+                  深色
+                </text>
+              </view>
+            </view>
           </view>
         </view>
         <view
           class="eat-press box-border h-100rpx flex items-center justify-center gap-16rpx rounded-36rpx border-solid"
-          :class="pending === 'swap' ? 'border-3rpx border-#c9a297' : 'border-4rpx border-#792b3e'"
+          :class="pending === 'swap' ? 'border-3rpx border-line' : 'border-4rpx border-accent'"
           :hover-class="pending ? 'none' : 'eat-press-on'"
           :hover-stay-time="140"
           @tap="swap"
@@ -214,14 +286,14 @@ export default {
           <ink-spin v-if="pending === 'swap'" tone="muted" />
           <text
             class="text-30rpx font-medium leading-40rpx"
-            :class="[faceOf(pending === 'swap' ? '正在互换' : '互换角色', 'sans'), pending === 'swap' ? 'text-#7a534c' : 'text-#792b3e']"
+            :class="[faceOf(pending === 'swap' ? '正在互换' : '互换角色', 'sans'), pending === 'swap' ? 'text-muted' : 'text-accent']"
           >
             {{ pending === 'swap' ? '正在互换' : '互换角色' }}
           </text>
         </view>
         <view
           class="eat-press box-border h-100rpx flex items-center justify-center gap-16rpx rounded-36rpx border-solid"
-          :class="pending === 'leave' ? 'border-3rpx border-#c9a297' : 'border-4rpx border-#9c342c'"
+          :class="pending === 'leave' ? 'border-3rpx border-line' : 'border-4rpx border-danger'"
           :hover-class="pending ? 'none' : 'eat-press-on'"
           :hover-stay-time="140"
           @tap="leave"
@@ -229,7 +301,7 @@ export default {
           <ink-spin v-if="pending === 'leave'" tone="muted" />
           <text
             class="text-30rpx font-medium leading-40rpx"
-            :class="[faceOf(pending === 'leave' ? '正在解除' : '解除绑定', 'sans'), pending === 'leave' ? 'text-#7a534c' : 'text-#9c342c']"
+            :class="[faceOf(pending === 'leave' ? '正在解除' : '解除绑定', 'sans'), pending === 'leave' ? 'text-muted' : 'text-danger']"
           >
             {{ pending === 'leave' ? '正在解除' : '解除绑定' }}
           </text>
@@ -242,4 +314,57 @@ export default {
 <style>
 @import "../../styles/motion.css";
 @import "../../styles/scrollbar.css";
+
+.theme-switch-ink {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  transition: transform 280ms cubic-bezier(0.22, 1.06, 0.36, 1);
+}
+
+.theme-switch-ink-dark {
+  transform: translate3d(100%, 0, 0);
+}
+
+.theme-switch-ink-body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent);
+  transform-origin: center;
+}
+
+.theme-switch-ink-go {
+  animation: theme-switch-squash 280ms linear both;
+}
+
+.theme-switch-label {
+  transition: color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes theme-switch-squash {
+  0% {
+    transform: scale(1, 1);
+  }
+
+  42% {
+    transform: scale(1.06, 0.9);
+  }
+
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switch-ink,
+  .theme-switch-label {
+    transition: none;
+  }
+
+  .theme-switch-ink-go {
+    animation: none;
+  }
+}
 </style>

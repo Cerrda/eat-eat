@@ -65,8 +65,8 @@ function pipOn(index: number) {
   justify-content: center;
   width: 52rpx;
   height: 52rpx;
-  background: #fff9f4;
-  border: 3rpx solid #792b3e;
+  background: var(--cream);
+  border: 3rpx solid var(--accent);
   border-radius: 14rpx;
   transform-origin: center center;
 }
@@ -93,7 +93,7 @@ function pipOn(index: number) {
 .roll-die-pip {
   width: 8rpx;
   height: 8rpx;
-  background: #792b3e;
+  background: var(--accent);
   border-radius: 50%;
   opacity: 0;
   transform: scale(0.5);

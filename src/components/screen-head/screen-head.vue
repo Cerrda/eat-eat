@@ -23,15 +23,15 @@ export default {
     <view class="flex items-end justify-between gap-24rpx">
       <view class="min-w-0 flex flex-col items-start">
         <view class="flex flex-col items-start gap-4rpx">
-          <text v-if="kicker" class="text-28rpx text-#792b3e leading-[1.15]" :class="faceOf(kicker, 'mono')">
+          <text v-if="kicker" class="text-28rpx text-accent leading-[1.15]" :class="faceOf(kicker, 'mono')">
             {{ kicker }}
           </text>
-          <text class="text-72rpx text-#3c2428 leading-[1.15]" :class="faceOf(title, 'serif')">
+          <text class="text-72rpx text-ink leading-[1.15]" :class="faceOf(title, 'serif')">
             {{ title }}
           </text>
           <ink-underline :width="markWidth" />
         </view>
-        <text v-if="note" class="mt-28rpx text-32rpx text-#7a534c leading-[1.5]" :class="faceOf(note, 'sans')">
+        <text v-if="note" class="mt-28rpx text-32rpx text-muted leading-[1.5]" :class="faceOf(note, 'sans')">
           {{ note }}
         </text>
       </view>

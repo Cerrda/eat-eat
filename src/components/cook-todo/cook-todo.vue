@@ -3,6 +3,7 @@ import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, releaseTodo } from '@/utils/account'
+import { art } from '@/utils/theme'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
@@ -169,24 +170,24 @@ export default {
       <screen-head title="待做" :note="ready && !total ? '还没有待做的一餐' : ''" />
       <view
         v-if="ready && !remindAlways"
-        class="eat-press mt-28rpx box-border h-78rpx flex items-center justify-between border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx"
+        class="eat-press mt-28rpx box-border h-78rpx flex items-center justify-between border-3rpx border-line rounded-36rpx border-solid px-32rpx"
         hover-class="eat-press-on"
         :hover-stay-time="140"
         @tap="remind"
       >
-        <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('有新餐时提醒我', 'sans')">
+        <text class="text-28rpx text-ink font-medium leading-none" :class="faceOf('有新餐时提醒我', 'sans')">
           有新餐时提醒我
         </text>
-        <text class="text-28rpx text-#792b3e leading-none" :class="faceOf(reminding ? '正在打开' : '允许', 'mono')">
+        <text class="text-28rpx text-accent leading-none" :class="faceOf(reminding ? '正在打开' : '允许', 'mono')">
           {{ reminding ? '正在打开' : '允许' }}
         </text>
       </view>
       <template v-if="ready">
         <view v-if="!groups.length" class="w-full flex flex-col items-center pb-16rpx pt-32rpx">
           <view class="relative h-428rpx w-616rpx">
-            <image class="absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
-            <view class="absolute left-0 top-156rpx z-0 box-border h-264rpx w-616rpx flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-36rpx pb-48rpx">
-              <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf('等对方点一餐', 'serif')">
+            <image class="absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" :src="art('cook-pot')" mode="aspectFit" />
+            <view class="absolute left-0 top-156rpx z-0 box-border h-264rpx w-616rpx flex items-end justify-center border-2rpx border-line rounded-40rpx border-solid bg-cream px-36rpx pb-48rpx">
+              <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf('等对方点一餐', 'serif')">
                 等对方点一餐
               </text>
             </view>
@@ -196,21 +197,21 @@ export default {
           <view
             v-for="group in groups"
             :key="group.date"
-            class="box-border flex flex-col gap-24rpx border-2rpx border-#c9a297 rounded-36rpx border-solid p-28rpx"
+            class="box-border flex flex-col gap-24rpx border-2rpx border-line rounded-36rpx border-solid p-28rpx"
           >
-            <text class="text-60rpx text-#3c2428 leading-[1.15]" :class="faceOf(dayTitle(group.date), 'serif')">
+            <text class="text-60rpx text-ink leading-[1.15]" :class="faceOf(dayTitle(group.date), 'serif')">
               {{ dayTitle(group.date) }}
             </text>
             <template v-for="(order, orderIndex) in group.list" :key="order.orderId">
-              <view v-if="orderIndex" class="h-2rpx w-full bg-#c9a297" />
+              <view v-if="orderIndex" class="h-2rpx w-full bg-line" />
               <view class="flex flex-col gap-20rpx" @tap="openOrder(order)">
                 <view class="flex items-center justify-between">
-                  <text class="text-32rpx text-#3c2428" :class="faceOf(SLOT_LABEL[order.slot], 'sans')">
+                  <text class="text-32rpx text-ink" :class="faceOf(SLOT_LABEL[order.slot], 'sans')">
                     {{ SLOT_LABEL[order.slot] }}
                   </text>
                   <text
                     class="text-30rpx"
-                    :class="[order.status === 'pending' ? 'text-#792b3e' : 'text-#7a534c', faceOf(statusText(order), 'mono')]"
+                    :class="[order.status === 'pending' ? 'text-accent' : 'text-muted', faceOf(statusText(order), 'mono')]"
                   >
                     {{ statusText(order) }}
                   </text>
@@ -219,47 +220,47 @@ export default {
                   <view
                     v-for="item in order.items"
                     :key="item.dishId"
-                    class="relative box-border overflow-hidden border-4rpx border-#fff9f4 rounded-36rpx border-solid"
+                    class="relative box-border overflow-hidden border-4rpx border-photo rounded-36rpx border-solid"
                     :class="order.status === 'pending' ? 'h-296rpx' : 'h-352rpx'"
                   >
                     <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" size="cover" />
                     <view class="absolute bottom-0 left-0 right-0 flex">
                       <view
-                        class="box-border max-w-full flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-#fff9f4"
+                        class="box-border max-w-full flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-cream"
                         :class="order.status === 'pending' ? 'px-32rpx py-24rpx' : 'pb-24rpx pl-36rpx pr-32rpx pt-24rpx'"
                       >
                         <text
-                          class="text-#3c2428 leading-[1.1]"
+                          class="text-ink leading-[1.1]"
                           :class="[order.status === 'pending' ? 'text-52rpx' : 'text-56rpx', faceOf(item.name, 'serif')]"
                         >
                           {{ item.name }}
                         </text>
                         <view
-                          class="h-8rpx overflow-hidden rounded-[50%] bg-#792b3e"
+                          class="h-8rpx overflow-hidden rounded-[50%] bg-accent"
                           :class="order.status === 'pending' ? 'w-96rpx' : 'w-104rpx'"
                         />
                       </view>
                     </view>
                   </view>
                 </view>
-                <text v-if="order.note" class="text-28rpx text-#7a534c" :class="faceOf(`${account?.partnerNickname || '食神'}：${order.note}`, 'sans')">
+                <text v-if="order.note" class="text-28rpx text-muted" :class="faceOf(`${account?.partnerNickname || '食神'}：${order.note}`, 'sans')">
                   {{ account?.partnerNickname || '食神' }}：{{ order.note }}
                 </text>
                 <view v-if="order.status === 'pending'" class="flex items-center justify-end gap-16rpx">
-                  <view class="eat-press box-border h-78rpx flex items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="reject(order)">
-                    <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('拒绝', 'sans')">
+                  <view class="eat-press box-border h-78rpx flex items-center border-3rpx border-line rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="reject(order)">
+                    <text class="text-28rpx text-ink font-medium leading-none" :class="faceOf('拒绝', 'sans')">
                       拒绝
                     </text>
                   </view>
                   <view
                     class="eat-press box-border h-78rpx flex items-center gap-16rpx rounded-36rpx px-36rpx"
-                    :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
+                    :class="acting === order.orderId ? 'bg-accent-busy' : 'bg-accent'"
                     :hover-class="acting === order.orderId ? 'none' : 'eat-press-on'"
                     :hover-stay-time="140"
                     @tap.stop="accept(order)"
                   >
                     <ink-spin v-if="acting === order.orderId" tone="paper" />
-                    <text class="text-28rpx text-#fbf3ea font-medium leading-none" :class="faceOf(acting === order.orderId ? '正在接单' : '接单', 'sans')">
+                    <text class="text-28rpx text-paper font-medium leading-none" :class="faceOf(acting === order.orderId ? '正在接单' : '接单', 'sans')">
                       {{ acting === order.orderId ? '正在接单' : '接单' }}
                     </text>
                   </view>

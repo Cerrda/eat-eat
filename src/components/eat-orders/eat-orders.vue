@@ -5,6 +5,7 @@ import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
 import { usePaged } from '@/composables/usePaged'
 import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
+import { art } from '@/utils/theme'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
@@ -107,8 +108,8 @@ function when(order: OrderDetail) {
 
 function statusTone(order: OrderDetail) {
   if (order.status === 'rejected' || order.status === 'cancelled')
-    return 'text-#7a534c'
-  return 'text-#792b3e'
+    return 'text-muted'
+  return 'text-accent'
 }
 
 function extra(order: OrderDetail) {
@@ -144,28 +145,28 @@ export default {
       <template v-if="account">
         <view v-if="!shown.length" class="w-full flex justify-center pb-16rpx pt-32rpx">
           <view class="relative h-428rpx w-616rpx" @tap="openMenu">
-            <view class="absolute left-0 top-156rpx box-border h-264rpx w-full flex items-end justify-center border-2rpx border-#c9a297 rounded-40rpx border-solid bg-#fff9f4 px-32rpx pb-48rpx">
+            <view class="absolute left-0 top-156rpx box-border h-264rpx w-full flex items-end justify-center border-2rpx border-line rounded-40rpx border-solid bg-cream px-32rpx pb-48rpx">
               <view class="flex items-center gap-12rpx">
-                <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('去菜单里点一餐', 'serif')">
+                <text class="text-44rpx text-accent leading-none" :class="faceOf('去菜单里点一餐', 'serif')">
                   去菜单里点一餐
                 </text>
-                <text class="text-44rpx text-#792b3e leading-none" :class="faceOf('›', 'sans')">
+                <text class="text-44rpx text-accent leading-none" :class="faceOf('›', 'sans')">
                   ›
                 </text>
               </view>
             </view>
-            <image class="pointer-events-none absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" src="/static/cook-pot.png" mode="aspectFit" />
+            <image class="pointer-events-none absolute left-98rpx top-0 z-1 h-320rpx w-420rpx" :src="art('cook-pot')" mode="aspectFit" />
           </view>
         </view>
         <view v-else class="flex flex-col pt-12rpx">
           <view
             v-for="order in shown"
             :key="order.orderId"
-            class="flex flex-col border-0 border-t-4rpx border-#c9a297 border-solid pb-16rpx pt-32rpx"
+            class="flex flex-col border-0 border-t-4rpx border-line border-solid pb-16rpx pt-32rpx"
             @tap="openOrder(order)"
           >
             <view class="flex items-center justify-between pb-16rpx">
-              <text class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(when(order), 'serif')">
+              <text class="text-36rpx text-ink leading-[1.15]" :class="faceOf(when(order), 'serif')">
                 {{ when(order) }}
               </text>
               <text
@@ -187,7 +188,7 @@ export default {
                 @tap.stop="previewItem(order, item)"
               >
                 <dish-cover
-                  class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-32rpx border-solid"
+                  class="box-border h-full w-full border-6rpx border-photo rounded-32rpx border-solid"
                   :file-id="item.coverFileId"
                   :name="item.name"
                   :held="heldId === itemKey(order, item)"
@@ -195,18 +196,18 @@ export default {
                 />
               </view>
               <view class="min-w-0 flex-1">
-                <text class="text-44rpx text-#3c2428 leading-[1.2]" :class="faceOf(item.name, 'serif')">
+                <text class="text-44rpx text-ink leading-[1.2]" :class="faceOf(item.name, 'serif')">
                   {{ item.name }}
                 </text>
               </view>
             </view>
             <view v-if="extra(order)" class="pb-12rpx pt-16rpx">
-              <view class="box-border flex items-center gap-16rpx border-3rpx border-#c9a297 rounded-24rpx border-solid px-24rpx py-16rpx">
-                <text class="shrink-0 text-26rpx text-#792b3e leading-none" :class="faceOf('备注', 'mono')">
+              <view class="box-border flex items-center gap-16rpx border-3rpx border-line rounded-24rpx border-solid px-24rpx py-16rpx">
+                <text class="shrink-0 text-26rpx text-accent leading-none" :class="faceOf('备注', 'mono')">
                   备注
                 </text>
                 <view class="min-w-0 flex flex-1 items-center -translate-y-6rpx">
-                  <text class="text-30rpx text-#3c2428 leading-none" :class="faceOf(extra(order), 'serif')">
+                  <text class="text-30rpx text-ink leading-none" :class="faceOf(extra(order), 'serif')">
                     {{ extra(order) }}
                   </text>
                 </view>
