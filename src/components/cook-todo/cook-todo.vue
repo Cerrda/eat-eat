@@ -7,7 +7,7 @@ import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
 import { askCookRemind, loadCookRemindAlways, renewCookRemindIfAlways } from '@/utils/subscribe'
-import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
+import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { showError, tell } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
@@ -73,13 +73,7 @@ async function onPull() {
   }
 }
 
-function settled(order: OrderDetail) {
-  return order.status === 'accepted' && !!account.value && order.date < account.value.today
-}
-
 function statusText(order: OrderDetail) {
-  if (settled(order))
-    return '已完成'
   return STATUS_LABEL[order.status]
 }
 
@@ -115,20 +109,8 @@ function openOrder(order: OrderDetail) {
   uni.navigateTo({ url: `/pages/cook/order?id=${order.orderId}` })
 }
 
-function openRecipe(order: OrderDetail, dishId: string) {
-  uni.navigateTo({ url: `/pages/cook/recipe?orderId=${order.orderId}&dishId=${dishId}` })
-}
-
 function reject(order: OrderDetail) {
   uni.navigateTo({ url: `/pages/cook/reject?id=${order.orderId}` })
-}
-
-function writeRecord(order: OrderDetail) {
-  uni.navigateTo({ url: `/pages/cook/record-edit?orderId=${order.orderId}` })
-}
-
-function openRecords() {
-  openTab('records')
 }
 
 async function onMore() {
@@ -221,7 +203,7 @@ export default {
             </text>
             <template v-for="(order, orderIndex) in group.list" :key="order.orderId">
               <view v-if="orderIndex" class="h-2rpx w-full bg-#c9a297" />
-              <view class="flex flex-col" :class="settled(order) ? 'gap-16rpx' : 'gap-20rpx'" @tap="openOrder(order)">
+              <view class="flex flex-col gap-20rpx" @tap="openOrder(order)">
                 <view class="flex items-center justify-between">
                   <text class="text-32rpx text-#3c2428" :class="faceOf(SLOT_LABEL[order.slot], 'sans')">
                     {{ SLOT_LABEL[order.slot] }}
@@ -233,92 +215,55 @@ export default {
                     {{ statusText(order) }}
                   </text>
                 </view>
-
-                <template v-if="!settled(order)">
-                  <view class="flex flex-col gap-20rpx">
-                    <view
-                      v-for="item in order.items"
-                      :key="item.dishId"
-                      class="relative box-border overflow-hidden border-4rpx border-#fff9f4 rounded-36rpx border-solid"
-                      :class="order.status === 'pending' ? 'h-296rpx' : 'h-352rpx'"
-                    >
-                      <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" size="cover" />
-                      <view class="absolute bottom-0 left-0 right-0 flex">
-                        <view
-                          class="box-border max-w-full flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-#fff9f4"
-                          :class="order.status === 'pending' ? 'px-32rpx py-24rpx' : 'pb-24rpx pl-36rpx pr-32rpx pt-24rpx'"
+                <view class="flex flex-col gap-20rpx">
+                  <view
+                    v-for="item in order.items"
+                    :key="item.dishId"
+                    class="relative box-border overflow-hidden border-4rpx border-#fff9f4 rounded-36rpx border-solid"
+                    :class="order.status === 'pending' ? 'h-296rpx' : 'h-352rpx'"
+                  >
+                    <dish-cover class="absolute left-0 top-0 h-full w-full" :file-id="item.coverFileId" :name="item.name" size="cover" />
+                    <view class="absolute bottom-0 left-0 right-0 flex">
+                      <view
+                        class="box-border max-w-full flex flex-col gap-6rpx rounded-br-36rpx rounded-tr-36rpx bg-#fff9f4"
+                        :class="order.status === 'pending' ? 'px-32rpx py-24rpx' : 'pb-24rpx pl-36rpx pr-32rpx pt-24rpx'"
+                      >
+                        <text
+                          class="text-#3c2428 leading-[1.1]"
+                          :class="[order.status === 'pending' ? 'text-52rpx' : 'text-56rpx', faceOf(item.name, 'serif')]"
                         >
-                          <text
-                            class="text-#3c2428 leading-[1.1]"
-                            :class="[order.status === 'pending' ? 'text-52rpx' : 'text-56rpx', faceOf(item.name, 'serif')]"
-                          >
-                            {{ item.name }}
-                          </text>
-                          <view
-                            class="h-8rpx overflow-hidden rounded-[50%] bg-#792b3e"
-                            :class="order.status === 'pending' ? 'w-96rpx' : 'w-104rpx'"
-                          />
-                        </view>
+                          {{ item.name }}
+                        </text>
+                        <view
+                          class="h-8rpx overflow-hidden rounded-[50%] bg-#792b3e"
+                          :class="order.status === 'pending' ? 'w-96rpx' : 'w-104rpx'"
+                        />
                       </view>
                     </view>
                   </view>
-                  <text v-if="order.note" class="text-28rpx text-#7a534c" :class="faceOf(`${account?.partnerNickname || '食神'}：${order.note}`, 'sans')">
-                    {{ account?.partnerNickname || '食神' }}：{{ order.note }}
-                  </text>
-                  <view v-if="order.status === 'pending'" class="flex items-center justify-end gap-16rpx">
-                    <view class="eat-press box-border h-78rpx flex items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="reject(order)">
-                      <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('拒绝', 'sans')">
-                        拒绝
-                      </text>
-                    </view>
-                    <view
-                      class="eat-press box-border h-78rpx flex items-center gap-16rpx rounded-36rpx px-36rpx"
-                      :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
-                      :hover-class="acting === order.orderId ? 'none' : 'eat-press-on'"
-                      :hover-stay-time="140"
-                      @tap.stop="accept(order)"
-                    >
-                      <ink-spin v-if="acting === order.orderId" tone="paper" />
-                      <text class="text-28rpx text-#fbf3ea font-medium leading-none" :class="faceOf(acting === order.orderId ? '正在接单' : '接单', 'sans')">
-                        {{ acting === order.orderId ? '正在接单' : '接单' }}
-                      </text>
-                    </view>
+                </view>
+                <text v-if="order.note" class="text-28rpx text-#7a534c" :class="faceOf(`${account?.partnerNickname || '食神'}：${order.note}`, 'sans')">
+                  {{ account?.partnerNickname || '食神' }}：{{ order.note }}
+                </text>
+                <view v-if="order.status === 'pending'" class="flex items-center justify-end gap-16rpx">
+                  <view class="eat-press box-border h-78rpx flex items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="reject(order)">
+                    <text class="text-28rpx text-#3c2428 font-medium leading-none" :class="faceOf('拒绝', 'sans')">
+                      拒绝
+                    </text>
                   </view>
-                </template>
-                <view v-else-if="order.recorded" class="flex items-center justify-between gap-16rpx">
-                  <view class="min-w-0 flex flex-1 flex-wrap items-center gap-16rpx">
-                    <view v-for="item in order.items" :key="item.dishId" class="flex items-center gap-16rpx">
-                      <text class="text-30rpx text-#3c2428 leading-[1.2]" :class="faceOf(item.name, 'sans')">
-                        {{ item.name }}
-                      </text>
-                      <text class="text-28rpx text-#792b3e" :class="faceOf('做法', 'mono')" @tap.stop="openRecipe(order, item.dishId)">
-                        做法
-                      </text>
-                    </view>
-                  </view>
-                  <view class="eat-press box-border h-78rpx flex shrink-0 items-center border-3rpx border-#c9a297 rounded-36rpx border-solid px-32rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="openRecords">
-                    <text class="text-28rpx text-#7a534c font-medium leading-none" :class="faceOf('已记下', 'sans')">
-                      已记下
+                  <view
+                    class="eat-press box-border h-78rpx flex items-center gap-16rpx rounded-36rpx px-36rpx"
+                    :class="acting === order.orderId ? 'bg-#a24c5c' : 'bg-#792b3e'"
+                    :hover-class="acting === order.orderId ? 'none' : 'eat-press-on'"
+                    :hover-stay-time="140"
+                    @tap.stop="accept(order)"
+                  >
+                    <ink-spin v-if="acting === order.orderId" tone="paper" />
+                    <text class="text-28rpx text-#fbf3ea font-medium leading-none" :class="faceOf(acting === order.orderId ? '正在接单' : '接单', 'sans')">
+                      {{ acting === order.orderId ? '正在接单' : '接单' }}
                     </text>
                   </view>
                 </view>
-                <template v-else>
-                  <view v-for="item in order.items" :key="item.dishId" class="flex items-center justify-between">
-                    <text class="text-30rpx text-#3c2428 leading-[1.2]" :class="faceOf(item.name, 'sans')">
-                      {{ item.name }}
-                    </text>
-                    <text class="text-28rpx text-#792b3e" :class="faceOf('做法', 'mono')" @tap.stop="openRecipe(order, item.dishId)">
-                      做法
-                    </text>
-                  </view>
-                  <view class="flex justify-end">
-                    <view class="eat-press box-border h-78rpx flex items-center rounded-36rpx bg-#792b3e px-36rpx" hover-class="eat-press-on" :hover-stay-time="140" @tap.stop="writeRecord(order)">
-                      <text class="text-28rpx text-#fbf3ea font-medium leading-none" :class="faceOf('补上', 'sans')">
-                        补上
-                      </text>
-                    </view>
-                  </view>
-                </template>
               </view>
             </template>
           </view>

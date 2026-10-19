@@ -22,6 +22,24 @@ function textLen(value) {
 }
 
 const SLOT_CLOCK = { morning: '08:00', noon: '12:00', evening: '18:00' }
+const SLOT_HOUR = { morning: 8, noon: 12, evening: 18 }
+
+function mealInstant(ymd, slot) {
+  const [year, month, day] = String(ymd || '').split('-').map(Number)
+  if (!year || !month || !day)
+    return 0
+  return Date.UTC(year, month - 1, day, (SLOT_HOUR[slot] ?? 12) - 8, 0, 0, 0)
+}
+
+function compareMealDistance(left, right, nowMs) {
+  const a = mealInstant(left.date, left.slot)
+  const b = mealInstant(right.date, right.slot)
+  const da = Math.abs(a - nowMs)
+  const db = Math.abs(b - nowMs)
+  if (da !== db)
+    return da - db
+  return a - b
+}
 
 function mealTime(ymd, slot) {
   const [year, month, day] = String(ymd || '').split('-').map(Number)
@@ -1389,14 +1407,22 @@ function createEatService(deps) {
       kitchenId: kitchen._id,
       status: { $in: ['pending', 'accepted'] },
     }
-    const { rows, total } = await loadPage(store, 'eat-orders', where, [
+    const matched = await store.count('eat-orders', where)
+    const { rows } = await loadSlice(store, 'eat-orders', where, [
       { field: 'date', dir: 'asc' },
       { field: 'slot', dir: 'asc', rank: SLOT_ORDER },
-    ], page, pageSize)
-    const recorded = await recordedAmong(kitchen, rows.map(order => order._id))
+    ], 0, matched)
+    const today = todayString()
+    const nowMs = now()
+    const open = rows
+      .filter(order => order.status === 'pending' || order.date >= today)
+      .sort((left, right) => compareMealDistance(left, right, nowMs))
+    const start = (page - 1) * pageSize
+    const pageRows = open.slice(start, start + pageSize)
+    const recorded = await recordedAmong(kitchen, pageRows.map(order => order._id))
     return {
-      orders: rows.map(order => mapOrder(order, recorded.has(order._id))),
-      ...pageMeta(total, page, pageSize),
+      orders: pageRows.map(order => mapOrder(order, recorded.has(order._id))),
+      ...pageMeta(open.length, page, pageSize),
     }
   }
 

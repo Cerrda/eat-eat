@@ -563,6 +563,55 @@ describe('绑定后的厨房', () => {
     const listed = await ctx.eat.listCategories()
     expect(listed.categories.map(item => item.name)).toEqual(['家常'])
   })
+
+  it('待做不含已完成，并按离现在从近到远排列', async () => {
+    const ctx = await kitchen()
+    await ctx.use('openid-cooker')
+    const dish = await ctx.eat.publishDish({
+      name: '番茄炒蛋',
+      coverFileId: 'cloud://cover',
+    })
+    const board = await ctx.eat.mealBoard()
+    const today = board.today
+    const tomorrow = board.dates[1].date
+    await ctx.use('openid-eater')
+    const morning = await ctx.eat.createOrder({ date: today, slot: 'morning', dishIds: [dish.dishId] })
+    const noon = await ctx.eat.createOrder({ date: today, slot: 'noon', dishIds: [dish.dishId] })
+    const evening = await ctx.eat.createOrder({ date: today, slot: 'evening', dishIds: [dish.dishId] })
+    const later = await ctx.eat.createOrder({ date: tomorrow, slot: 'evening', dishIds: [dish.dishId] })
+    await ctx.use('openid-cooker')
+    await ctx.eat.acceptOrder({ orderId: morning.orderId })
+    const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
+    const yesterday = '2026-10-03'
+    const pendingPast = await ctx.store.insert('eat-orders', {
+      kitchenId,
+      date: yesterday,
+      slot: 'evening',
+      status: 'pending',
+      note: '',
+      items: [],
+      eaterUnread: false,
+    })
+    const done = await ctx.store.insert('eat-orders', {
+      kitchenId,
+      date: yesterday,
+      slot: 'noon',
+      status: 'accepted',
+      note: '',
+      items: [],
+      eaterUnread: false,
+    })
+    const todo = await ctx.eat.listTodo({})
+    expect(todo.orders.map(item => item.orderId)).toEqual([
+      morning.orderId,
+      noon.orderId,
+      evening.orderId,
+      pendingPast,
+      later.orderId,
+    ])
+    expect(todo.orders.map(item => item.orderId)).not.toContain(done)
+    expect(todo.total).toBe(5)
+  })
 })
 
 describe('批量新增菜品', () => {
