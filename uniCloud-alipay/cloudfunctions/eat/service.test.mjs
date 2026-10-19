@@ -422,6 +422,9 @@ describe('绑定后的厨房', () => {
       text: '我也记下',
     })
     expect(noted.text).toBe('我也记下')
+    expect(noted.authorName).toBe('食神')
+    expect(noted.dishes).toEqual([])
+    expect(JSON.stringify(noted)).not.toContain('openid')
 
     await ctx.use('openid-cooker')
     expect((await ctx.eat.badges()).records).toBe(1)
@@ -436,6 +439,15 @@ describe('绑定后的厨房', () => {
     })
     expect(record.date).toBe(board.today)
     expect(record.slot).toBe('evening')
+    expect(record.authorName).toBe('厨神')
+    expect(record.dishes).toEqual([{
+      dishId: dish.dishId,
+      name: '番茄炒蛋',
+      coverFileId: 'cloud://cover',
+    }])
+    const matched = await ctx.eat.matchMeal({ date: board.today, slot: 'evening' })
+    expect(matched.dishes.map(item => item.name)).toEqual(['番茄炒蛋'])
+    expect((await ctx.eat.matchMeal({ date: board.today, slot: 'morning' })).dishes).toEqual([])
     await expect(ctx.eat.createRecord({
       orderId: order.orderId,
       text: '再记一次',

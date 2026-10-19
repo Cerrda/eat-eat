@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { OrderDetail, RecordCard, Slot } from '@/api/eat'
-import { createRecord, dateLabel, deleteRecord, getOrder, getRecord, SLOT_LABEL, updateRecord } from '@/api/eat'
+import type { OrderDetail, RecordCard, RecordDish, Slot } from '@/api/eat'
+import { createRecord, dateLabel, deleteRecord, getOrder, getRecord, matchMeal, SLOT_LABEL, updateRecord } from '@/api/eat'
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
@@ -25,11 +25,18 @@ const photoLimit = 9
 const photos = ref<string[]>([])
 const uploading = ref(false)
 const dishIds = ref<string[]>([])
+const mealDishes = ref<RecordDish[]>([])
 const locked = ref(false)
 const pending = ref(false)
 const ready = ref(false)
 const hydrated = ref(false)
 const slotLabels = ['早上', '中午', '晚上']
+
+const mealLabel = computed(() => {
+  if (!date.value)
+    return ''
+  return `${dateLabel(date.value, today.value)}${SLOT_LABEL[slot.value]}点的`
+})
 
 const backLabel = computed(() => {
   if (!date.value)
@@ -72,9 +79,31 @@ async function load() {
     }
     hydrated.value = true
     ready.value = true
+    await loadMeal()
   }
   catch (err) {
     showError(err)
+  }
+}
+
+let mealSpin = 0
+
+async function loadMeal() {
+  const id = ++mealSpin
+  if (!date.value) {
+    mealDishes.value = []
+    return
+  }
+  try {
+    const matched = await matchMeal(date.value, slot.value)
+    if (id !== mealSpin)
+      return
+    mealDishes.value = matched.dishes
+    await primeFileUrls(matched.dishes.map(dish => dish.coverFileId))
+  }
+  catch (err) {
+    if (id === mealSpin)
+      showError(err)
   }
 }
 
@@ -93,11 +122,13 @@ function applyRecord(record: RecordCard) {
 
 function onDate(event: { detail: { value: string } }) {
   date.value = event.detail.value
+  void loadMeal()
 }
 
 function onSlot(event: { detail: { value: string } }) {
   const index = Number(event.detail.value)
   slot.value = (['morning', 'noon', 'evening'] as Slot[])[index] || 'morning'
+  void loadMeal()
 }
 
 function addPhoto() {
@@ -244,6 +275,30 @@ async function submit() {
             </picker>
             <text v-else class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
               {{ SLOT_LABEL[slot] }}
+            </text>
+          </view>
+        </view>
+        <view v-if="mealDishes.length" class="flex flex-col gap-4rpx">
+          <text class="text-26rpx text-#792b3e leading-[1.15]" :class="faceOf(mealLabel, 'mono')">
+            {{ mealLabel }}
+          </text>
+          <view
+            v-for="dish in mealDishes"
+            :key="dish.dishId"
+            class="flex items-center gap-20rpx py-8rpx"
+          >
+            <view
+              class="h-96rpx w-96rpx shrink-0 rounded-28rpx"
+              :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+            >
+              <dish-cover
+                class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-28rpx border-solid"
+                :file-id="dish.coverFileId"
+                :name="dish.name"
+              />
+            </view>
+            <text class="min-w-0 flex-1 text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+              {{ dish.name }}
             </text>
           </view>
         </view>

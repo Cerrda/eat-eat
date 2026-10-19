@@ -154,6 +154,7 @@ export interface CookDish {
 export interface RecordDish {
   dishId: string
   name: string
+  coverFileId: string
 }
 
 export interface RecordCard {
@@ -164,6 +165,7 @@ export interface RecordCard {
   photoFileIds: string[]
   dishes: RecordDish[]
   orderId: string
+  authorName: string
 }
 
 export interface CreateRecordInput {
@@ -212,6 +214,7 @@ export interface EatCloud {
   cancelOrder: (params: { orderId: string, note: string }) => Promise<CloudResult<OrderDetail>>
   getCookDish: (params: { orderId: string, dishId: string }) => Promise<CloudResult<CookDish>>
   getRecord: (params: { recordId: string }) => Promise<CloudResult<RecordCard>>
+  matchMeal: (params: { date: string, slot: Slot }) => Promise<CloudResult<{ dishes: RecordDish[] }>>
   listRecords: (params?: PageQuery) => Promise<CloudResult<{ records: RecordCard[] } & PageMeta>>
   createRecord: (params: CreateRecordInput) => Promise<CloudResult<RecordCard>>
   updateRecord: (params: UpdateRecordInput) => Promise<CloudResult<RecordCard>>

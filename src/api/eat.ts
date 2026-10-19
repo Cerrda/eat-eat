@@ -26,6 +26,7 @@ export type {
   OrderDetail,
   OrderStatus,
   RecordCard,
+  RecordDish,
   Role,
   SessionView,
   Slot,
@@ -295,6 +296,10 @@ export function getCookDish(orderId: string, dishId: string) {
 
 export function getRecord(recordId: string) {
   return callEat(eat => eat.getRecord({ recordId }))
+}
+
+export function matchMeal(date: string, slot: Slot) {
+  return callEat(eat => eat.matchMeal({ date, slot }))
 }
 
 export function listRecords(query?: PageQuery) {

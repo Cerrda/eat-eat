@@ -33,6 +33,7 @@ const methods = [
   'cancelOrder',
   'getCookDish',
   'getRecord',
+  'matchMeal',
   'listRecords',
   'createRecord',
   'updateRecord',

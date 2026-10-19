@@ -29,6 +29,9 @@
     "orderId": {
       "bsonType": "string"
     },
+    "authorOpenid": {
+      "bsonType": "string"
+    },
     "deleted": {
       "bsonType": "bool"
     }

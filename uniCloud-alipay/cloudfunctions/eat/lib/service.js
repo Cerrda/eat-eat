@@ -1532,16 +1532,96 @@ function createEatService(deps) {
     }
   }
 
-  function mapRecord(record) {
+  function mealKey(date, slot) {
+    return `${date}\0${slot}`
+  }
+
+  function liveOrder(orders) {
+    return orders.find(order => order.status === 'accepted')
+      || orders.find(order => order.status === 'pending')
+      || null
+  }
+
+  function dishView(item) {
+    return {
+      dishId: item.dishId,
+      name: item.name,
+      coverFileId: item.coverFileId || '',
+    }
+  }
+
+  async function ordersForMeals(kitchen, records) {
+    const dates = [...new Set(records.map(record => record.date).filter(Boolean))]
+    if (!dates.length)
+      return new Map()
+    const orders = await store.select('eat-orders', {
+      where: {
+        kitchenId: kitchen._id,
+        date: { $in: dates },
+        status: { $in: ['pending', 'accepted'] },
+      },
+      limit: Math.max(dates.length * 3, 20),
+    })
+    const grouped = new Map()
+    for (const order of orders) {
+      const key = mealKey(order.date, order.slot)
+      const list = grouped.get(key) || []
+      list.push(order)
+      grouped.set(key, list)
+    }
+    return grouped
+  }
+
+  function roleInKitchen(kitchen, user) {
+    if (kitchen.cookerOpenid === user.openid)
+      return 'cooker'
+    if (kitchen.eaterOpenid === user.openid)
+      return 'eater'
+    return user.role || ''
+  }
+
+  async function namesFor(kitchen, openids) {
+    const ids = [...new Set(openids.filter(Boolean))]
+    const map = new Map()
+    if (!ids.length)
+      return map
+    const users = await store.select('eat-users', {
+      where: { openid: { $in: ids } },
+      limit: ids.length,
+    })
+    for (const user of users)
+      map.set(user.openid, resolvedNickname(user, roleInKitchen(kitchen, user)))
+    return map
+  }
+
+  function mapRecord(record, dishes, authorName) {
     return {
       recordId: record._id,
       date: record.date,
       slot: record.slot,
       text: record.text || '',
       photoFileIds: record.photoFileIds || [],
-      dishes: record.dishes || [],
+      dishes,
       orderId: record.orderId || '',
+      authorName: authorName || '',
     }
+  }
+
+  async function presentRecords(kitchen, records) {
+    const [orders, names] = await Promise.all([
+      ordersForMeals(kitchen, records),
+      namesFor(kitchen, records.map(record => record.authorOpenid)),
+    ])
+    return records.map((record) => {
+      const found = liveOrder(orders.get(mealKey(record.date, record.slot)) || [])
+      const dishes = found ? (found.items || []).map(dishView) : []
+      return mapRecord(record, dishes, names.get(record.authorOpenid) || '')
+    })
+  }
+
+  async function presentRecord(kitchen, record) {
+    const [shown] = await presentRecords(kitchen, [record])
+    return shown
   }
 
   async function ownRecord(kitchen, recordId) {
@@ -1567,7 +1647,20 @@ function createEatService(deps) {
   async function getRecord(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
-    return mapRecord(await ownRecord(kitchen, input(params).recordId))
+    return presentRecord(kitchen, await ownRecord(kitchen, input(params).recordId))
+  }
+
+  async function matchMeal(params) {
+    const body = input(params)
+    const user = await requireUser()
+    const kitchen = await requireActive(user)
+    const date = String(body.date || '')
+    const slot = body.slot
+    if (!isRealDate(date) || !SLOTS.includes(slot))
+      return { dishes: [] }
+    const orders = await store.find('eat-orders', { kitchenId: kitchen._id, date, slot }, 20)
+    const found = liveOrder(orders)
+    return { dishes: found ? (found.items || []).map(dishView) : [] }
   }
 
   async function listRecords(params) {
@@ -1585,7 +1678,7 @@ function createEatService(deps) {
       { field: 'createdAt', dir: 'desc' },
     ], page, pageSize)
     return {
-      records: rows.map(mapRecord),
+      records: await presentRecords(kitchen, rows),
       ...pageMeta(total, page, pageSize),
     }
   }
@@ -1627,13 +1720,14 @@ function createEatService(deps) {
       photoFileIds,
       dishes,
       orderId,
+      authorOpenid: user.openid,
       unreadCooker: user.role !== 'cooker',
       unreadEater: user.role !== 'eater',
       deleted: false,
       createdAt,
       updatedAt: createdAt,
     })
-    return mapRecord(await ownRecord(kitchen, recordId))
+    return presentRecord(kitchen, await ownRecord(kitchen, recordId))
   }
 
   async function updateRecord(params) {
@@ -1650,7 +1744,7 @@ function createEatService(deps) {
       photoFileIds,
       updatedAt: now(),
     })
-    return mapRecord(await ownRecord(kitchen, record._id))
+    return presentRecord(kitchen, await ownRecord(kitchen, record._id))
   }
 
   async function deleteRecord(params) {
@@ -1823,6 +1917,7 @@ function createEatService(deps) {
     cancelOrder,
     getCookDish,
     getRecord,
+    matchMeal,
     listRecords,
     createRecord,
     updateRecord,

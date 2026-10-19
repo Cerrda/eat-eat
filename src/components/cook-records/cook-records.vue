@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AccountView, RecordCard } from '@/api/eat'
+import type { AccountView, RecordCard, RecordDish } from '@/api/eat'
 import type { CloudImageSize } from '@/utils/files'
 import { dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
@@ -27,7 +27,10 @@ const {
 const account = ref<AccountView | null>(null)
 const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
   const listed = await listRecords({ page })
-  await primeFileUrls(listed.records.flatMap(record => record.photoFileIds))
+  await primeFileUrls(listed.records.flatMap(record => [
+    ...record.photoFileIds,
+    ...record.dishes.map(dish => dish.coverFileId),
+  ]))
   return { rows: listed.records, total: listed.total }
 })
 const pulling = ref(false)
@@ -117,6 +120,20 @@ function photoAt(count: number, rowIndex: number, column: number) {
   return rowIndex * cols + column
 }
 
+function dishKey(recordId: string, dishId: string) {
+  return `${recordId}-dish-${dishId}`
+}
+
+function openDish(record: RecordCard, dish: RecordDish) {
+  if (!dish.coverFileId)
+    return
+  void openZoom({
+    id: dishKey(record.recordId, dish.dishId),
+    fileId: dish.coverFileId,
+    radius: 28,
+  })
+}
+
 function openPhoto(record: RecordCard, index: number, from: Exclude<CloudImageSize, 'raw'>) {
   const fileId = record.photoFileIds[index]
   if (!fileId)
@@ -177,16 +194,44 @@ export default {
           <view
             v-for="record in shown"
             :key="record.recordId"
-            class="flex flex-col gap-16rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-16rpx pt-32rpx"
+            class="flex flex-col gap-24rpx border-0 border-t-4rpx border-#c9a297 border-solid pb-16rpx pt-32rpx"
             @tap="editOne(record)"
           >
             <view class="flex items-center justify-between">
-              <text class="text-30rpx text-#792b3e leading-[1.15]" :class="faceOf(when(record), 'mono')">
+              <text class="text-60rpx text-#792b3e leading-[1.15]" :class="faceOf(when(record), 'mono')">
                 {{ when(record) }}
               </text>
-              <text class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[record.slot], 'serif')">
+              <text class="text-30rpx text-#3c2428 leading-[1.15]" :class="faceOf(SLOT_LABEL[record.slot], 'serif')">
                 {{ SLOT_LABEL[record.slot] }}
               </text>
+            </view>
+            <text v-if="record.authorName" class="text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(`${record.authorName}记下`, 'serif')">
+              {{ record.authorName }}记下
+            </text>
+            <view v-if="record.dishes.length" class="flex flex-col">
+              <view
+                v-for="dish in record.dishes"
+                :key="dish.dishId"
+                class="flex items-center gap-20rpx py-8rpx"
+              >
+                <view
+                  :id="domId(dishKey(record.recordId, dish.dishId))"
+                  class="h-96rpx w-96rpx shrink-0 rounded-28rpx"
+                  :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+                  @tap.stop="openDish(record, dish)"
+                >
+                  <dish-cover
+                    class="box-border h-full w-full border-6rpx border-#fff9f4 rounded-28rpx border-solid"
+                    :file-id="dish.coverFileId"
+                    :name="dish.name"
+                    :held="heldId === dishKey(record.recordId, dish.dishId)"
+                    @size="remember(dishKey(record.recordId, dish.dishId), $event)"
+                  />
+                </view>
+                <text class="min-w-0 flex-1 text-36rpx text-#3c2428 leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+                  {{ dish.name }}
+                </text>
+              </view>
             </view>
             <view
               v-if="record.photoFileIds.length === 1"
@@ -237,9 +282,6 @@ export default {
                 </view>
               </view>
             </view>
-            <text v-if="record.dishes.length" class="text-28rpx text-#7a534c" :class="faceOf(record.dishes.map(dish => dish.name).join('、'), 'sans')">
-              {{ record.dishes.map(dish => dish.name).join('、') }}
-            </text>
             <text v-if="record.text" class="text-44rpx text-#3c2428 leading-[1.15]" :class="faceOf(record.text, 'serif')">
               {{ record.text }}
             </text>

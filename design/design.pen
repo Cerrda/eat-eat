@@ -5001,6 +5001,154 @@
                         },
                         {
                           "type": "frame",
+                          "id": "mKsQm",
+                          "name": "今天这一天",
+                          "width": "fill_container",
+                          "cornerRadius": 18,
+                          "stroke": "$line",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 14,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dnEww",
+                              "name": "今天",
+                              "fill": "$ink",
+                              "content": "今天",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-serif",
+                              "fontSize": 30,
+                              "fontWeight": "normal",
+                              "letterSpacing": 1.4
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bPiBt",
+                              "name": "今天中午",
+                              "width": "fill_container",
+                              "stroke": "#00000000",
+                              "layout": "vertical",
+                              "gap": 10,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "LE7qq",
+                                  "name": "餐次行",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "F45DQ",
+                                      "name": "餐次",
+                                      "fill": "$ink",
+                                      "content": "中午",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-sans",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "o3pKA",
+                                      "name": "状态",
+                                      "fill": "$muted",
+                                      "content": "已接单",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 15,
+                                      "fontWeight": "normal",
+                                      "letterSpacing": 0.8
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "s97ktm",
+                                  "name": "红烧排骨封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "haroldjp89",
+                                    "link": "https://unsplash.com/@haroldjp89",
+                                    "author": "Harold Castro"
+                                  },
+                                  "clip": true,
+                                  "width": "fill_container",
+                                  "height": 176,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 18,
+                                  "stroke": "#FFF9F4",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#4E222D47",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "WWcaP",
+                                      "name": "菜名区",
+                                      "fill": "$cream",
+                                      "cornerRadius": [
+                                        0,
+                                        18,
+                                        18,
+                                        0
+                                      ],
+                                      "layout": "vertical",
+                                      "gap": 3,
+                                      "padding": [
+                                        12,
+                                        16,
+                                        12,
+                                        18
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "nnLN2",
+                                          "name": "菜名",
+                                          "fill": "$ink",
+                                          "content": "红烧排骨",
+                                          "lineHeight": 1.1,
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 28,
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "ellipse",
+                                          "id": "pcqSF",
+                                          "name": "菜名下划线",
+                                          "fill": "$burgundy",
+                                          "width": 52,
+                                          "height": 4
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
                           "id": "TsmlO",
                           "name": "明天这一天",
                           "width": "fill_container",
@@ -5292,398 +5440,6 @@
                                           "name": "按钮字",
                                           "fill": "$paper",
                                           "content": "接单",
-                                          "fontFamily": "$font-sans",
-                                          "fontSize": 14,
-                                          "fontWeight": "500"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "mKsQm",
-                          "name": "今天这一天",
-                          "width": "fill_container",
-                          "cornerRadius": 18,
-                          "stroke": "$line",
-                          "strokeWidth": 1,
-                          "layout": "vertical",
-                          "gap": 12,
-                          "padding": 14,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "dnEww",
-                              "name": "今天",
-                              "fill": "$ink",
-                              "content": "今天",
-                              "lineHeight": 1.15,
-                              "fontFamily": "$font-serif",
-                              "fontSize": 30,
-                              "fontWeight": "normal",
-                              "letterSpacing": 1.4
-                            },
-                            {
-                              "type": "frame",
-                              "id": "bPiBt",
-                              "name": "今天中午",
-                              "width": "fill_container",
-                              "stroke": "#00000000",
-                              "layout": "vertical",
-                              "gap": 10,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "LE7qq",
-                                  "name": "餐次行",
-                                  "width": "fill_container",
-                                  "justifyContent": "space_between",
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "F45DQ",
-                                      "name": "餐次",
-                                      "fill": "$ink",
-                                      "content": "中午",
-                                      "lineHeight": 1.15,
-                                      "fontFamily": "$font-sans",
-                                      "fontSize": 16,
-                                      "fontWeight": "normal"
-                                    },
-                                    {
-                                      "type": "text",
-                                      "id": "o3pKA",
-                                      "name": "状态",
-                                      "fill": "$muted",
-                                      "content": "已接单",
-                                      "lineHeight": 1.15,
-                                      "fontFamily": "$font-mono",
-                                      "fontSize": 15,
-                                      "fontWeight": "normal",
-                                      "letterSpacing": 0.8
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "s97ktm",
-                                  "name": "红烧排骨封面",
-                                  "metadata": {
-                                    "type": "unsplash",
-                                    "username": "haroldjp89",
-                                    "link": "https://unsplash.com/@haroldjp89",
-                                    "author": "Harold Castro"
-                                  },
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": 176,
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
-                                    "mode": "cover"
-                                  },
-                                  "cornerRadius": 18,
-                                  "stroke": "#FFF9F4",
-                                  "strokeWidth": 2,
-                                  "strokeAlignment": "inner",
-                                  "effect": {
-                                    "type": "shadow",
-                                    "shadowType": "outer",
-                                    "color": "#4E222D47",
-                                    "offset": {
-                                      "x": 3,
-                                      "y": 4
-                                    }
-                                  },
-                                  "layout": "vertical",
-                                  "justifyContent": "end",
-                                  "children": [
-                                    {
-                                      "type": "frame",
-                                      "id": "WWcaP",
-                                      "name": "菜名区",
-                                      "fill": "$cream",
-                                      "cornerRadius": [
-                                        0,
-                                        18,
-                                        18,
-                                        0
-                                      ],
-                                      "layout": "vertical",
-                                      "gap": 3,
-                                      "padding": [
-                                        12,
-                                        16,
-                                        12,
-                                        18
-                                      ],
-                                      "children": [
-                                        {
-                                          "type": "text",
-                                          "id": "nnLN2",
-                                          "name": "菜名",
-                                          "fill": "$ink",
-                                          "content": "红烧排骨",
-                                          "lineHeight": 1.1,
-                                          "fontFamily": "$font-serif",
-                                          "fontSize": 28,
-                                          "fontWeight": "normal"
-                                        },
-                                        {
-                                          "type": "ellipse",
-                                          "id": "pcqSF",
-                                          "name": "菜名下划线",
-                                          "fill": "$burgundy",
-                                          "width": 52,
-                                          "height": 4
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Dc8r8",
-                          "name": "2026-09-28",
-                          "width": "fill_container",
-                          "cornerRadius": 18,
-                          "stroke": "$line",
-                          "strokeWidth": 1,
-                          "layout": "vertical",
-                          "gap": 12,
-                          "padding": 14,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "T9lAD",
-                              "name": "日期",
-                              "fill": "$ink",
-                              "content": "2026-09-28",
-                              "fontFamily": "$font-serif",
-                              "fontSize": 30,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "aCzu5",
-                              "name": "早上未记",
-                              "width": "fill_container",
-                              "layout": "vertical",
-                              "gap": 8,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "jrR2T",
-                                  "name": "餐次行",
-                                  "width": "fill_container",
-                                  "justifyContent": "space_between",
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "jykOg",
-                                      "name": "餐次",
-                                      "fill": "$ink",
-                                      "content": "早上",
-                                      "fontFamily": "$font-sans",
-                                      "fontSize": 16,
-                                      "fontWeight": "normal"
-                                    },
-                                    {
-                                      "type": "text",
-                                      "id": "C0VU5B",
-                                      "name": "状态",
-                                      "fill": "$muted",
-                                      "content": "已完成",
-                                      "fontFamily": "$font-mono",
-                                      "fontSize": 15,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "ETfNA",
-                                  "name": "菜名行",
-                                  "width": "fill_container",
-                                  "justifyContent": "space_between",
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "VNuMQ",
-                                      "name": "菜名",
-                                      "fill": "$ink",
-                                      "content": "蒜蓉西兰花",
-                                      "fontFamily": "$font-sans",
-                                      "fontSize": 15,
-                                      "fontWeight": "normal"
-                                    },
-                                    {
-                                      "type": "text",
-                                      "id": "MpRjD",
-                                      "name": "做法",
-                                      "fill": "$brass",
-                                      "content": "做法",
-                                      "lineHeight": 1.15,
-                                      "fontFamily": "$font-mono",
-                                      "fontSize": 14,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "nQO9G",
-                                  "name": "操作",
-                                  "width": "fill_container",
-                                  "justifyContent": "end",
-                                  "children": [
-                                    {
-                                      "type": "frame",
-                                      "id": "kkP6a",
-                                      "name": "补上",
-                                      "fill": "$burgundy",
-                                      "cornerRadius": 18,
-                                      "padding": [
-                                        10,
-                                        18
-                                      ],
-                                      "justifyContent": "center",
-                                      "alignItems": "center",
-                                      "children": [
-                                        {
-                                          "type": "text",
-                                          "id": "bxEEF",
-                                          "name": "按钮字",
-                                          "fill": "$paper",
-                                          "content": "补上",
-                                          "fontFamily": "$font-sans",
-                                          "fontSize": 14,
-                                          "fontWeight": "500"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "XAUYK",
-                              "name": "分隔",
-                              "width": "fill_container",
-                              "height": 1,
-                              "fill": "$line"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "XNR1R",
-                              "name": "中午已记",
-                              "width": "fill_container",
-                              "layout": "vertical",
-                              "gap": 8,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "YtD9K",
-                                  "name": "餐次行",
-                                  "width": "fill_container",
-                                  "justifyContent": "space_between",
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "BMw3r",
-                                      "name": "餐次",
-                                      "fill": "$ink",
-                                      "content": "中午",
-                                      "fontFamily": "$font-sans",
-                                      "fontSize": 16,
-                                      "fontWeight": "normal"
-                                    },
-                                    {
-                                      "type": "text",
-                                      "id": "nrfyi",
-                                      "name": "状态",
-                                      "fill": "$muted",
-                                      "content": "已完成",
-                                      "fontFamily": "$font-mono",
-                                      "fontSize": 15,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "LIpbJ",
-                                  "name": "已记下行",
-                                  "width": "fill_container",
-                                  "justifyContent": "space_between",
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "frame",
-                                      "id": "PcMhg",
-                                      "name": "菜名组",
-                                      "gap": 8,
-                                      "alignItems": "center",
-                                      "children": [
-                                        {
-                                          "type": "text",
-                                          "id": "I4CI1U",
-                                          "name": "菜名",
-                                          "fill": "$ink",
-                                          "content": "蒸蛋羹",
-                                          "lineHeight": 1.2,
-                                          "fontFamily": "$font-sans",
-                                          "fontSize": 15,
-                                          "fontWeight": "normal"
-                                        },
-                                        {
-                                          "type": "text",
-                                          "id": "o3d1wG",
-                                          "name": "做法",
-                                          "fill": "$brass",
-                                          "content": "做法",
-                                          "lineHeight": 1.15,
-                                          "fontFamily": "$font-mono",
-                                          "fontSize": 14,
-                                          "fontWeight": "normal"
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "type": "frame",
-                                      "id": "jwZy5",
-                                      "name": "已记下",
-                                      "cornerRadius": 18,
-                                      "stroke": "$line",
-                                      "strokeWidth": 1.5,
-                                      "padding": [
-                                        10,
-                                        16
-                                      ],
-                                      "justifyContent": "center",
-                                      "alignItems": "center",
-                                      "children": [
-                                        {
-                                          "type": "text",
-                                          "id": "oswG1",
-                                          "name": "按钮字",
-                                          "fill": "$muted",
-                                          "content": "已记下",
                                           "fontFamily": "$font-sans",
                                           "fontSize": 14,
                                           "fontWeight": "500"
@@ -13762,7 +13518,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -13786,7 +13542,7 @@
                                   "content": "2026-09-29",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -13798,8 +13554,223 @@
                                   "content": "晚上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xMTl7",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Gedhe",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "厨神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "H1fut",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "nclll",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "jnE87",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "E1jxN",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "n8xKoo",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "RRxLw",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "A95GT",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "o6Ghh",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "lqMPA",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "h2yj1u",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -13838,16 +13809,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "w0QjG",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "番茄炒蛋",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "I0009W",
                               "name": "一句话",
                               "fill": "$ink",
@@ -13871,7 +13832,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -13895,7 +13856,7 @@
                                   "content": "2026-09-29",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -13907,8 +13868,161 @@
                                   "content": "中午",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SS16k",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "PUu7J",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "食神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "I68ude",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "e8Xh9",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "sohtt",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "I3V9r",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "jYbwc",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "REQwM",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "uaWLO",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -13986,16 +14100,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "jax7L",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "蒸蛋羹",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "jDKV7",
                               "name": "一句话",
                               "fill": "$ink",
@@ -14019,7 +14123,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -14043,7 +14147,7 @@
                                   "content": "2026-09-29",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -14055,8 +14159,163 @@
                                   "content": "早上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "oB6cE",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Q6kSL",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "厨神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "cwRYg",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "IaIC3",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "VEoEI",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "f5ocw1",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "bkMu4",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "KAPSZ",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "I5WO94",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -14161,16 +14420,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "N0TlPt",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "小馄饨",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "BDFgA",
                               "name": "一句话",
                               "fill": "$ink",
@@ -14194,7 +14443,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -14218,7 +14467,7 @@
                                   "content": "2026-09-28",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -14230,8 +14479,223 @@
                                   "content": "晚上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xBPB0",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WAYOy",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "食神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "c0KZX",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "V14v7",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "ZjJ6U",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "waPP4",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "MVKKq",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "iGri2",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "ihEzX",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "c7cDjR",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "bFUJU",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "L97yGe",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -14371,16 +14835,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "AgdZ5",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "红烧排骨",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "S8t98",
                               "name": "一句话",
                               "fill": "$ink",
@@ -14404,7 +14858,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -14428,7 +14882,7 @@
                                   "content": "2026-09-28",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -14440,8 +14894,163 @@
                                   "content": "中午",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CU2Fc",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "wmizD",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "厨神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "A1gg9",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "NkIXi",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "zinYO",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "cIsUu",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "vXfeq",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "qtwLN",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "eW2xq",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -14608,16 +15217,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "LOLbf",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "青菜",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "x1tds",
                               "name": "一句话",
                               "fill": "$ink",
@@ -14641,7 +15240,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -14665,7 +15264,7 @@
                                   "content": "2026-09-28",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -14677,8 +15276,161 @@
                                   "content": "早上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "v7wpA",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "jCZq3",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "食神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "X6DZwS",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "gMgnR",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "IKaxH",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "p8zUOP",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Fu5oh",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "IaJs9",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "T1mXXJ",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -14872,16 +15624,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "ykBsO",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "煎饺",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "ZurBJ",
                               "name": "一句话",
                               "fill": "$ink",
@@ -14905,7 +15647,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -14929,7 +15671,7 @@
                                   "content": "2026-09-27",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -14941,8 +15683,223 @@
                                   "content": "晚上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "z9RwRU",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "L5bytD",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "厨神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "NBKjb",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "NfRvF",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "S9qKdj",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "d1tIL9",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "dxxs7",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "LplE9",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "niFtX",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "sV2iU",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "GZktm",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "b5hI5",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -15171,16 +16128,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "ieegO",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "糖醋里脊",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "FxU3i",
                               "name": "一句话",
                               "fill": "$ink",
@@ -15204,7 +16151,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -15228,7 +16175,7 @@
                                   "content": "2026-09-27",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -15240,8 +16187,163 @@
                                   "content": "中午",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "sIhCf",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "y61FQ6",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "食神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "auJ80",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "X0PEc",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "D3Agw",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "d1Evrw",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "WdquW",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "SNJwu",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "Wdg7t",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -15497,16 +16599,6 @@
                             },
                             {
                               "type": "text",
-                              "id": "hwRUm",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "番茄牛腩",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
                               "id": "ITY0e",
                               "name": "一句话",
                               "fill": "$ink",
@@ -15530,7 +16622,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             16,
                             0,
@@ -15554,7 +16646,7 @@
                                   "content": "2026-09-27",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -15566,8 +16658,285 @@
                                   "content": "早上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Xk2af",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "LEnfK",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "厨神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Ei6Ty",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "UKIl7",
+                                  "name": "蒸蛋羹",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "n0GaHS",
+                                      "name": "蒸蛋羹封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "harrisonchang",
+                                        "link": "https://unsplash.com/@harrisonchang",
+                                        "author": "Harrison Chang"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1593307564163-65bed8690ba2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ2Mjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 3,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "BOmks",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "蒸蛋羹",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "YjeCy",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "J4TgT",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "ZOdXE",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "o90Cxz",
+                                  "name": "红烧排骨",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "ipyMW",
+                                      "name": "红烧排骨封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "haroldjp89",
+                                        "link": "https://unsplash.com/@haroldjp89",
+                                        "author": "Harold Castro"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "V8fbIP",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "红烧排骨",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Nlev1",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "OjDMt",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "VATcU",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -15847,16 +17216,6 @@
                                   ]
                                 }
                               ]
-                            },
-                            {
-                              "type": "text",
-                              "id": "A0yfm",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "紫菜蛋花",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
@@ -16491,6 +17850,213 @@
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
                                   "fontSize": 22,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "gGZjk",
+                          "name": "对上的菜",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "zRC37",
+                              "name": "菜眉",
+                              "fill": "$brass",
+                              "content": "今天中午点的",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JFxM9",
+                              "name": "红烧排骨",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "v43ah",
+                                  "name": "红烧排骨封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "haroldjp89",
+                                    "link": "https://unsplash.com/@haroldjp89",
+                                    "author": "Harold Castro"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#FFF9F4",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#4E222D47",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "iEVxH",
+                                  "name": "菜名",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "红烧排骨",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JJQIt",
+                              "name": "番茄炒蛋",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "iVfRt",
+                                  "name": "番茄炒蛋封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "rayzhou",
+                                    "link": "https://unsplash.com/@rayzhou",
+                                    "author": "Ray Zhou"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#FFF9F4",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#4E222D47",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "vARH0",
+                                  "name": "菜名",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "番茄炒蛋",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "B26ymx",
+                              "name": "葱油拌面",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "khQgi",
+                                  "name": "葱油拌面封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "zoshuacolah",
+                                    "link": "https://unsplash.com/@zoshuacolah",
+                                    "author": "Zoshua Colah"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#FFF9F4",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#4E222D47",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "X8mjq",
+                                  "name": "菜名",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "葱油拌面",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
                                   "fontWeight": "normal"
                                 }
                               ]
@@ -26485,7 +28051,7 @@
                             "top": 2
                           },
                           "layout": "vertical",
-                          "gap": 8,
+                          "gap": 12,
                           "padding": [
                             14,
                             0,
@@ -26509,7 +28075,7 @@
                                   "content": "2026-09-29",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-mono",
-                                  "fontSize": 15,
+                                  "fontSize": 30,
                                   "fontWeight": "normal",
                                   "letterSpacing": 0.8
                                 },
@@ -26521,8 +28087,163 @@
                                   "content": "晚上",
                                   "lineHeight": 1.15,
                                   "fontFamily": "$font-serif",
-                                  "fontSize": 22,
+                                  "fontSize": 15,
                                   "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lf6Ga",
+                              "name": "发布人",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "w3vcqQ",
+                                  "name": "名字",
+                                  "fill": "$ink",
+                                  "content": "食神记下",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "e2puZT",
+                              "name": "这一餐",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Lz52B",
+                                  "name": "番茄炒蛋",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "XR7su",
+                                      "name": "番茄炒蛋封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "rayzhou",
+                                        "link": "https://unsplash.com/@rayzhou",
+                                        "author": "Ray Zhou"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "b4mwz",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "番茄炒蛋",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "d1Vjml",
+                                  "name": "葱油拌面",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "padding": [
+                                    4,
+                                    0
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "XYwSa",
+                                      "name": "葱油拌面封面",
+                                      "metadata": {
+                                        "type": "unsplash",
+                                        "username": "zoshuacolah",
+                                        "link": "https://unsplash.com/@zoshuacolah",
+                                        "author": "Zoshua Colah"
+                                      },
+                                      "clip": true,
+                                      "width": 48,
+                                      "height": 48,
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                        "mode": "cover"
+                                      },
+                                      "cornerRadius": 14,
+                                      "stroke": "#FFF9F4",
+                                      "strokeWidth": 2,
+                                      "strokeAlignment": "inner",
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#4E222D47",
+                                        "offset": {
+                                          "x": 3,
+                                          "y": 4
+                                        }
+                                      },
+                                      "layout": "vertical",
+                                      "justifyContent": "end"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "i5TyiE",
+                                      "name": "菜名",
+                                      "fill": "$ink",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "葱油拌面",
+                                      "lineHeight": 1.15,
+                                      "fontFamily": "$font-serif",
+                                      "fontSize": 18,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
                                 }
                               ]
                             },
@@ -26558,16 +28279,6 @@
                                   "y": 4
                                 }
                               }
-                            },
-                            {
-                              "type": "text",
-                              "id": "V41o4",
-                              "name": "菜名",
-                              "fill": "$muted",
-                              "content": "番茄炒蛋",
-                              "fontFamily": "$font-sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
