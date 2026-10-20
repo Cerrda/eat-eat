@@ -151,6 +151,7 @@ declare global {
   const reactiveComputed: typeof import('@vueuse/core')['reactiveComputed']
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
+  const readMenuScreen: typeof import('./utils/menuCache')['readMenuScreen']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
   const refAutoReset: typeof import('@vueuse/core')['refAutoReset']
@@ -398,6 +399,7 @@ declare global {
   const whenPageFontsReady: typeof import('./utils/fonts')['whenPageFontsReady']
   const whenever: typeof import('@vueuse/core')['whenever']
   const withinMenu: typeof import('./utils/format')['withinMenu']
+  const writeMenuScreen: typeof import('./utils/menuCache')['writeMenuScreen']
 }
 // for type re-export
 declare global {
@@ -416,6 +418,9 @@ declare global {
   // @ts-ignore
   export type { CloudImageSize } from './utils/files'
   import('./utils/files')
+  // @ts-ignore
+  export type { MenuScreen } from './utils/menuCache'
+  import('./utils/menuCache')
   // @ts-ignore
   export type { SubscribeChoice } from './utils/subscribe'
   import('./utils/subscribe')
@@ -579,6 +584,7 @@ declare module 'vue' {
     readonly reactiveComputed: UnwrapRef<typeof import('@vueuse/core')['reactiveComputed']>
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
+    readonly readMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['readMenuScreen']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
@@ -821,5 +827,6 @@ declare module 'vue' {
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
     readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
+    readonly writeMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['writeMenuScreen']>
   }
 }

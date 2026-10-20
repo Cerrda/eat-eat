@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Category, MealBoard, MenuDish, MenuName, OrderDetail, Slot } from '@/api/eat'
-import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard, SLOT_LABEL } from '@/api/eat'
+import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard, menuHome, SLOT_LABEL } from '@/api/eat'
 import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
 import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
@@ -9,6 +9,7 @@ import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
+import { readMenuScreen, writeMenuScreen } from '@/utils/menuCache'
 import { markTabFresh, menuPanePose } from '@/utils/tabs'
 import { art, themeVars } from '@/utils/theme'
 import { showError } from '@/utils/ui'
@@ -100,7 +101,7 @@ function absorb(rows: MenuDish[]) {
     tray.value = next
 }
 
-const { shown, total, finished, loading, reset, more, extend } = usePaged(async (page) => {
+const { shown, total, finished, loading, seed, reset, more, extend } = usePaged(async (page) => {
   const menu = await listMenu({
     page,
     keyword: keyword.value.trim(),
@@ -120,8 +121,20 @@ const selectedBusy = computed(() => {
 })
 
 onMounted(() => {
+  hydrateScreen()
   void refresh()
 })
+
+function hydrateScreen() {
+  const saved = readMenuScreen()
+  if (!saved)
+    return
+  categories.value = saved.categories
+  board.value = saved.board
+  menuTotal.value = saved.menuTotal
+  seed(saved.dishes, saved.total)
+  ensureSelection()
+}
 
 let filterTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -188,12 +201,37 @@ watch(randomRoom, () => {
   fitWish()
 })
 
-function loadBoard() {
+function seedMenu(menu: { dishes: MenuDish[], total: number, menuTotal: number }) {
+  menuTotal.value = typeof menu.menuTotal === 'number' ? menu.menuTotal : menu.dishes.length
+  absorb(menu.dishes)
+  seed(menu.dishes, menu.total)
+}
+
+function loadBoardFallback() {
   return Promise.all([
     listCategories(),
     mealBoard(),
     reset(),
-  ])
+  ]).then(([cats, meal]) => ({ categories: cats.categories, board: meal }))
+}
+
+let menuHomeReady = true
+
+function loadBoard() {
+  if (!menuHomeReady)
+    return loadBoardFallback()
+  return menuHome({
+    page: 1,
+    keyword: keyword.value.trim(),
+    categoryId: categoryId.value,
+  }).then(async (data) => {
+    await primeFileUrls(data.menu.dishes.map(dish => dish.coverFileId))
+    seedMenu(data.menu)
+    return { categories: data.categories, board: data.board }
+  }).catch(() => {
+    menuHomeReady = false
+    return loadBoardFallback()
+  })
 }
 
 async function refresh() {
@@ -206,13 +244,22 @@ async function refresh() {
     if (!view || id !== spin)
       return
     cancelReload()
-    const [cats, meal] = await (eager ? eager.catch(loadBoard) : loadBoard())
+    const data = await (eager ? eager.catch(loadBoard) : loadBoard())
     if (id !== spin)
       return
-    categories.value = cats.categories
-    board.value = meal
+    categories.value = data.categories
+    board.value = data.board
     ensureSelection()
     markTabFresh('menu')
+    if (!keyword.value.trim() && !categoryId.value) {
+      writeMenuScreen({
+        categories: data.categories,
+        board: data.board,
+        dishes: shown.value,
+        total: total.value,
+        menuTotal: menuTotal.value,
+      })
+    }
   }
   catch (err) {
     if (id === spin)

@@ -30,6 +30,14 @@ export function usePaged<T>(load: (page: number) => Promise<PageResult<T>>) {
     return run
   }
 
+  function seed(rows: T[], totalCount: number) {
+    shown.value = rows
+    total.value = totalCount
+    page.value = 1
+    ended.value = rows.length === 0 || rows.length >= totalCount
+    loading.value = false
+  }
+
   function reset() {
     return occupy(async () => {
       const id = ++token
@@ -103,5 +111,5 @@ export function usePaged<T>(load: (page: number) => Promise<PageResult<T>>) {
     })
   }
 
-  return { shown, total, finished, loading, reset, more, extend }
+  return { shown, total, finished, loading, seed, reset, more, extend }
 }

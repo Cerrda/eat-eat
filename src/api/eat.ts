@@ -21,6 +21,7 @@ export type {
   DishQuery,
   MealBoard,
   MenuDish,
+  MenuHome,
   MenuName,
   OrderDetail,
   OrderStatus,
@@ -259,6 +260,10 @@ export function listMenuNames() {
 
 export function mealBoard() {
   return callEat(eat => eat.mealBoard())
+}
+
+export function menuHome(query?: MenuQuery) {
+  return callEat(eat => eat.menuHome(query))
 }
 
 export function createOrder(input: { date: string, slot: Slot, dishIds: string[], note?: string }) {

@@ -24,6 +24,7 @@ const methods = [
   'listMenu',
   'listMenuNames',
   'mealBoard',
+  'menuHome',
   'createOrder',
   'listTodo',
   'listOrders',

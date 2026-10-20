@@ -1248,6 +1248,19 @@ function createEatService(deps) {
     return { names }
   }
 
+  async function menuHome(params) {
+    const [categories, board, menu] = await Promise.all([
+      listCategories(),
+      mealBoard(),
+      listMenu(params),
+    ])
+    return {
+      categories: categories.categories,
+      board,
+      menu,
+    }
+  }
+
   async function mealBoard() {
     const user = await requireUser()
     const kitchen = await requireActive(user)
@@ -1908,6 +1921,7 @@ function createEatService(deps) {
     listMenu,
     listMenuNames,
     mealBoard,
+    menuHome,
     createOrder,
     listTodo,
     listOrders,

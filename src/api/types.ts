@@ -142,6 +142,12 @@ export interface MealBoard {
   busy: Array<{ date: string, slot: Slot, orderId: string, status: 'pending' | 'accepted' }>
 }
 
+export interface MenuHome {
+  categories: Category[]
+  board: MealBoard
+  menu: { dishes: MenuDish[], menuTotal: number } & PageMeta
+}
+
 export interface CookDish {
   dishId: string
   name: string
@@ -205,6 +211,7 @@ export interface EatCloud {
   listMenu: (params?: MenuQuery) => Promise<CloudResult<{ dishes: MenuDish[], menuTotal: number } & PageMeta>>
   listMenuNames: () => Promise<CloudResult<{ names: MenuName[] }>>
   mealBoard: () => Promise<CloudResult<MealBoard>>
+  menuHome: (params?: MenuQuery) => Promise<CloudResult<MenuHome>>
   createOrder: (params: { date: string, slot: Slot, dishIds: string[], note?: string }) => Promise<CloudResult<OrderDetail>>
   listTodo: (params?: PageQuery) => Promise<CloudResult<{ orders: OrderDetail[] } & PageMeta>>
   listOrders: (params?: PageQuery) => Promise<CloudResult<{ orders: OrderDetail[] } & PageMeta>>
