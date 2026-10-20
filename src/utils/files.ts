@@ -1,10 +1,74 @@
 import { EatRequestError } from '@/api/eat'
 
-const urlCache = new Map<string, string>()
+const URL_CACHE_KEY = 'eat-file-urls-v1'
+const URL_TTL = 30 * 60 * 1000
+const URL_CACHE_MAX = 240
 
 interface TempFileItem {
   fileID: string
   tempFileURL?: string
+}
+
+interface UrlEntry {
+  url: string
+  until: number
+}
+
+const urlCache = new Map<string, UrlEntry>()
+let cacheReady = false
+let saveTimer: ReturnType<typeof setTimeout> | undefined
+
+function readyCache() {
+  if (cacheReady)
+    return
+  cacheReady = true
+  try {
+    const stored = uni.getStorageSync(URL_CACHE_KEY) as Record<string, UrlEntry> | ''
+    if (!stored || typeof stored !== 'object')
+      return
+    const now = Date.now()
+    for (const [id, entry] of Object.entries(stored)) {
+      if (entry && typeof entry.url === 'string' && Number(entry.until) > now)
+        urlCache.set(id, { url: entry.url, until: Number(entry.until) })
+    }
+  }
+  catch {
+    // 缓存坏了就按没缓存走
+  }
+}
+
+function cachedUrl(fileId: string) {
+  readyCache()
+  const entry = urlCache.get(fileId)
+  return entry && entry.until > Date.now() ? entry.url : ''
+}
+
+function scheduleSave() {
+  if (saveTimer)
+    return
+  saveTimer = setTimeout(() => {
+    saveTimer = undefined
+    try {
+      const now = Date.now()
+      for (const [id, entry] of urlCache) {
+        if (entry.until <= now)
+          urlCache.delete(id)
+      }
+      while (urlCache.size > URL_CACHE_MAX) {
+        const oldest = urlCache.keys().next().value
+        if (!oldest)
+          break
+        urlCache.delete(oldest)
+      }
+      const rows: Record<string, UrlEntry> = {}
+      for (const [id, entry] of urlCache)
+        rows[id] = entry
+      uni.setStorageSync(URL_CACHE_KEY, rows)
+    }
+    catch {
+      // 写不进去只影响下次启动
+    }
+  }, 0)
 }
 
 /** 按屏幕上的实际占用选一档，避免列表和宫格去拉相机原图。 */
@@ -25,20 +89,30 @@ export function fitCloudImageUrl(url: string, size: CloudImageSize = 'thumb') {
 }
 
 export async function primeFileUrls(ids: string[]) {
-  const missing = [...new Set(ids.filter(id => id.startsWith('cloud://') && !urlCache.has(id)))]
+  readyCache()
+  const now = Date.now()
+  const missing = [...new Set(ids.filter((id) => {
+    if (!id.startsWith('cloud://'))
+      return false
+    const entry = urlCache.get(id)
+    return !entry || entry.until <= now
+  }))]
   if (!missing.length)
     return
   try {
     const result = await uniCloud.getTempFileURL({ fileList: missing }) as { fileList?: TempFileItem[] }
     const list = result.fileList || []
+    const until = now + URL_TTL
     list.forEach((item, index) => {
       if (!item.tempFileURL)
         return
-      urlCache.set(item.fileID, item.tempFileURL)
+      const entry = { url: item.tempFileURL, until }
+      urlCache.set(item.fileID, entry)
       const asked = missing[index]
       if (asked)
-        urlCache.set(asked, item.tempFileURL)
+        urlCache.set(asked, entry)
     })
+    scheduleSave()
   }
   catch {
     // 封面暂时用菜名代替，不打断列表。
@@ -52,9 +126,11 @@ export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'th
     return fileId
   if (!fileId.startsWith('cloud://'))
     return ''
-  if (!urlCache.has(fileId))
+  let raw = cachedUrl(fileId)
+  if (!raw) {
     await primeFileUrls([fileId])
-  const raw = urlCache.get(fileId) || ''
+    raw = cachedUrl(fileId)
+  }
   return raw ? fitCloudImageUrl(raw, size) : ''
 }
 

@@ -61,6 +61,7 @@ export default defineManifestConfig({
       urlCheck: false,
     },
     usingComponents: true,
+    lazyCodeLoading: 'requiredComponents',
     darkmode: true,
     themeLocation: 'theme.json',
   },

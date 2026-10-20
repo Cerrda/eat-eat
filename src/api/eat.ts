@@ -1,5 +1,4 @@
 import type {
-  Badges,
   CloudResult,
   CreateRecordInput,
   DishQuery,
@@ -316,8 +315,4 @@ export function updateRecord(input: UpdateRecordInput) {
 
 export function deleteRecord(recordId: string) {
   return callEat(eat => eat.deleteRecord({ recordId }))
-}
-
-export function badges() {
-  return callEat<Badges>(eat => eat.badges())
 }

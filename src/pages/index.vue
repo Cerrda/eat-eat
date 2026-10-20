@@ -8,7 +8,6 @@ import { art, pageStyle, themeClass } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
 
 definePage({
-  type: 'home',
   layout: false,
   style: {
     navigationStyle: 'custom',

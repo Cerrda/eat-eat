@@ -20,6 +20,7 @@ declare global {
   const beginChoose: typeof import('./utils/account')['beginChoose']
   const beginClose: typeof import('./utils/ui')['beginClose']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
+  const cachedHome: typeof import('./utils/account')['cachedHome']
   const chooseImage: typeof import('./utils/files')['chooseImage']
   const chooseImages: typeof import('./utils/files')['chooseImages']
   const computed: typeof import('vue')['computed']
@@ -448,6 +449,7 @@ declare module 'vue' {
     readonly beginChoose: UnwrapRef<typeof import('./utils/account')['beginChoose']>
     readonly beginClose: UnwrapRef<typeof import('./utils/ui')['beginClose']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
+    readonly cachedHome: UnwrapRef<typeof import('./utils/account')['cachedHome']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
     readonly chooseImages: UnwrapRef<typeof import('./utils/files')['chooseImages']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

@@ -2,13 +2,13 @@
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, releaseTodo } from '@/utils/account'
-import { art } from '@/utils/theme'
+import { cachedHome, ensureAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
 import { askCookRemind, loadCookRemindAlways, renewCookRemindIfAlways } from '@/utils/subscribe'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
+import { art } from '@/utils/theme'
 import { showError, tell } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
@@ -38,16 +38,23 @@ onMounted(() => {
   void refresh()
 })
 
+function loadTodoList() {
+  return Promise.all([
+    loadCookRemindAlways(),
+    reset(),
+  ])
+}
+
 async function refresh() {
   const id = ++spin
   try {
+    // 有上次的账号时，列表和账号校验一起发，少等一个来回。
+    const eager = cachedHome('cooker') ? loadTodoList() : null
+    eager?.catch(() => {})
     const view = await ensureAccount({ next: 'home', role: 'cooker' })
     if (!view || id !== spin)
       return
-    const [always] = await Promise.all([
-      loadCookRemindAlways(),
-      reset(),
-    ])
+    const [always] = await (eager ? eager.catch(loadTodoList) : loadTodoList())
     if (id !== spin)
       return
     account.value = view

@@ -1,8 +1,39 @@
 import type { AccountView, Badges, Role } from '@/api/eat'
-import { badges, EatRequestError, enter, me } from '@/api/eat'
+import { EatRequestError, enter, me } from '@/api/eat'
 import { noteBadges, resetHomeTab } from '@/utils/tabs'
 
-let current: AccountView | null = null
+const CACHE_KEY = 'eat-account-v1'
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000
+
+function readCache(): AccountView | null {
+  try {
+    const stored = uni.getStorageSync(CACHE_KEY) as { at?: unknown, view?: unknown } | ''
+    if (!stored || typeof stored !== 'object')
+      return null
+    if (Date.now() - Number(stored.at || 0) > CACHE_TTL)
+      return null
+    const view = stored.view as AccountView | undefined
+    if (!view || typeof view !== 'object' || typeof view.next !== 'string')
+      return null
+    if (!view.badges || typeof view.badges !== 'object')
+      view.badges = { todo: 0, orders: 0, records: 0 }
+    return view
+  }
+  catch {
+    return null
+  }
+}
+
+function saveCache(view: AccountView) {
+  try {
+    uni.setStorageSync(CACHE_KEY, { at: Date.now(), view })
+  }
+  catch {
+    // 存储写不进去时只影响下次启动的快路径
+  }
+}
+
+let current: AccountView | null = readCache()
 let choosing = false
 let showId = 0
 let fetchedId = -1
@@ -23,9 +54,18 @@ export function isChoosing() {
 
 export function rememberAccount(view: AccountView) {
   current = view
+  saveCache(view)
 }
 
 export function peekAccount() {
+  return current
+}
+
+export function cachedHome(role?: Role) {
+  if (!current || current.next !== 'home')
+    return null
+  if (role && current.role !== role)
+    return null
   return current
 }
 
@@ -52,19 +92,12 @@ function keepAccount(view: AccountView, id: number) {
   current = view
   fetchedId = id
   noteBadges(view.badges)
+  saveCache(view)
   return view
 }
 
-async function fetchOpen(id: number) {
-  const view = await fetchMe()
-  let nextBadges = view.badges
-  try {
-    nextBadges = await badges()
-  }
-  catch {
-    // 角标失败时沿用账号里带回的数量，页面仍可打开
-  }
-  return keepAccount({ ...view, badges: nextBadges }, id)
+function fetchOpen(id: number) {
+  return fetchMe().then(view => keepAccount(view, id))
 }
 
 export async function loadAccount(fresh = false) {
@@ -92,14 +125,17 @@ export async function reloadMe() {
   current = view
   fetchedId = showId
   noteBadges(view.badges)
+  saveCache(view)
   return view
 }
 
 export function patchBadges(partial: Partial<Badges>) {
   const base = current?.badges ?? { todo: 0, orders: 0, records: 0 }
   const next = { ...base, ...partial }
-  if (current)
+  if (current) {
     current.badges = next
+    saveCache(current)
+  }
   noteBadges(next)
   return next
 }

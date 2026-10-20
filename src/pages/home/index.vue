@@ -9,12 +9,13 @@ import EatOrders from '@/components/eat-orders/eat-orders.vue'
 import SettingsPane from '@/components/settings-pane/settings-pane.vue'
 import TabDock from '@/components/tab-dock/tab-dock.vue'
 import TabScroll from '@/components/tab-scroll/tab-scroll.vue'
-import { ensureAccount } from '@/utils/account'
+import { ensureAccount, peekAccount } from '@/utils/account'
 import { cookerTabs, eaterTabs, invalidateTabs, isTabFresh, noteBadges, onTabPick, tabBadges, tabKey, tabsOf } from '@/utils/tabs'
 import { art, pageStyle, themeClass } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 definePage({
+  type: 'home',
   style: {
     navigationStyle: 'custom',
     navigationBarTextStyle: 'black',
@@ -143,17 +144,35 @@ function onDockDeparted() {
   })
 }
 
+function adoptAccount(view: AccountView) {
+  if (view.role !== 'eater' && view.role !== 'cooker')
+    return false
+  const switched = ready.value && view.role !== role.value
+  role.value = view.role
+  noteBadges(view.badges)
+  if (switched || !tabsOf(view.role).includes(tabKey.value)) {
+    tabKey.value = view.role === 'eater' ? 'menu' : 'todo'
+    opened.menu = false
+    opened.orders = false
+    opened.records = false
+    opened.settings = false
+    opened.todo = false
+    opened.dishes = false
+  }
+  opened[tabKey.value] = true
+  ready.value = true
+  return true
+}
+
 async function boot() {
+  const cached = peekAccount()
+  if (cached?.next === 'home')
+    adoptAccount(cached)
   try {
     const view = await ensureAccount({ next: 'home' })
-    if (!view || (view.role !== 'eater' && view.role !== 'cooker'))
+    if (!view)
       return
-    role.value = view.role
-    noteBadges(view.badges)
-    if (!tabsOf(view.role).includes(tabKey.value))
-      tabKey.value = view.role === 'eater' ? 'menu' : 'todo'
-    opened[tabKey.value] = true
-    ready.value = true
+    adoptAccount(view)
   }
   catch (err) {
     showError(err)

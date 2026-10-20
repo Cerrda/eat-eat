@@ -4,13 +4,13 @@ import { dateLabel, getOrder, listCategories, listMenu, listMenuNames, mealBoard
 import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
 import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
-import { ensureAccount } from '@/utils/account'
-import { art, themeVars } from '@/utils/theme'
+import { cachedHome, ensureAccount } from '@/utils/account'
 import { menuIntent, orderDraft } from '@/utils/draft'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { markTabFresh, menuPanePose } from '@/utils/tabs'
+import { art, themeVars } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 const props = defineProps<{
@@ -188,18 +188,25 @@ watch(randomRoom, () => {
   fitWish()
 })
 
+function loadBoard() {
+  return Promise.all([
+    listCategories(),
+    mealBoard(),
+    reset(),
+  ])
+}
+
 async function refresh() {
   const id = ++spin
   try {
+    // 有上次的账号时，列表和账号校验一起发，少等一个来回。
+    const eager = cachedHome('eater') ? loadBoard() : null
+    eager?.catch(() => {})
     const view = await ensureAccount({ next: 'home', role: 'eater' })
     if (!view || id !== spin)
       return
     cancelReload()
-    const [cats, meal] = await Promise.all([
-      listCategories(),
-      mealBoard(),
-      reset(),
-    ])
+    const [cats, meal] = await (eager ? eager.catch(loadBoard) : loadBoard())
     if (id !== spin)
       return
     categories.value = cats.categories

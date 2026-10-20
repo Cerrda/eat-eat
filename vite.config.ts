@@ -20,6 +20,9 @@ export default defineConfig({
     // https://uni-helper.js.org/vite-plugin-uni-pages
     UniHelperPages({
       dts: 'src/uni-pages.d.ts',
+      // 绑定、做饭、点餐页拆到子包，首包只留首页和角色选择页。
+      subPackages: ['src/pages/bind', 'src/pages/cook', 'src/pages/eat'],
+      exclude: ['bind/**', 'cook/**', 'eat/**'],
     }),
     // https://uni-helper.js.org/vite-plugin-uni-layouts
     UniHelperLayouts(),

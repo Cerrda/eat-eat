@@ -1,7 +1,10 @@
 import type { EatCloud } from '@/api/types'
 
+let instance: EatCloud | null = null
+
 export function eatCloud() {
-  return uniCloud.importObject('eat', {
+  instance ??= uniCloud.importObject('eat', {
     customUI: true,
   }) as EatCloud
+  return instance
 }

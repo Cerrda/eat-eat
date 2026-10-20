@@ -1,18 +1,17 @@
 import { defineUniPages } from '@uni-helper/vite-plugin-uni-pages'
 
 export default defineUniPages({
-  pages: [
-    {
-      path: 'pages/index',
-      type: 'home',
-      layout: false,
-      style: {
-        navigationStyle: 'custom',
-        navigationBarTextStyle: 'black',
-        backgroundColor: '#FBF3EA',
-      },
+  // 首页就绪后在后台预下载后续可能进入的子包。
+  preloadRule: {
+    'pages/index': {
+      network: 'all',
+      packages: ['pages/bind'],
     },
-  ],
+    'pages/home/index': {
+      network: 'all',
+      packages: ['pages/cook', 'pages/eat'],
+    },
+  },
   globalStyle: {
     backgroundColor: '@bgColor',
     backgroundColorBottom: '@bgColorBottom',
