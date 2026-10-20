@@ -23,6 +23,7 @@ const acting = ref('')
 const ready = ref(false)
 const reminding = ref(false)
 const remindAlways = ref(false)
+const remindReady = ref(false)
 let spin = 0
 
 const groups = computed(() => {
@@ -77,6 +78,7 @@ async function refresh() {
     noteBadges(view.badges)
     markTabFresh('todo')
     remindAlways.value = always
+    remindReady.value = true
     ready.value = true
     writeTodoScreen({
       orders: shown.value.slice(0, LIST_PAGE_SIZE),
@@ -196,7 +198,7 @@ export default {
     >
       <screen-head title="待做" :note="ready && !total ? '还没有待做的一餐' : ''" />
       <view
-        v-if="ready && !remindAlways"
+        v-if="ready && remindReady && !remindAlways"
         class="eat-press mt-28rpx box-border h-78rpx flex items-center justify-between border-3rpx border-line rounded-36rpx border-solid px-32rpx"
         hover-class="eat-press-on"
         :hover-stay-time="140"
