@@ -152,6 +152,7 @@ declare global {
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
   const readMenuScreen: typeof import('./utils/menuCache')['readMenuScreen']
+  const readTodoScreen: typeof import('./utils/todoCache')['readTodoScreen']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
   const refAutoReset: typeof import('@vueuse/core')['refAutoReset']
@@ -400,6 +401,7 @@ declare global {
   const whenever: typeof import('@vueuse/core')['whenever']
   const withinMenu: typeof import('./utils/format')['withinMenu']
   const writeMenuScreen: typeof import('./utils/menuCache')['writeMenuScreen']
+  const writeTodoScreen: typeof import('./utils/todoCache')['writeTodoScreen']
 }
 // for type re-export
 declare global {
@@ -430,6 +432,9 @@ declare global {
   // @ts-ignore
   export type { ThemeName, ArtName } from './utils/theme'
   import('./utils/theme')
+  // @ts-ignore
+  export type { TodoScreen } from './utils/todoCache'
+  import('./utils/todoCache')
   // @ts-ignore
   export type { DialogResult } from './utils/ui'
   import('./utils/ui')
@@ -585,6 +590,7 @@ declare module 'vue' {
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
     readonly readMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['readMenuScreen']>
+    readonly readTodoScreen: UnwrapRef<typeof import('./utils/todoCache')['readTodoScreen']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
@@ -828,5 +834,6 @@ declare module 'vue' {
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
     readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
     readonly writeMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['writeMenuScreen']>
+    readonly writeTodoScreen: UnwrapRef<typeof import('./utils/todoCache')['writeTodoScreen']>
   }
 }

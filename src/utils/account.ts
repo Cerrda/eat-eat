@@ -3,14 +3,11 @@ import { EatRequestError, enter, me } from '@/api/eat'
 import { noteBadges, resetHomeTab } from '@/utils/tabs'
 
 const CACHE_KEY = 'eat-account-v1'
-const CACHE_TTL = 7 * 24 * 60 * 60 * 1000
 
 function readCache(): AccountView | null {
   try {
     const stored = uni.getStorageSync(CACHE_KEY) as { at?: unknown, view?: unknown } | ''
     if (!stored || typeof stored !== 'object')
-      return null
-    if (Date.now() - Number(stored.at || 0) > CACHE_TTL)
       return null
     const view = stored.view as AccountView | undefined
     if (!view || typeof view !== 'object' || typeof view.next !== 'string')

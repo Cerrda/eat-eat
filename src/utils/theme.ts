@@ -47,7 +47,7 @@ const DARK = {
 type TokenMap = typeof LIGHT
 
 const ARTS = {
-  'paper': ['/static/paper.avif', '/static/paper-dark.avif'],
+  'paper': ['/static/paper.jpg', '/static/paper-dark.jpg'],
   'pot': ['/static/pot.png', '/static/pot-dark.png'],
   'house': ['/static/house.png', '/static/house-dark.png'],
   'cook-pot': ['/static/cook-pot.png', '/static/cook-pot-dark.png'],

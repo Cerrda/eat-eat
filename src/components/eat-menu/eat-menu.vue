@@ -133,7 +133,15 @@ function hydrateScreen() {
   board.value = saved.board
   menuTotal.value = saved.menuTotal
   seed(saved.dishes, saved.total)
-  ensureSelection()
+  if (saved.board.today === todayKey())
+    ensureSelection()
+}
+
+function todayKey() {
+  const now = new Date()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${now.getFullYear()}-${month}-${day}`
 }
 
 let filterTimer: ReturnType<typeof setTimeout> | undefined

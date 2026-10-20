@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import type { AccountView, OrderDetail } from '@/api/eat'
 import { acceptOrder, dateLabel, listTodo, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
-import { usePaged } from '@/composables/usePaged'
-import { cachedHome, ensureAccount, releaseTodo } from '@/utils/account'
+import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
+import { cachedHome, ensureAccount, peekAccount, releaseTodo } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { showHint } from '@/utils/hint'
 import { askCookRemind, loadCookRemindAlways, renewCookRemindIfAlways } from '@/utils/subscribe'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { art } from '@/utils/theme'
+import { readTodoScreen, writeTodoScreen } from '@/utils/todoCache'
 import { showError, tell } from '@/utils/ui'
 
 const account = ref<AccountView | null>(null)
-const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+const { shown, total, finished, loading, seed, reset, more } = usePaged(async (page) => {
   const data = await listTodo({ page })
   await primeFileUrls(data.orders.flatMap(order => order.items.map(item => item.coverFileId)))
   return { rows: data.orders, total: data.total }
@@ -35,8 +36,23 @@ const groups = computed(() => {
 })
 
 onMounted(() => {
+  hydrateTodo()
   void refresh()
 })
+
+function hydrateTodo() {
+  const saved = readTodoScreen()
+  if (!saved)
+    return
+  const view = peekAccount()
+  if (view?.role === 'cooker') {
+    account.value = view
+    noteBadges(view.badges)
+  }
+  void primeFileUrls(saved.orders.flatMap(order => order.items.map(item => item.coverFileId)))
+  seed(saved.orders, saved.total)
+  ready.value = true
+}
 
 function loadTodoList() {
   return Promise.all([
@@ -62,6 +78,10 @@ async function refresh() {
     markTabFresh('todo')
     remindAlways.value = always
     ready.value = true
+    writeTodoScreen({
+      orders: shown.value.slice(0, LIST_PAGE_SIZE),
+      total: total.value,
+    })
   }
   catch (err) {
     if (id === spin)
