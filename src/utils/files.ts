@@ -1,4 +1,5 @@
 import { EatRequestError } from '@/api/eat'
+import { cacheRemoteImage, imageFileExt, readCachedImage } from '@/utils/imageCache'
 
 const URL_CACHE_KEY = 'eat-file-urls-v1'
 const URL_TTL = 30 * 60 * 1000
@@ -122,16 +123,41 @@ export async function primeFileUrls(ids: string[]) {
 export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'thumb') {
   if (!fileId)
     return ''
-  if (/^https?:\/\//.test(fileId) || fileId.startsWith('wxfile://') || fileId.startsWith('blob:') || fileId.startsWith('/'))
+  if (/^https?:\/\//.test(fileId)) {
+    const ext = imageFileExt(fileId)
+    const local = await readCachedImage(fileId, ext)
+    if (local)
+      return local
+    cacheRemoteImage(fileId, fileId, ext)
+    return fileId
+  }
+  if (fileId.startsWith('wxfile://') || fileId.startsWith('blob:') || fileId.startsWith('/'))
     return fileId
   if (!fileId.startsWith('cloud://'))
     return ''
+  const key = `${fileId}\n${size}`
+  const ext = size === 'raw' ? '' : 'avif'
+  if (ext) {
+    const local = await readCachedImage(key, ext)
+    if (local)
+      return local
+  }
   let raw = cachedUrl(fileId)
   if (!raw) {
     await primeFileUrls([fileId])
     raw = cachedUrl(fileId)
   }
-  return raw ? fitCloudImageUrl(raw, size) : ''
+  if (!raw)
+    return ''
+  const url = fitCloudImageUrl(raw, size)
+  const fileExt = size === 'raw' ? imageFileExt(url) : ext
+  if (size === 'raw') {
+    const local = await readCachedImage(key, fileExt)
+    if (local)
+      return local
+  }
+  cacheRemoteImage(key, url, fileExt)
+  return url
 }
 
 function rejectChoose(error: unknown, reject: (reason: Error) => void) {

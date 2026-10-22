@@ -27,12 +27,12 @@ export function tell(title: string, content: string, confirmText = '知道了') 
   }).then(result => result.confirm)
 }
 
-export function ask(title: string, content: string, confirmText = '确定') {
+export function ask(title: string, content: string, confirmText = '确定', cancelText = '先不用') {
   return openDialog({
     title,
     content,
     confirmText,
-    cancelText: '先不用',
+    cancelText,
     showCancel: true,
     editable: false,
     placeholder: '',

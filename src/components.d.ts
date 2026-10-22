@@ -13,6 +13,7 @@ declare module 'vue' {
     CookRecords: typeof import('./components/cook-records/cook-records.vue')['default']
     CookTodo: typeof import('./components/cook-todo/cook-todo.vue')['default']
     CoverZoom: typeof import('./components/cover-zoom/cover-zoom.vue')['default']
+    DateSheet: typeof import('./components/date-sheet/date-sheet.vue')['default']
     DishCover: typeof import('./components/dish-cover/dish-cover.vue')['default']
     EatMenu: typeof import('./components/eat-menu/eat-menu.vue')['default']
     EatOrders: typeof import('./components/eat-orders/eat-orders.vue')['default']

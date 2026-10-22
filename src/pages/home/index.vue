@@ -128,6 +128,15 @@ function onSwapped(view: AccountView) {
   dockLeaving.value = true
 }
 
+function onCacheCleared() {
+  opened.menu = false
+  opened.orders = false
+  opened.todo = false
+  opened.dishes = false
+  opened.records = false
+  invalidateTabs()
+}
+
 function onDockDeparted() {
   if (!dockLeaving.value)
     return
@@ -206,7 +215,7 @@ onLoad(() => {
           <cook-records ref="recordsPane" :active="tabKey === 'records'" />
         </tab-scroll>
         <tab-scroll v-if="opened.settings" :active="tabKey === 'settings'" :motion="motion">
-          <SettingsPane ref="settingsRef" :snapshot="settingsSnapshot" :locked="dockLeaving" @swapped="onSwapped" />
+          <SettingsPane ref="settingsRef" :snapshot="settingsSnapshot" :locked="dockLeaving" :active="tabKey === 'settings'" @swapped="onSwapped" @cleared="onCacheCleared" />
         </tab-scroll>
         <tab-dock
           v-if="dockShown"

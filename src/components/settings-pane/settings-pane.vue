@@ -5,6 +5,7 @@ import { ensureAccount, peekAccount, reloadMe, rememberAccount, routeAccount } f
 import { faceOf } from '@/utils/face'
 import { keepOneLine, textLength } from '@/utils/format'
 import { showHint } from '@/utils/hint'
+import { clearImageCache, formatCacheSize, imageCacheInfo } from '@/utils/imageCache'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
 import { setTheme, theme } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
@@ -12,9 +13,10 @@ import { ask, showError } from '@/utils/ui'
 const props = defineProps<{
   snapshot?: AccountView | null
   locked?: boolean
+  active?: boolean
 }>()
 
-const emit = defineEmits<{ swapped: [view: AccountView] }>()
+const emit = defineEmits<{ swapped: [view: AccountView], cleared: [] }>()
 const account = ref<AccountView | null>(peekAccount())
 const nickname = ref(account.value?.nickname || '')
 const nicknameReady = ref(false)
@@ -23,6 +25,9 @@ const fieldOn = ref(true)
 keepOneLine(nickname)
 const pending = ref<'swap' | 'leave' | ''>('')
 const inkGo = ref(false)
+const cacheBytes = ref(0)
+const cacheBusy = ref(false)
+let cacheToken = 0
 let accountToken = 0
 let holdNickname = false
 let inkToken = 0
@@ -50,7 +55,46 @@ function applyAccount(view: AccountView) {
   })
 }
 
+async function readCacheInfo() {
+  const token = ++cacheToken
+  try {
+    const info = await imageCacheInfo()
+    if (token === cacheToken)
+      cacheBytes.value = info.bytes
+  }
+  catch {
+    if (token === cacheToken)
+      cacheBytes.value = 0
+  }
+}
+
+async function clearCache() {
+  if (cacheBusy.value)
+    return
+  cacheBusy.value = true
+  cacheToken += 1
+  try {
+    const freed = await clearImageCache()
+    cacheBytes.value = 0
+    if (freed > 0) {
+      emit('cleared')
+      showHint(`已清理 ${formatCacheSize(freed)}`)
+    }
+    else {
+      showHint('还没有图片缓存')
+    }
+  }
+  catch {
+    void readCacheInfo()
+    showHint('这次没清掉，再试一次')
+  }
+  finally {
+    cacheBusy.value = false
+  }
+}
+
 async function refresh() {
+  void readCacheInfo()
   const token = ++accountToken
   nicknameReady.value = false
   try {
@@ -80,6 +124,11 @@ watch(() => props.snapshot, (view) => {
 
 onMounted(() => {
   void refresh()
+})
+
+watch(() => props.active, (on) => {
+  if (on)
+    void readCacheInfo()
 })
 
 defineExpose({ refresh })
@@ -245,7 +294,7 @@ export default {
               @confirm="saveNickname"
             />
           </view>
-          <view class="flex flex-col gap-24rpx border-0 border-y-4rpx border-rule border-solid py-32rpx">
+          <view class="flex flex-col gap-24rpx border-0 border-t-4rpx border-solid py-32rpx border-rule">
             <text class="text-28rpx text-accent leading-[1.15] tracking-[2rpx]" :class="faceOf('外观', 'mono')">
               外观
             </text>
@@ -272,6 +321,34 @@ export default {
                 >
                   深色
                 </text>
+              </view>
+            </view>
+          </view>
+          <view class="flex flex-col gap-24rpx border-0 border-t-4rpx border-solid pt-32rpx border-rule">
+            <text class="text-28rpx leading-[1.15] tracking-[2rpx] text-accent" :class="faceOf('缓存', 'mono')">
+              缓存
+            </text>
+            <view class="flex items-center justify-between">
+              <text class="text-30rpx leading-[1.15] text-ink" :class="faceOf('图片缓存', 'serif')">
+                图片缓存
+              </text>
+              <view class="flex items-center gap-16rpx">
+                <text class="text-24rpx leading-[1.15] text-muted" :class="faceOf(formatCacheSize(cacheBytes), 'mono')">
+                  {{ formatCacheSize(cacheBytes) }}
+                </text>
+                <view
+                  class="eat-press box-border border-3rpx rounded-full border-solid px-28rpx py-12rpx border-line"
+                  :hover-class="cacheBusy ? 'none' : 'eat-press-on'"
+                  :hover-stay-time="140"
+                  @tap="clearCache"
+                >
+                  <text
+                    class="text-26rpx leading-[1.15]"
+                    :class="[faceOf(cacheBusy ? '清理中' : '清理', 'serif'), cacheBusy ? 'text-muted' : 'text-accent']"
+                  >
+                    {{ cacheBusy ? '清理中' : '清理' }}
+                  </text>
+                </view>
               </view>
             </view>
           </view>

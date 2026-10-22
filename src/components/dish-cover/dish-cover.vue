@@ -116,7 +116,9 @@ async function paint(src: string | undefined, fileId: string | undefined, size: 
   const current = ++ticket
   usedOriginal = false
   if (src) {
-    shown.value = src
+    const next = /^https?:\/\//.test(src) ? await resolveFileUrl(src, size) : src
+    if (current === ticket)
+      shown.value = next
     return
   }
   const url = await resolveFileUrl(fileId, size)

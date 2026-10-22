@@ -20,9 +20,11 @@ declare global {
   const beginChoose: typeof import('./utils/account')['beginChoose']
   const beginClose: typeof import('./utils/ui')['beginClose']
   const bootFonts: typeof import('./utils/fonts')['bootFonts']
+  const cacheRemoteImage: typeof import('./utils/imageCache')['cacheRemoteImage']
   const cachedHome: typeof import('./utils/account')['cachedHome']
   const chooseImage: typeof import('./utils/files')['chooseImage']
   const chooseImages: typeof import('./utils/files')['chooseImages']
+  const clearImageCache: typeof import('./utils/imageCache')['clearImageCache']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -61,12 +63,15 @@ declare global {
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const faceOf: typeof import('./utils/face')['faceOf']
   const fitCloudImageUrl: typeof import('./utils/files')['fitCloudImageUrl']
+  const formatCacheSize: typeof import('./utils/imageCache')['formatCacheSize']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const homePath: typeof import('./utils/tabs')['homePath']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const ignoredCancel: typeof import('./utils/files')['ignoredCancel']
+  const imageCacheInfo: typeof import('./utils/imageCache')['imageCacheInfo']
+  const imageFileExt: typeof import('./utils/imageCache')['imageFileExt']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const invalidateTabs: typeof import('./utils/tabs')['invalidateTabs']
@@ -151,6 +156,7 @@ declare global {
   const reactiveComputed: typeof import('@vueuse/core')['reactiveComputed']
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
+  const readCachedImage: typeof import('./utils/imageCache')['readCachedImage']
   const readMenuScreen: typeof import('./utils/menuCache')['readMenuScreen']
   const readTodoScreen: typeof import('./utils/todoCache')['readTodoScreen']
   const readonly: typeof import('vue')['readonly']
@@ -459,9 +465,11 @@ declare module 'vue' {
     readonly beginChoose: UnwrapRef<typeof import('./utils/account')['beginChoose']>
     readonly beginClose: UnwrapRef<typeof import('./utils/ui')['beginClose']>
     readonly bootFonts: UnwrapRef<typeof import('./utils/fonts')['bootFonts']>
+    readonly cacheRemoteImage: UnwrapRef<typeof import('./utils/imageCache')['cacheRemoteImage']>
     readonly cachedHome: UnwrapRef<typeof import('./utils/account')['cachedHome']>
     readonly chooseImage: UnwrapRef<typeof import('./utils/files')['chooseImage']>
     readonly chooseImages: UnwrapRef<typeof import('./utils/files')['chooseImages']>
+    readonly clearImageCache: UnwrapRef<typeof import('./utils/imageCache')['clearImageCache']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -499,12 +507,15 @@ declare module 'vue' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly faceOf: UnwrapRef<typeof import('./utils/face')['faceOf']>
     readonly fitCloudImageUrl: UnwrapRef<typeof import('./utils/files')['fitCloudImageUrl']>
+    readonly formatCacheSize: UnwrapRef<typeof import('./utils/imageCache')['formatCacheSize']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly homePath: UnwrapRef<typeof import('./utils/tabs')['homePath']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly ignoredCancel: UnwrapRef<typeof import('./utils/files')['ignoredCancel']>
+    readonly imageCacheInfo: UnwrapRef<typeof import('./utils/imageCache')['imageCacheInfo']>
+    readonly imageFileExt: UnwrapRef<typeof import('./utils/imageCache')['imageFileExt']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly invalidateTabs: UnwrapRef<typeof import('./utils/tabs')['invalidateTabs']>
@@ -589,6 +600,7 @@ declare module 'vue' {
     readonly reactiveComputed: UnwrapRef<typeof import('@vueuse/core')['reactiveComputed']>
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
+    readonly readCachedImage: UnwrapRef<typeof import('./utils/imageCache')['readCachedImage']>
     readonly readMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['readMenuScreen']>
     readonly readTodoScreen: UnwrapRef<typeof import('./utils/todoCache')['readTodoScreen']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>

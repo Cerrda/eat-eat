@@ -4,6 +4,7 @@ import { createRecord, dateLabel, deleteRecord, getOrder, getRecord, matchMeal, 
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
+import { addDays, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { pageStyle } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
@@ -31,12 +32,39 @@ const locked = ref(false)
 const pending = ref(false)
 const ready = ref(false)
 const hydrated = ref(false)
-const slotLabels = ['早上', '中午', '晚上']
+const sheetOpen = ref(false)
+const mealOpen = ref(false)
+const mealMatchDate = ref('')
+const mealMatchSlot = ref<Slot>('noon')
+let mealCloseTimer: ReturnType<typeof setTimeout> | undefined
+const slotOptions: Array<{ value: Slot, label: string, short: string }> = [
+  { value: 'morning', label: '早上', short: '早' },
+  { value: 'noon', label: '中午', short: '中' },
+  { value: 'evening', label: '晚上', short: '晚' },
+]
 
-const mealLabel = computed(() => {
+const dateMain = computed(() => {
   if (!date.value)
     return ''
-  return `${dateLabel(date.value, today.value)}${SLOT_LABEL[slot.value]}点的`
+  return dateLabel(date.value, today.value)
+})
+
+const dateSub = computed(() => {
+  if (!date.value)
+    return ''
+  return `${monthDay(date.value)} ${weekdayLabel(date.value)}`
+})
+
+const mealLabel = computed(() => {
+  if (!mealMatchDate.value)
+    return ''
+  return `${dateLabel(mealMatchDate.value, today.value)}${SLOT_LABEL[mealMatchSlot.value]}点的`
+})
+
+const mealPanelHeight = computed(() => {
+  if (!mealOpen.value || !mealDishes.value.length)
+    return '0rpx'
+  return `${40 + mealDishes.value.length * 116}rpx`
 })
 
 const backLabel = computed(() => {
@@ -55,6 +83,10 @@ onShow(() => {
   void load()
 })
 
+onUnmounted(() => {
+  clearMealClose()
+})
+
 async function load() {
   try {
     const view = await ensureAccount({ next: 'home' })
@@ -65,8 +97,11 @@ async function load() {
       ready.value = true
       return
     }
-    if (!date.value)
-      date.value = view.today
+    if (!date.value) {
+      const pick = defaultMeal(view.today)
+      date.value = pick.date
+      slot.value = pick.slot
+    }
     if (orderId.value) {
       const order = await getOrder(orderId.value)
       applyOrder(order)
@@ -89,22 +124,60 @@ async function load() {
 
 let mealSpin = 0
 
+function clearMealClose() {
+  if (!mealCloseTimer)
+    return
+  clearTimeout(mealCloseTimer)
+  mealCloseTimer = undefined
+}
+
+function showMeal(dishes: RecordDish[], matchedDate: string, matchedSlot: Slot) {
+  dishIds.value = dishes.map(dish => dish.dishId)
+  if (dishes.length) {
+    clearMealClose()
+    mealDishes.value = dishes
+    mealMatchDate.value = matchedDate
+    mealMatchSlot.value = matchedSlot
+    mealOpen.value = true
+    return
+  }
+  if (!mealDishes.value.length) {
+    mealOpen.value = false
+    mealMatchDate.value = ''
+    return
+  }
+  clearMealClose()
+  mealOpen.value = false
+  mealCloseTimer = setTimeout(() => {
+    mealCloseTimer = undefined
+    mealDishes.value = []
+    mealMatchDate.value = ''
+  }, 260)
+}
+
 async function loadMeal() {
   const id = ++mealSpin
-  if (!date.value) {
-    mealDishes.value = []
+  clearMealClose()
+  const matchedDate = date.value
+  const matchedSlot = slot.value
+  if (!matchedDate) {
+    showMeal([], matchedDate, matchedSlot)
     return
   }
   try {
-    const matched = await matchMeal(date.value, slot.value)
+    const matched = await matchMeal(matchedDate, matchedSlot)
     if (id !== mealSpin)
       return
-    mealDishes.value = matched.dishes
     await primeFileUrls(matched.dishes.map(dish => dish.coverFileId))
+    if (id !== mealSpin)
+      return
+    showMeal(matched.dishes, matchedDate, matchedSlot)
   }
   catch (err) {
-    if (id === mealSpin)
+    if (id === mealSpin) {
+      showMeal([], matchedDate, matchedSlot)
       showError(err)
+    }
   }
 }
 
@@ -121,14 +194,47 @@ function applyRecord(record: RecordCard) {
   photos.value = [...record.photoFileIds]
 }
 
-function onDate(event: { detail: { value: string } }) {
-  date.value = event.detail.value
+function defaultMeal(day: string) {
+  const now = new Date()
+  const hour = now.getHours() + now.getMinutes() / 60
+  // 夜里 4 点前还算是前一晚的饭，避免把刚吃完的夜宵记成还没发生的早饭。
+  if (hour < 4)
+    return { date: addDays(day, -1), slot: 'evening' as Slot }
+  if (hour < 10)
+    return { date: day, slot: 'morning' as Slot }
+  if (hour < 15)
+    return { date: day, slot: 'noon' as Slot }
+  return { date: day, slot: 'evening' as Slot }
+}
+
+function weekdayLabel(day: string) {
+  const [year, month, date] = day.split('-').map(Number)
+  const week = new Date(Date.UTC(year, month - 1, date)).getUTCDay()
+  return `周${'日一二三四五六'[week]}`
+}
+
+function openSheet() {
+  if (locked.value || pending.value)
+    return
+  sheetOpen.value = true
+}
+
+function chooseDate(next: string) {
+  if (locked.value || pending.value)
+    return
+  sheetOpen.value = false
+  if (next === date.value)
+    return
+  date.value = next
+  dishIds.value = []
   void loadMeal()
 }
 
-function onSlot(event: { detail: { value: string } }) {
-  const index = Number(event.detail.value)
-  slot.value = (['morning', 'noon', 'evening'] as Slot[])[index] || 'morning'
+function chooseSlot(next: Slot) {
+  if (locked.value || pending.value || next === slot.value)
+    return
+  slot.value = next
+  dishIds.value = []
   void loadMeal()
 }
 
@@ -212,6 +318,20 @@ async function submit() {
   }
   pending.value = true
   try {
+    if (!recordId.value && !orderId.value) {
+      const matched = await matchMeal(date.value, slot.value)
+      showMeal(matched.dishes, date.value, slot.value)
+      if (!matched.dishes.length) {
+        const agreed = await ask(
+          '这餐还没对上',
+          `${dateLabel(date.value, today.value)}${SLOT_LABEL[slot.value]}还没找到对应的点餐，日期和餐次要不要再确认一下？`,
+          '就这样记',
+          '再看看',
+        )
+        if (!agreed)
+          return
+      }
+    }
     if (recordId.value) {
       await updateRecord({
         recordId: recordId.value,
@@ -252,56 +372,92 @@ async function submit() {
           </text>
           <ink-underline :width="176" />
         </view>
-        <view class="box-border flex border-0 border-y-4rpx border-line border-solid py-24rpx">
-          <view class="min-w-0 flex flex-1 flex-col gap-8rpx">
-            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('日期', 'mono')">
-              日期
-            </text>
-            <picker v-if="!locked" mode="date" :value="date" @change="onDate">
-              <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
-                {{ dateLabel(date, today) }}
+        <view class="box-border w-full flex gap-20rpx border-4rpx border-line rounded-36rpx border-solid bg-cream p-24rpx shadow-stamp">
+          <view class="min-w-0 flex flex-1 flex-col gap-8rpx" @tap="openSheet">
+            <view class="min-h-48rpx w-full flex items-center justify-between gap-8rpx">
+              <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('日期', 'mono')">
+                日期
               </text>
-            </picker>
-            <text v-else class="text-44rpx text-ink leading-[1.15]" :class="faceOf(dateLabel(date, today), 'serif')">
-              {{ dateLabel(date, today) }}
-            </text>
+              <view
+                v-if="!locked"
+                class="eat-press box-border flex shrink-0 items-center gap-6rpx border-3rpx border-line rounded-24rpx border-solid bg-paper px-16rpx py-8rpx"
+                hover-class="eat-press-on"
+                :hover-stay-time="120"
+              >
+                <view class="i-mingcute-calendar-line text-24rpx text-accent" />
+                <text class="text-24rpx text-accent leading-none" :class="faceOf('换一天', 'sans')">
+                  换一天
+                </text>
+              </view>
+            </view>
+            <view :key="date" class="record-date-in flex min-w-0 flex-col gap-2rpx">
+              <text class="block truncate text-44rpx text-ink leading-[1.15]" :class="faceOf(dateMain, 'serif')">
+                {{ dateMain }}
+              </text>
+              <text class="block truncate text-24rpx text-muted leading-[1.3]" :class="faceOf(dateSub, 'sans')">
+                {{ dateSub }}
+              </text>
+            </view>
           </view>
-          <view class="box-border min-w-0 flex flex-1 flex-col gap-8rpx border-0 border-l-4rpx border-line border-solid pl-24rpx">
-            <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('餐次', 'mono')">
-              餐次
-            </text>
-            <picker v-if="!locked" :range="slotLabels" @change="onSlot">
-              <text class="text-44rpx text-ink leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
-                {{ SLOT_LABEL[slot] }}
+          <view class="box-border min-w-0 flex flex-1 flex-col gap-12rpx border-0 border-l-4rpx border-line border-solid pl-24rpx">
+            <view class="min-h-48rpx w-full flex items-center">
+              <text class="text-28rpx text-accent leading-[1.15]" :class="faceOf('餐次', 'mono')">
+                餐次
               </text>
-            </picker>
-            <text v-else class="text-44rpx text-ink leading-[1.15]" :class="faceOf(SLOT_LABEL[slot], 'serif')">
-              {{ SLOT_LABEL[slot] }}
-            </text>
+            </view>
+            <view class="flex gap-8rpx">
+              <view
+                v-for="item in slotOptions"
+                :key="item.value"
+                class="record-slot h-88rpx flex flex-1 items-center justify-center border-3rpx rounded-28rpx border-solid"
+                :class="slot === item.value ? 'record-slot-on' : 'record-slot-off'"
+                :aria-label="item.label"
+                :hover-class="locked || slot === item.value ? 'none' : 'record-slot-press'"
+                :hover-stay-time="100"
+                @tap="chooseSlot(item.value)"
+              >
+                <text
+                  class="text-36rpx leading-[1.15]"
+                  :class="[slot === item.value ? 'text-paper' : 'text-ink', faceOf(item.short, 'serif')]"
+                >
+                  {{ item.short }}
+                </text>
+              </view>
+            </view>
           </view>
         </view>
-        <view v-if="mealDishes.length" class="flex flex-col gap-4rpx">
-          <text class="text-26rpx text-accent leading-[1.15]" :class="faceOf(mealLabel, 'mono')">
-            {{ mealLabel }}
-          </text>
+        <view
+          class="record-meal-panel"
+          :class="mealOpen && mealDishes.length ? 'record-meal-panel-on' : ''"
+          :style="{ maxHeight: mealPanelHeight }"
+        >
           <view
-            v-for="dish in mealDishes"
-            :key="dish.dishId"
-            class="flex items-center gap-20rpx py-8rpx"
+            v-if="mealDishes.length"
+            class="record-meal-content flex flex-col gap-4rpx"
           >
-            <view
-              class="h-96rpx w-96rpx shrink-0 rounded-28rpx"
-              :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
-            >
-              <dish-cover
-                class="box-border h-full w-full border-6rpx border-photo rounded-28rpx border-solid"
-                :file-id="dish.coverFileId"
-                :name="dish.name"
-              />
-            </view>
-            <text class="min-w-0 flex-1 text-36rpx text-ink leading-[1.15]" :class="faceOf(dish.name, 'serif')">
-              {{ dish.name }}
+            <text :key="mealLabel" class="record-meal-in text-26rpx text-accent leading-[1.15]" :class="faceOf(mealLabel, 'mono')">
+              {{ mealLabel }}
             </text>
+            <view
+              v-for="(dish, index) in mealDishes"
+              :key="`${mealMatchDate}-${mealMatchSlot}-${dish.dishId}`"
+              class="record-meal-in flex items-center gap-20rpx py-8rpx"
+              :style="{ animationDelay: `${40 + index * 36}ms` }"
+            >
+              <view
+                class="h-96rpx w-96rpx shrink-0 rounded-28rpx"
+                :style="{ boxShadow: '6rpx 8rpx 0 rgba(78, 34, 45, 0.28)' }"
+              >
+                <dish-cover
+                  class="box-border h-full w-full border-6rpx border-photo rounded-28rpx border-solid"
+                  :file-id="dish.coverFileId"
+                  :name="dish.name"
+                />
+              </view>
+              <text class="min-w-0 flex-1 truncate text-36rpx text-ink leading-[1.15]" :class="faceOf(dish.name, 'serif')">
+                {{ dish.name }}
+              </text>
+            </view>
           </view>
         </view>
         <view class="flex flex-wrap items-start gap-16rpx">
@@ -348,5 +504,109 @@ async function submit() {
         </text>
       </template>
     </view>
+    <template #dock>
+      <date-sheet
+        v-if="!locked"
+        :open="sheetOpen"
+        :value="date"
+        :today="today"
+        @select="chooseDate"
+        @close="sheetOpen = false"
+      />
+    </template>
   </paper-page>
 </template>
+
+<style>
+.record-date-in {
+  animation: record-date-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.record-slot {
+  transition:
+    transform 120ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.record-slot-on {
+  border-color: transparent;
+  background-color: var(--accent);
+  animation: record-slot-on 220ms cubic-bezier(0.22, 1.08, 0.36, 1);
+}
+
+.record-slot-off {
+  border-color: var(--line);
+  background-color: var(--paper);
+}
+
+.record-slot-press {
+  transform: scale(0.95);
+}
+
+.record-meal-panel {
+  overflow: hidden;
+  max-height: 0;
+  /* 空着时抵掉父级 flex gap，展开后再把上下间距补回来 */
+  margin: -14rpx 0;
+  transition:
+    max-height 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    margin 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.record-meal-panel-on {
+  margin: 0;
+  transition:
+    max-height 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.record-meal-panel .record-meal-content {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.record-meal-panel-on .record-meal-content {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+.record-meal-in {
+  animation: record-meal-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes record-date-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12rpx, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes record-slot-on {
+  from {
+    transform: scale(0.94);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes record-meal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16rpx, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+</style>
