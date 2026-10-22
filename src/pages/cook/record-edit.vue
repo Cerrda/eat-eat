@@ -36,6 +36,8 @@ const sheetOpen = ref(false)
 const mealOpen = ref(false)
 const mealMatchDate = ref('')
 const mealMatchSlot = ref<Slot>('noon')
+const savedDate = ref('')
+const savedSlot = ref<Slot>('noon')
 let mealCloseTimer: ReturnType<typeof setTimeout> | undefined
 const slotOptions: Array<{ value: Slot, label: string, short: string }> = [
   { value: 'morning', label: '早上', short: '早' },
@@ -110,7 +112,6 @@ async function load() {
     else if (recordId.value) {
       const found = await getRecord(recordId.value)
       applyRecord(found)
-      locked.value = true
       await primeFileUrls(found.photoFileIds)
     }
     hydrated.value = true
@@ -190,6 +191,8 @@ function applyOrder(order: OrderDetail) {
 function applyRecord(record: RecordCard) {
   date.value = record.date
   slot.value = record.slot
+  savedDate.value = record.date
+  savedSlot.value = record.slot
   text.value = record.text
   photos.value = [...record.photoFileIds]
 }
@@ -318,7 +321,8 @@ async function submit() {
   }
   pending.value = true
   try {
-    if (!recordId.value && !orderId.value) {
+    const moved = !!recordId.value && (date.value !== savedDate.value || slot.value !== savedSlot.value)
+    if (!orderId.value && (!recordId.value || moved)) {
       const matched = await matchMeal(date.value, slot.value)
       showMeal(matched.dishes, date.value, slot.value)
       if (!matched.dishes.length) {
@@ -335,6 +339,8 @@ async function submit() {
     if (recordId.value) {
       await updateRecord({
         recordId: recordId.value,
+        date: date.value,
+        slot: slot.value,
         text: text.value.trim(),
         photoFileIds: photos.value,
       })

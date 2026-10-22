@@ -19397,19 +19397,17 @@
                               "children": [
                                 {
                                   "type": "frame",
-                                  "id": "s1U8Qm",
+                                  "id": "iS9sv",
                                   "name": "上月",
                                   "width": 26,
                                   "height": 26,
                                   "fill": "#00000000",
-                                  "cornerRadius": 15,
-                                  "stroke": "#C9A297",
                                   "justifyContent": "center",
                                   "alignItems": "center",
                                   "children": [
                                     {
                                       "type": "icon",
-                                      "id": "WG2Gu",
+                                      "id": "FSyRS",
                                       "name": "左",
                                       "width": 13,
                                       "height": 13,
@@ -19421,7 +19419,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "En4nr",
+                                  "id": "BQkHI",
                                   "name": "月份",
                                   "fill": "#3C2428",
                                   "content": "2026年10月",
@@ -19432,19 +19430,17 @@
                                 },
                                 {
                                   "type": "frame",
-                                  "id": "Ey3Vj",
+                                  "id": "iv8b5",
                                   "name": "下月",
                                   "width": 26,
                                   "height": 26,
                                   "fill": "#00000000",
-                                  "cornerRadius": 15,
-                                  "stroke": "#C9A297",
                                   "justifyContent": "center",
                                   "alignItems": "center",
                                   "children": [
                                     {
                                       "type": "icon",
-                                      "id": "Eb9UV",
+                                      "id": "dZcjE",
                                       "name": "右",
                                       "width": 13,
                                       "height": 13,
@@ -20842,6 +20838,101 @@
                                       "fontFamily": "$font-serif",
                                       "fontSize": 16,
                                       "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qOwvB",
+                          "name": "缓存",
+                          "width": "fill_container",
+                          "stroke": "$line",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NuRN1",
+                              "name": "缓存字",
+                              "fill": "$burgundy",
+                              "content": "缓存",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "g3K0F",
+                              "name": "缓存行",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "qwgIq",
+                                  "name": "缓存项",
+                                  "fill": "$ink",
+                                  "content": "图片缓存",
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "vb5BX",
+                                  "name": "缓存操作",
+                                  "gap": 12,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "PSn5G",
+                                      "name": "缓存大小",
+                                      "fill": "$muted",
+                                      "content": "12.3 MB",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "W4yps",
+                                      "name": "清理缓存",
+                                      "cornerRadius": 16,
+                                      "stroke": "$line",
+                                      "strokeWidth": 1.5,
+                                      "padding": [
+                                        7,
+                                        14
+                                      ],
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "YH309",
+                                          "name": "清理字",
+                                          "fill": "$burgundy",
+                                          "content": "清理",
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 14,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
@@ -32013,6 +32104,101 @@
                                       "fontFamily": "$font-serif",
                                       "fontSize": 16,
                                       "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fPdHM",
+                          "name": "缓存",
+                          "width": "fill_container",
+                          "stroke": "$line",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GsqWI",
+                              "name": "缓存字",
+                              "fill": "$burgundy",
+                              "content": "缓存",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DrojM",
+                              "name": "缓存行",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "eIzeN",
+                                  "name": "缓存项",
+                                  "fill": "$ink",
+                                  "content": "图片缓存",
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Cu43j",
+                                  "name": "缓存操作",
+                                  "gap": 12,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "ociZu",
+                                      "name": "缓存大小",
+                                      "fill": "$muted",
+                                      "content": "12.3 MB",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "xyteK",
+                                      "name": "清理缓存",
+                                      "cornerRadius": 16,
+                                      "stroke": "$line",
+                                      "strokeWidth": 1.5,
+                                      "padding": [
+                                        7,
+                                        14
+                                      ],
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "ghaPF",
+                                          "name": "清理字",
+                                          "fill": "$burgundy",
+                                          "content": "清理",
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 14,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
@@ -53753,63 +53939,126 @@
                         },
                         {
                           "type": "frame",
-                          "id": "WSy24",
+                          "id": "Glxib",
                           "name": "日期餐次",
                           "width": "fill_container",
+                          "fill": "#262E29",
+                          "cornerRadius": 18,
                           "stroke": "#5C5348",
-                          "strokeWidth": {
-                            "top": 2,
-                            "bottom": 2
+                          "strokeWidth": 2,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#00000047",
+                            "offset": {
+                              "x": 3,
+                              "y": 4
+                            }
                           },
-                          "padding": [
-                            12,
-                            0
-                          ],
+                          "gap": 10,
+                          "padding": 12,
                           "children": [
                             {
                               "type": "frame",
-                              "id": "VSpld",
+                              "id": "K61dmu",
                               "name": "日期",
                               "width": "fill_container",
                               "layout": "vertical",
                               "gap": 4,
                               "children": [
                                 {
-                                  "type": "text",
-                                  "id": "zX3Gj",
-                                  "name": "字段",
-                                  "fill": "#C6A36A",
-                                  "content": "日期",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal",
-                                  "letterSpacing": 0.8
+                                  "type": "frame",
+                                  "id": "L7bxNQ",
+                                  "name": "字段行",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "A8uHs",
+                                      "name": "字段",
+                                      "fill": "#C6A36A",
+                                      "content": "日期",
+                                      "fontFamily": "Long Cang",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal",
+                                      "letterSpacing": 0.8
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "j7ewv",
+                                      "name": "换一天",
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 12,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "gap": 3,
+                                      "padding": [
+                                        4,
+                                        8
+                                      ],
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "icon",
+                                          "id": "ccm27",
+                                          "name": "日历",
+                                          "width": 12,
+                                          "height": 12,
+                                          "icon": "calendar-blank",
+                                          "library": "phosphor",
+                                          "fill": "#C6A36A"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "o50py",
+                                          "name": "按钮字",
+                                          "fill": "#C6A36A",
+                                          "content": "换一天",
+                                          "fontFamily": "Noto Sans SC",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 },
                                 {
                                   "type": "text",
-                                  "id": "VLFpr",
+                                  "id": "GW2U9",
                                   "name": "值",
                                   "fill": "#F3E6D4",
                                   "content": "今天",
                                   "lineHeight": 1.15,
-                                  "fontFamily": "$font-serif",
+                                  "fontFamily": "Ma Shan Zheng",
                                   "fontSize": 22,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "HzR1h",
+                                  "name": "月日",
+                                  "fill": "#B5A394",
+                                  "content": "10月22日 周四",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 12,
                                   "fontWeight": "normal"
                                 }
                               ]
                             },
                             {
                               "type": "frame",
-                              "id": "ujQtZ",
+                              "id": "lo1lL",
                               "name": "餐次",
                               "width": "fill_container",
+                              "height": 75,
                               "stroke": "#5C5348",
                               "strokeWidth": {
                                 "left": 2
                               },
                               "layout": "vertical",
-                              "gap": 4,
+                              "gap": 6,
                               "padding": [
                                 0,
                                 0,
@@ -53818,27 +54067,107 @@
                               ],
                               "children": [
                                 {
-                                  "type": "text",
-                                  "id": "uXSBM",
-                                  "name": "字段",
-                                  "fill": "#C6A36A",
-                                  "content": "餐次",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal",
-                                  "letterSpacing": 0.8
+                                  "type": "frame",
+                                  "id": "EtIE7",
+                                  "name": "字段行",
+                                  "width": "fill_container",
+                                  "height": 25,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "auwxF",
+                                      "name": "字段",
+                                      "fill": "#C6A36A",
+                                      "content": "餐次",
+                                      "fontFamily": "Long Cang",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal",
+                                      "letterSpacing": 0.8
+                                    }
+                                  ]
                                 },
                                 {
-                                  "type": "text",
-                                  "id": "vBSp3",
-                                  "name": "值",
-                                  "fill": "#F3E6D4",
-                                  "content": "中午",
-                                  "lineHeight": 1.15,
-                                  "fontFamily": "$font-serif",
-                                  "fontSize": 22,
-                                  "fontWeight": "normal"
+                                  "type": "frame",
+                                  "id": "Z6o60c",
+                                  "name": "段选",
+                                  "width": "fill_container",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "bIvQX",
+                                      "name": "早上",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 14,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "D6LOk6",
+                                          "name": "字",
+                                          "fill": "#F3E6D4",
+                                          "content": "早",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "wlHIb",
+                                      "name": "中午",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#C6A36A",
+                                      "cornerRadius": 14,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "l4VNf",
+                                          "name": "字",
+                                          "fill": "#1A211C",
+                                          "content": "中",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "yUw8o",
+                                      "name": "晚上",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 14,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "P2PhNK",
+                                          "name": "字",
+                                          "fill": "#F3E6D4",
+                                          "content": "晚",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -54300,6 +54629,1970 @@
                 },
                 {
                   "type": "frame",
+                  "id": "pAXBk",
+                  "name": "记下这餐 · 选日期",
+                  "clip": true,
+                  "width": 390,
+                  "height": 811,
+                  "fill": {
+                    "type": "shader",
+                    "enabled": true,
+                    "url": "paper.glsl",
+                    "uniforms": {
+                      "u_paper": "#1A211C",
+                      "u_fiber": "#2C3830",
+                      "u_blush": "#3A3028",
+                      "u_ink": "#C6A36A"
+                    }
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "feCjA",
+                      "name": "状态栏",
+                      "width": "fill_container",
+                      "height": 52,
+                      "padding": [
+                        0,
+                        22
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iVSOO",
+                          "name": "时间",
+                          "fill": "#F3E6D4",
+                          "content": "9:41",
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mIEhG",
+                      "name": "内容",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "padding": [
+                        4,
+                        22,
+                        24,
+                        22
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pXNUC",
+                          "name": "返回头",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "c1FTGu",
+                              "name": "返回",
+                              "width": 20,
+                              "height": 20,
+                              "icon": "caret-left",
+                              "library": "phosphor",
+                              "weight": 400,
+                              "fill": "#F3E6D4"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ror9L",
+                              "name": "标题",
+                              "fill": "#F3E6D4",
+                              "content": "今天中午",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-serif",
+                              "fontSize": 22,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "G8RjRY",
+                          "name": "标题组",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qRbwJ",
+                              "name": "标题",
+                              "fill": "#F3E6D4",
+                              "content": "记下这餐",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-serif",
+                              "fontSize": 36,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "path",
+                              "id": "n9jOp",
+                              "name": "手绘下划线",
+                              "geometry": "M0 6.8l5.2-6.8 5.1 0 5.2 1.7 5.1 1.7 5.2 1.7 5.1 3.4 5.2 3.4 5.2 3.4 5.1 5 5.2 3.4 5.1 5.1 5.2 5.1 5.1 5.1 5.2 5.1 5.2 5.1 5.1 6.7 5.2 6.8 5.1 8.5 5.2 10.2 1.7 8.4 0 1.7-1.7 3.4-5.2 1.7-5.1 0-5.2-1.7-5.1-1.7-5.2-1.7-5.2-3.4-5.1-3.4-5.2-3.3-5.1-5.1-5.2-3.4-5.1-5.1-5.2-5.1-5.2-5.1-5.1-5.1-5.2-6.7-5.1-6.8-5.2-6.8-5.1-8.5-5.2-15.2z",
+                              "viewBox": [
+                                0,
+                                0,
+                                100,
+                                100
+                              ],
+                              "fill": "#C6A36A",
+                              "width": 88,
+                              "height": 15
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cEpLW",
+                          "name": "日期餐次",
+                          "width": "fill_container",
+                          "fill": "#262E29",
+                          "cornerRadius": 18,
+                          "stroke": "#5C5348",
+                          "strokeWidth": 2,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#00000047",
+                            "offset": {
+                              "x": 3,
+                              "y": 4
+                            }
+                          },
+                          "gap": 10,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "h2wgF5",
+                              "name": "日期",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "FxZFw",
+                                  "name": "字段行",
+                                  "width": "fill_container",
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "HCtU9",
+                                      "name": "字段",
+                                      "fill": "#C6A36A",
+                                      "content": "日期",
+                                      "fontFamily": "Long Cang",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal",
+                                      "letterSpacing": 0.8
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "DT9hZ",
+                                      "name": "换一天",
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 12,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "gap": 3,
+                                      "padding": [
+                                        4,
+                                        8
+                                      ],
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "icon",
+                                          "id": "kIOyK",
+                                          "name": "日历",
+                                          "width": 12,
+                                          "height": 12,
+                                          "icon": "calendar-blank",
+                                          "library": "phosphor",
+                                          "fill": "#C6A36A"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "c4TD5",
+                                          "name": "按钮字",
+                                          "fill": "#C6A36A",
+                                          "content": "换一天",
+                                          "fontFamily": "Noto Sans SC",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "D5Jnw",
+                                  "name": "值",
+                                  "fill": "#F3E6D4",
+                                  "content": "今天",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "Ma Shan Zheng",
+                                  "fontSize": 22,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "QdS9Q",
+                                  "name": "月日",
+                                  "fill": "#B5A394",
+                                  "content": "10月22日 周四",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lakAU",
+                              "name": "餐次",
+                              "width": "fill_container",
+                              "height": 75,
+                              "stroke": "#5C5348",
+                              "strokeWidth": {
+                                "left": 2
+                              },
+                              "layout": "vertical",
+                              "gap": 6,
+                              "padding": [
+                                0,
+                                0,
+                                0,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "P8E3OL",
+                                  "name": "字段行",
+                                  "width": "fill_container",
+                                  "height": 25,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "rnNDY",
+                                      "name": "字段",
+                                      "fill": "#C6A36A",
+                                      "content": "餐次",
+                                      "fontFamily": "Long Cang",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal",
+                                      "letterSpacing": 0.8
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "SsXCK",
+                                  "name": "段选",
+                                  "width": "fill_container",
+                                  "gap": 4,
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "qIVSl",
+                                      "name": "早上",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 14,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "g3gym",
+                                          "name": "字",
+                                          "fill": "#F3E6D4",
+                                          "content": "早",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "yQGgT",
+                                      "name": "中午",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#C6A36A",
+                                      "cornerRadius": 14,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "A2Srq",
+                                          "name": "字",
+                                          "fill": "#1A211C",
+                                          "content": "中",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "k8m6cG",
+                                      "name": "晚上",
+                                      "width": "fill_container",
+                                      "height": 44,
+                                      "fill": "#1A211C",
+                                      "cornerRadius": 14,
+                                      "stroke": "#5C5348",
+                                      "strokeWidth": 1.5,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "rZNw9",
+                                          "name": "字",
+                                          "fill": "#F3E6D4",
+                                          "content": "晚",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 18,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iaIYF",
+                          "name": "对上的菜",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Ab2wi",
+                              "name": "菜眉",
+                              "fill": "#C6A36A",
+                              "content": "今天中午点的",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "kf5M7",
+                              "name": "红烧排骨",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "pnvxJ",
+                                  "name": "红烧排骨封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "haroldjp89",
+                                    "link": "https://unsplash.com/@haroldjp89",
+                                    "author": "Harold Castro"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1734094159593-211927207602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#3A4640",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#00000047",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "efaCc",
+                                  "name": "菜名",
+                                  "fill": "#F3E6D4",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "红烧排骨",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "QTTEC",
+                              "name": "番茄炒蛋",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "DTmwC",
+                                  "name": "番茄炒蛋封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "rayzhou",
+                                    "link": "https://unsplash.com/@rayzhou",
+                                    "author": "Ray Zhou"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1640409084317-ada21bc20d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#3A4640",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#00000047",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "FRGBT",
+                                  "name": "菜名",
+                                  "fill": "#F3E6D4",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "番茄炒蛋",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "y4iTmg",
+                              "name": "葱油拌面",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                4,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "A8HXI",
+                                  "name": "葱油拌面封面",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "zoshuacolah",
+                                    "link": "https://unsplash.com/@zoshuacolah",
+                                    "author": "Zoshua Colah"
+                                  },
+                                  "clip": true,
+                                  "width": 48,
+                                  "height": 48,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1789999963810-288d08185449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzQ1MjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 14,
+                                  "stroke": "#3A4640",
+                                  "strokeWidth": 2,
+                                  "strokeAlignment": "inner",
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#00000047",
+                                    "offset": {
+                                      "x": 3,
+                                      "y": 4
+                                    }
+                                  },
+                                  "layout": "vertical",
+                                  "justifyContent": "end"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "C6qBxc",
+                                  "name": "菜名",
+                                  "fill": "#F3E6D4",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "葱油拌面",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 18,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YGjT6",
+                          "name": "照片",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Q0eS6V",
+                              "name": "红烧排骨封面",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "kierinsightarchives",
+                                "link": "https://unsplash.com/@kierinsightarchives",
+                                "author": "Kier in Sight Archives"
+                              },
+                              "clip": true,
+                              "width": 104,
+                              "height": 104,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1732589307047-c97891a243b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzUwNzh8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "cover"
+                              },
+                              "cornerRadius": 18,
+                              "stroke": "#3A4640",
+                              "strokeWidth": 3,
+                              "strokeAlignment": "inner",
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#00000047",
+                                "offset": {
+                                  "x": 3,
+                                  "y": 4
+                                }
+                              }
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Udo94",
+                              "name": "排骨特写封面",
+                              "metadata": {
+                                "type": "unsplash",
+                                "username": "yllea_126",
+                                "link": "https://unsplash.com/@yllea_126",
+                                "author": "Famery Fialiwan"
+                              },
+                              "clip": true,
+                              "width": 104,
+                              "height": 104,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "https://images.unsplash.com/photo-1707322540735-2a758dcfb68c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTAxMzUwNzh8&ixlib=rb-4.1.0&q=80&w=1080",
+                                "mode": "cover"
+                              },
+                              "cornerRadius": 18,
+                              "stroke": "#3A4640",
+                              "strokeWidth": 3,
+                              "strokeAlignment": "inner",
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#00000047",
+                                "offset": {
+                                  "x": 3,
+                                  "y": 4
+                                }
+                              }
+                            },
+                            {
+                              "type": "frame",
+                              "id": "oKUrL",
+                              "name": "加一张",
+                              "width": 104,
+                              "height": 104,
+                              "cornerRadius": 18,
+                              "stroke": "#5C5348",
+                              "strokeWidth": 2,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ubbxQ",
+                                  "name": "加一张",
+                                  "fill": "#B5A394",
+                                  "content": "加一张",
+                                  "fontFamily": "$font-sans",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "DXnks",
+                          "name": "张数",
+                          "fill": "#B5A394",
+                          "content": "2 / 9 张",
+                          "fontFamily": "$font-sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "OeXZw",
+                          "name": "文字",
+                          "width": "fill_container",
+                          "height": 120,
+                          "fill": "#262E29",
+                          "cornerRadius": 18,
+                          "stroke": "#5C5348",
+                          "strokeWidth": 2,
+                          "layout": "vertical",
+                          "padding": 14,
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g2oA2V",
+                              "name": "正文",
+                              "fill": "#F3E6D4",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "收汁收得久了一点，骨头很软。",
+                              "lineHeight": 1.15,
+                              "fontFamily": "$font-serif",
+                              "fontSize": 20,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "sLDUX",
+                              "name": "字数",
+                              "width": "fill_container",
+                              "justifyContent": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WFSAB",
+                                  "name": "字数字",
+                                  "fill": "#B5A394",
+                                  "content": "16 / 300",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "$font-mono",
+                                  "fontSize": 15,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "x9O3gt",
+                          "name": "记下",
+                          "width": "fill_container",
+                          "fill": "#C6A36A",
+                          "cornerRadius": 26,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#00000059",
+                            "offset": {
+                              "x": 3,
+                              "y": 4
+                            }
+                          },
+                          "padding": [
+                            15,
+                            16
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "DDZAY",
+                              "name": "按钮字",
+                              "fill": "#1A211C",
+                              "content": "记下",
+                              "fontFamily": "$font-sans",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T4NdQ",
+                      "layoutPosition": "absolute",
+                      "x": 296,
+                      "y": 51,
+                      "name": "胶囊",
+                      "width": 87,
+                      "height": 32,
+                      "fill": "#262E29",
+                      "cornerRadius": 16,
+                      "stroke": "#5C5348",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        11
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Uzqkt",
+                          "name": "更多",
+                          "fill": "#F3E6D4",
+                          "content": "···",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "p8DBk",
+                          "name": "分隔",
+                          "width": 1,
+                          "height": 18,
+                          "fill": "#5C5348"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "LySra",
+                          "name": "关闭",
+                          "fill": "#262E29",
+                          "width": 14,
+                          "height": 14,
+                          "stroke": "#F3E6D4",
+                          "strokeWidth": 1.25
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "J2SZCk",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "遮罩",
+                      "fill": "#00000073",
+                      "width": 390,
+                      "height": 811
+                    },
+                    {
+                      "type": "frame",
+                      "id": "m5OhT",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 422,
+                      "name": "选日期面板",
+                      "width": 390,
+                      "fill": "#262E29",
+                      "cornerRadius": [
+                        22,
+                        22,
+                        0,
+                        0
+                      ],
+                      "stroke": "#5C5348",
+                      "strokeWidth": 2,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": [
+                        14,
+                        20,
+                        34,
+                        20
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "fnbR0",
+                          "name": "抓手行",
+                          "width": "fill_container",
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "hEpGJ",
+                              "name": "抓手",
+                              "fill": "#5C5348",
+                              "width": 40,
+                              "height": 4
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "KMMPo",
+                          "name": "标题行",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "SSzuY",
+                              "name": "标题",
+                              "fill": "#F3E6D4",
+                              "content": "选日期",
+                              "lineHeight": 1.15,
+                              "fontFamily": "Ma Shan Zheng",
+                              "fontSize": 24,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "eYvsk",
+                              "name": "回到今天",
+                              "fill": "#1A211C",
+                              "cornerRadius": 15,
+                              "stroke": "#5C5348",
+                              "strokeWidth": 1.5,
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "PTDsX",
+                                  "name": "字",
+                                  "fill": "#C6A36A",
+                                  "content": "今天",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "etij6",
+                          "name": "月份行",
+                          "width": "fill_container",
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "k2Adwb",
+                              "name": "月份切换",
+                              "width": "fill_container",
+                              "fill": "#1A211C",
+                              "cornerRadius": 22,
+                              "stroke": "#5C5348",
+                              "strokeWidth": 1.5,
+                              "gap": 10,
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "FDTaC",
+                                  "name": "上月",
+                                  "width": 26,
+                                  "height": 26,
+                                  "fill": "#00000000",
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "G3ea10",
+                                      "name": "左",
+                                      "width": 13,
+                                      "height": 13,
+                                      "icon": "caret-left",
+                                      "library": "phosphor",
+                                      "fill": "#F3E6D4"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "l1ZWMf",
+                                  "name": "月份",
+                                  "fill": "#F3E6D4",
+                                  "content": "2026年10月",
+                                  "lineHeight": 1.15,
+                                  "fontFamily": "Ma Shan Zheng",
+                                  "fontSize": 20,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Fwl3s",
+                                  "name": "下月",
+                                  "width": 26,
+                                  "height": 26,
+                                  "fill": "#00000000",
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "Z5DR5N",
+                                      "name": "右",
+                                      "width": 13,
+                                      "height": 13,
+                                      "icon": "caret-right",
+                                      "library": "phosphor",
+                                      "fill": "#5C5348"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "H4FFg",
+                          "name": "星期行",
+                          "width": "fill_container",
+                          "height": 28,
+                          "fill": "#314038",
+                          "cornerRadius": 10,
+                          "padding": [
+                            3,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "DFZby",
+                              "name": "日",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "vtfFu",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "日",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "OgUYy",
+                              "name": "一",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "XtjZZ",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "一",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "J3qAt",
+                              "name": "二",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "TWpPx",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "二",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "msPmv",
+                              "name": "三",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "x3Pqby",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "三",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lRRaz",
+                              "name": "四",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "T170V",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "四",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DE2DF",
+                              "name": "五",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "wid4m",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "五",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "yDNIf",
+                              "name": "六",
+                              "width": "fill_container",
+                              "height": 22,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "B4aeL",
+                                  "name": "星期",
+                                  "fill": "#C6A36A",
+                                  "content": "六",
+                                  "fontFamily": "Long Cang",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "IpxsL",
+                          "name": "日历格",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "MUw9e",
+                              "name": "第1周",
+                              "width": "fill_container",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "CnrFj",
+                                  "name": "空",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "aUQUw",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "27",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "JS5B8",
+                                  "name": "空",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "ia0oN",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "28",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Zl3Fs",
+                                  "name": "空",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "mVUCy",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "29",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "JvhNb",
+                                  "name": "空",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "MhNQD",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "30",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ji15g",
+                                  "name": "1",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bsEO6",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "1",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Hf8G5",
+                                  "name": "2",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "yDNGt",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "2",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Bvyp1",
+                                  "name": "3",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "h9ePUT",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "3",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "tMEh4",
+                              "name": "第2周",
+                              "width": "fill_container",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "dYngs",
+                                  "name": "4",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "oK1Ed",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "4",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "E0bp2S",
+                                  "name": "5",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "k4kIY",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "5",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ES7mS",
+                                  "name": "6",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "xvY7h",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "6",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "uqnsN",
+                                  "name": "7",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "X23qw",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "7",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "f1UxD",
+                                  "name": "8",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "kSR0P",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "8",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ONF5H",
+                                  "name": "9",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "DnxzW",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "9",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "edVsV",
+                                  "name": "10",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "iYxBk",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "10",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bC6F4",
+                              "name": "第3周",
+                              "width": "fill_container",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "fFcNu",
+                                  "name": "11",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "J8KJS2",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "11",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "BXgx1",
+                                  "name": "12",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "oXnZI",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "12",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "hGGca",
+                                  "name": "13",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "t36NMi",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "13",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "G6VpGC",
+                                  "name": "14",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "b0erE",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "14",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "xYbCW",
+                                  "name": "15",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "YR3tg",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "15",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "zcxQ7",
+                                  "name": "16",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "IwqUG",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "16",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "N9zRnj",
+                                  "name": "17",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "egOWA",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "17",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "G7Wkx",
+                              "name": "第4周",
+                              "width": "fill_container",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "c7qchu",
+                                  "name": "18",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Jkkyy",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "18",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "L1Zvdc",
+                                  "name": "19",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "eVYNN",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "19",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "D4yqc",
+                                  "name": "20",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Rnxv9",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "20",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "y0BZ63",
+                                  "name": "21",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "uGHIK",
+                                      "name": "日",
+                                      "fill": "#F3E6D4",
+                                      "content": "21",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "wfY9b",
+                                  "name": "22",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "EStcV",
+                                      "name": "选中日",
+                                      "width": 36,
+                                      "height": 36,
+                                      "fill": "#C6A36A",
+                                      "cornerRadius": 18,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "pQVvk",
+                                          "name": "日",
+                                          "fill": "#1A211C",
+                                          "content": "22",
+                                          "fontFamily": "Ma Shan Zheng",
+                                          "fontSize": 16,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Sk2lW",
+                                  "name": "23",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "zYA38",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "23",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "B2rdef",
+                                  "name": "24",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "GzpGy",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "24",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "V5dJSL",
+                              "name": "第5周",
+                              "width": "fill_container",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "GTzc5",
+                                  "name": "25",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "YltgI",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "25",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "z9M91",
+                                  "name": "26",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Z76K1",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "26",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "O07EzF",
+                                  "name": "27",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "K5wlb",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "27",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "w07a3A",
+                                  "name": "28",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "m4WOhg",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "28",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "TBjL9",
+                                  "name": "29",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "SOxHD",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "29",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "zBI0r",
+                                  "name": "30",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "cujyH",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "30",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "y2YfXa",
+                                  "name": "31",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "BHHPg",
+                                      "name": "日",
+                                      "fill": "#B5A39466",
+                                      "content": "31",
+                                      "fontFamily": "Ma Shan Zheng",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
                   "id": "wWPec",
                   "name": "加载中",
                   "width": "fill_container",
@@ -54717,6 +57010,101 @@
                                       "fontFamily": "$font-serif",
                                       "fontSize": 16,
                                       "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Fg5cW",
+                          "name": "缓存",
+                          "width": "fill_container",
+                          "stroke": "#7A6C5C",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "G6KvBT",
+                              "name": "缓存字",
+                              "fill": "#C6A36A",
+                              "content": "缓存",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "RiZNU",
+                              "name": "缓存行",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "IvK7X",
+                                  "name": "缓存项",
+                                  "fill": "#F3E6D4",
+                                  "content": "图片缓存",
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Skq1X",
+                                  "name": "缓存操作",
+                                  "gap": 12,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "cQw8r",
+                                      "name": "缓存大小",
+                                      "fill": "#B5A394",
+                                      "content": "12.3 MB",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "FM4vV",
+                                      "name": "清理缓存",
+                                      "cornerRadius": 16,
+                                      "stroke": "#7A6C5C",
+                                      "strokeWidth": 1.5,
+                                      "padding": [
+                                        7,
+                                        14
+                                      ],
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "Cs116",
+                                          "name": "清理字",
+                                          "fill": "#C6A36A",
+                                          "content": "清理",
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 14,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
@@ -65886,6 +68274,101 @@
                                       "fontFamily": "$font-serif",
                                       "fontSize": 16,
                                       "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "s9S5dh",
+                          "name": "缓存",
+                          "width": "fill_container",
+                          "stroke": "#7A6C5C",
+                          "strokeWidth": {
+                            "top": 2
+                          },
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            18,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "k501Ix",
+                              "name": "缓存字",
+                              "fill": "#C6A36A",
+                              "content": "缓存",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "d9XIQ",
+                              "name": "缓存行",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "xOsV9",
+                                  "name": "缓存项",
+                                  "fill": "#F3E6D4",
+                                  "content": "图片缓存",
+                                  "fontFamily": "$font-serif",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "G41qcw",
+                                  "name": "缓存操作",
+                                  "gap": 12,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "KWiWL",
+                                      "name": "缓存大小",
+                                      "fill": "#B5A394",
+                                      "content": "12.3 MB",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "HKZOu",
+                                      "name": "清理缓存",
+                                      "cornerRadius": 16,
+                                      "stroke": "#7A6C5C",
+                                      "strokeWidth": 1.5,
+                                      "padding": [
+                                        7,
+                                        14
+                                      ],
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "h6rzIt",
+                                          "name": "清理字",
+                                          "fill": "#C6A36A",
+                                          "content": "清理",
+                                          "fontFamily": "$font-serif",
+                                          "fontSize": 14,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }

@@ -1752,11 +1752,33 @@ function createEatService(deps) {
     const photoFileIds = body.photoFileIds === undefined ? record.photoFileIds : normalizePhotos(body.photoFileIds)
     if (!text && photoFileIds.length === 0)
       throw new EatError('VALIDATION', '照片和文字至少留一样')
-    await store.update('eat-records', { _id: record._id, kitchenId: kitchen._id }, {
-      text,
-      photoFileIds,
-      updatedAt: now(),
-    })
+    let date = record.date
+    let slot = record.slot
+    if (body.date !== undefined) {
+      date = String(body.date || '')
+      if (!isRealDate(date))
+        throw new EatError('VALIDATION', '先选这一天')
+      if (date > todayString())
+        throw new EatError('VALIDATION', '还没到这一天')
+    }
+    if (body.slot !== undefined) {
+      slot = body.slot
+      if (!SLOTS.includes(slot))
+        throw new EatError('VALIDATION', '先选早上、中午或晚上')
+    }
+    const patch = { text, photoFileIds, updatedAt: now() }
+    if (date !== record.date || slot !== record.slot) {
+      const target = liveOrder(await store.find('eat-orders', { kitchenId: kitchen._id, date, slot }, 20))
+      const linked = target
+        ? await store.find('eat-records', { kitchenId: kitchen._id, orderId: target._id }, 20)
+        : []
+      const claimed = linked.some(item => !item.deleted && item._id !== record._id)
+      patch.date = date
+      patch.slot = slot
+      patch.orderId = target && !claimed ? target._id : ''
+      patch.dishes = target ? (target.items || []).map(dishView) : []
+    }
+    await store.update('eat-records', { _id: record._id, kitchenId: kitchen._id }, patch)
     return presentRecord(kitchen, await ownRecord(kitchen, record._id))
   }
 

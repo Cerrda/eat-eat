@@ -185,6 +185,8 @@ export interface CreateRecordInput {
 
 export interface UpdateRecordInput {
   recordId: string
+  date?: string
+  slot?: Slot
   text?: string
   photoFileIds?: string[]
 }

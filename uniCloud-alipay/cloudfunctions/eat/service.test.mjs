@@ -453,6 +453,44 @@ describe('绑定后的厨房', () => {
       text: '再记一次',
     })).rejects.toMatchObject({ errCode: 'VALIDATION' })
 
+    const moved = await ctx.eat.updateRecord({
+      recordId: record.recordId,
+      date: board.today,
+      slot: 'morning',
+      text: '记错餐次了',
+      photoFileIds: ['cloud://photo'],
+    })
+    expect(moved.date).toBe(board.today)
+    expect(moved.slot).toBe('morning')
+    expect(moved.dishes).toEqual([])
+    expect(moved.orderId).toBe('')
+    expect((await ctx.eat.getOrder({ orderId: order.orderId })).recorded).toBe(false)
+
+    const restored = await ctx.eat.updateRecord({
+      recordId: record.recordId,
+      slot: 'evening',
+    })
+    expect(restored.slot).toBe('evening')
+    expect(restored.orderId).toBe(order.orderId)
+    expect(restored.dishes).toEqual([{
+      dishId: dish.dishId,
+      name: '番茄炒蛋',
+      coverFileId: 'cloud://cover',
+    }])
+    expect((await ctx.eat.getOrder({ orderId: order.orderId })).recorded).toBe(true)
+    await expect(ctx.eat.updateRecord({
+      recordId: record.recordId,
+      date: '2026-13-01',
+    })).rejects.toMatchObject({ errCode: 'VALIDATION' })
+    await expect(ctx.eat.updateRecord({
+      recordId: record.recordId,
+      date: '2099-01-01',
+    })).rejects.toMatchObject({ errCode: 'VALIDATION' })
+    await expect(ctx.eat.updateRecord({
+      recordId: record.recordId,
+      slot: 'late',
+    })).rejects.toMatchObject({ errCode: 'VALIDATION' })
+
     await ctx.use('openid-eater')
     expect((await ctx.eat.badges()).records).toBe(1)
     const records = await ctx.eat.listRecords()
@@ -696,12 +734,12 @@ describe('批量新增菜品', () => {
     expect(await ctx.store.find('eat-categories', { kitchenId }, 10)).toHaveLength(1)
   })
 
-  it('列表默认一页 10 条，下一页接着给', async () => {
+  it('列表默认一页 50 条，下一页接着给', async () => {
     const ctx = setup()
     await bindPair(ctx.eat, 'openid-cooker', 'openid-eater')
     await ctx.use('openid-cooker')
     const category = await ctx.eat.createCategory({ name: '家常' })
-    for (let index = 0; index < 12; index += 1) {
+    for (let index = 0; index < 55; index += 1) {
       ctx.advance(1)
       await ctx.eat.publishDish({
         name: `菜${String(index).padStart(2, '0')}`,
@@ -712,34 +750,45 @@ describe('批量新增菜品', () => {
 
     const first = await ctx.eat.listDishes({})
     expect(first.page).toBe(1)
-    expect(first.pageSize).toBe(10)
-    expect(first.total).toBe(12)
-    expect(first.dishes).toHaveLength(10)
-    expect(first.dishes[0].name).toBe('菜11')
+    expect(first.pageSize).toBe(50)
+    expect(first.total).toBe(55)
+    expect(first.dishes).toHaveLength(50)
+    expect(first.dishes[0].name).toBe('菜54')
 
     const second = await ctx.eat.listDishes({ page: 2 })
-    expect(second.dishes.map(item => item.name)).toEqual(['菜01', '菜00'])
-    expect(second.total).toBe(12)
+    expect(second.dishes.map(item => item.name)).toEqual(['菜04', '菜03', '菜02', '菜01', '菜00'])
+    expect(second.total).toBe(55)
 
     const named = await ctx.eat.listDishes({ keyword: '菜1' })
-    expect(named.total).toBe(2)
-    expect(named.dishes.map(item => item.name).sort()).toEqual(['菜10', '菜11'])
+    expect(named.total).toBe(10)
+    expect(named.dishes.map(item => item.name).sort()).toEqual([
+      '菜10',
+      '菜11',
+      '菜12',
+      '菜13',
+      '菜14',
+      '菜15',
+      '菜16',
+      '菜17',
+      '菜18',
+      '菜19',
+    ])
 
     const wide = await ctx.eat.listDishes({ pageSize: 1000 })
     expect(wide.pageSize).toBe(50)
-    expect(wide.dishes).toHaveLength(12)
+    expect(wide.dishes).toHaveLength(50)
 
     const categories = await ctx.eat.listCategories()
     expect(categories.categories.find(item => item.name === '家常').count).toBe(2)
 
     await ctx.use('openid-eater')
     const menu = await ctx.eat.listMenu({})
-    expect(menu.total).toBe(12)
-    expect(menu.dishes).toHaveLength(10)
-    expect(menu.menuTotal).toBe(12)
+    expect(menu.total).toBe(55)
+    expect(menu.dishes).toHaveLength(50)
+    expect(menu.menuTotal).toBe(55)
     const filtered = await ctx.eat.listMenu({ keyword: '菜1', page: 1 })
-    expect(filtered.total).toBe(2)
-    expect(filtered.menuTotal).toBe(12)
+    expect(filtered.total).toBe(10)
+    expect(filtered.menuTotal).toBe(55)
 
     const board = await ctx.eat.mealBoard()
     await ctx.eat.createOrder({
@@ -747,27 +796,28 @@ describe('批量新增菜品', () => {
       slot: 'noon',
       dishIds: [menu.dishes[0].dishId],
     })
-    for (let index = 0; index < 11; index += 1) {
+    for (let index = 0; index < 53; index += 1) {
+      ctx.advance(1)
       await ctx.eat.createRecord({
-        date: `2026-01-${String(index + 1).padStart(2, '0')}`,
+        date: '2026-01-01',
         slot: 'noon',
         text: `记${String(index).padStart(2, '0')}`,
       })
     }
     const records = await ctx.eat.listRecords({})
-    expect(records.total).toBe(11)
-    expect(records.records).toHaveLength(10)
-    expect(records.records[0].text).toBe('记10')
+    expect(records.total).toBe(53)
+    expect(records.records).toHaveLength(50)
+    expect(records.records[0].text).toBe('记52')
     const rest = await ctx.eat.listRecords({ page: 2 })
-    expect(rest.records).toHaveLength(1)
+    expect(rest.records).toHaveLength(3)
     const one = await ctx.eat.getRecord({ recordId: rest.records[0].recordId })
     expect(one.text).toBe(rest.records[0].text)
 
     const kitchenId = (await ctx.store.find('eat-kitchens', { status: 'active' }, 1))[0]._id
-    for (let index = 0; index < 12; index += 1) {
+    for (let index = 0; index < 52; index += 1) {
       await ctx.store.insert('eat-orders', {
         kitchenId,
-        date: `2026-03-${String(index + 1).padStart(2, '0')}`,
+        date: '2026-03-01',
         slot: 'evening',
         status: 'pending',
         note: '',
@@ -776,15 +826,15 @@ describe('批量新增菜品', () => {
       })
     }
     const orders = await ctx.eat.listOrders({ page: 1 })
-    expect(orders.total).toBe(13)
-    expect(orders.orders).toHaveLength(10)
+    expect(orders.total).toBe(53)
+    expect(orders.orders).toHaveLength(50)
     const ordersNext = await ctx.eat.listOrders({ page: 2 })
     expect(ordersNext.orders).toHaveLength(3)
 
     await ctx.use('openid-cooker')
     const todo = await ctx.eat.listTodo({ page: 1 })
-    expect(todo.total).toBe(13)
-    expect(todo.orders).toHaveLength(10)
+    expect(todo.total).toBe(53)
+    expect(todo.orders).toHaveLength(50)
     const todoNext = await ctx.eat.listTodo({ page: 2 })
     expect(todoNext.orders).toHaveLength(3)
   })
@@ -806,7 +856,7 @@ describe('批量新增菜品', () => {
         updatedAt: index,
       })
     }
-    const page = await ctx.eat.listDishes({ page: 101 })
+    const page = await ctx.eat.listDishes({ page: 21 })
     expect(page.total).toBe(1005)
     expect(page.dishes.map(item => item.name)).toEqual(['量0004', '量0003', '量0002', '量0001', '量0000'])
 
@@ -822,8 +872,8 @@ describe('批量新增菜品', () => {
     })
 
     const first = await ctx.eat.listMenu({})
-    expect(first.pageSize).toBe(10)
-    expect(first.dishes.map(item => item.name)).toEqual(named.names.slice(0, 10).map(item => item.name))
+    expect(first.pageSize).toBe(50)
+    expect(first.dishes.map(item => item.name)).toEqual(named.names.slice(0, 50).map(item => item.name))
 
     const window = await ctx.eat.listMenu({ offset: 20, pageSize: 30 })
     expect(window.pageSize).toBe(30)
