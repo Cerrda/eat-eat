@@ -50,6 +50,17 @@ export function withinMenu(date: string, today: string) {
   return Boolean(today) && date >= today && date <= addDays(today, 2)
 }
 
+const MEAL_HOUR = { noon: 12, evening: 18 }
+
+export function defaultMeal(day: string, now = new Date()) {
+  const hour = now.getHours() + now.getMinutes() / 60
+  if (hour < MEAL_HOUR.noon)
+    return { date: addDays(day, -1), slot: 'evening' as Slot }
+  if (hour < MEAL_HOUR.evening)
+    return { date: day, slot: 'noon' as Slot }
+  return { date: day, slot: 'evening' as Slot }
+}
+
 export function slotKey(label: string): Slot {
   if (label === '中午')
     return 'noon'

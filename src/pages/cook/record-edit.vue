@@ -4,7 +4,7 @@ import { createRecord, dateLabel, deleteRecord, getOrder, getRecord, matchMeal, 
 import { ensureAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { chooseImages, ignoredCancel, primeFileUrls, uploadImage } from '@/utils/files'
-import { addDays, monthDay } from '@/utils/format'
+import { defaultMeal, monthDay } from '@/utils/format'
 import { showHint } from '@/utils/hint'
 import { pageStyle } from '@/utils/theme'
 import { ask, showError } from '@/utils/ui'
@@ -195,19 +195,6 @@ function applyRecord(record: RecordCard) {
   savedSlot.value = record.slot
   text.value = record.text
   photos.value = [...record.photoFileIds]
-}
-
-function defaultMeal(day: string) {
-  const now = new Date()
-  const hour = now.getHours() + now.getMinutes() / 60
-  // 夜里 4 点前还算是前一晚的饭，避免把刚吃完的夜宵记成还没发生的早饭。
-  if (hour < 4)
-    return { date: addDays(day, -1), slot: 'evening' as Slot }
-  if (hour < 10)
-    return { date: day, slot: 'morning' as Slot }
-  if (hour < 15)
-    return { date: day, slot: 'noon' as Slot }
-  return { date: day, slot: 'evening' as Slot }
 }
 
 function weekdayLabel(day: string) {

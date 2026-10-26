@@ -291,6 +291,8 @@ function busyOf(day: string, meal: Slot) {
   return board.value?.busy.find(item => item.date === day && item.slot === meal) || null
 }
 
+let holdSelection = false
+
 function ensureSelection() {
   if (!board.value)
     return
@@ -299,10 +301,11 @@ function ensureSelection() {
     const nextSlot = menuIntent.slot
     menuIntent.date = ''
     menuIntent.slot = ''
+    holdSelection = true
     void selectSlot(nextDate, nextSlot)
     return
   }
-  if (date.value) {
+  if (holdSelection && date.value) {
     void selectSlot(date.value, slot.value)
     return
   }
@@ -311,22 +314,29 @@ function ensureSelection() {
     void selectSlot(pick.date, pick.meal)
 }
 
+const NEXT_MEAL_HOUR = { noon: 12, evening: 18 } as const
+
+function mealStamp(day: string, meal: keyof typeof NEXT_MEAL_HOUR) {
+  const [year, month, dayNum] = day.split('-').map(Number)
+  return new Date(year, month - 1, dayNum, NEXT_MEAL_HOUR[meal], 0, 0, 0).getTime()
+}
+
 function openSlot() {
   const days = board.value?.dates
   if (!days?.length)
     return null
-  const line: Array<{ date: string, meal: Slot }> = []
-  for (const day of days) {
-    for (const meal of slots)
-      line.push({ date: day.date, meal })
-  }
-  const tomorrow = days.find(day => day.offset === 1)
-  const start = tomorrow
-    ? line.findIndex(item => item.date === tomorrow.date && item.meal === 'noon')
-    : 0
-  const from = start < 0 ? 0 : start
-  const turned = [...line.slice(from), ...line.slice(0, from)]
-  return turned.find(item => !busyOf(item.date, item.meal)) || turned[0] || null
+  const line: Array<{ date: string, meal: keyof typeof NEXT_MEAL_HOUR }> = []
+  for (const day of days)
+    line.push({ date: day.date, meal: 'noon' }, { date: day.date, meal: 'evening' })
+  const now = Date.now()
+  const upcoming = line.filter(item => mealStamp(item.date, item.meal) >= now)
+  const pool = upcoming.length ? upcoming : line.slice(-1)
+  return pool.find(item => !busyOf(item.date, item.meal)) || pool[0] || null
+}
+
+function chooseSlot(day: string, meal: Slot) {
+  holdSelection = true
+  void selectSlot(day, meal)
 }
 
 async function selectSlot(day: string, meal: Slot) {
@@ -1381,7 +1391,7 @@ export default {
                     v-for="meal in slots"
                     :key="meal"
                     class="h-80rpx min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx overflow-hidden rounded-24rpx"
-                    @tap="selectSlot(day.date, meal)"
+                    @tap="chooseSlot(day.date, meal)"
                   >
                     <text class="text-32rpx leading-none font-display" :class="mealTone(day.date, meal)">
                       {{ slotShort[meal] }}
