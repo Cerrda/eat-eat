@@ -41,6 +41,9 @@ interface TrayItem {
 
 const tray = ref<TrayItem[]>([])
 let traySerial = 0
+// 看着已点的那一餐时，草稿托盘先收起来，切回没点的餐再放回去。
+let parkedTray: TrayItem[] | null = null
+let slotToken = 0
 const picked = computed(() => tray.value.map(item => item.dish))
 
 function trayKey() {
@@ -176,6 +179,8 @@ function forgetMissing(ids: string[]) {
     if (!alive.has(dish.dishId))
       beginLeave(dish.dishId)
   }
+  if (parkedTray)
+    parkedTray = parkedTray.filter(item => alive.has(item.dish.dishId))
   roundIds.value = roundIds.value.filter(id => alive.has(id))
   keptIds.value = keptIds.value.filter(id => roundIds.value.includes(id))
   freshIds.value = freshIds.value.filter(id => roundIds.value.includes(id))
@@ -339,26 +344,58 @@ function chooseSlot(day: string, meal: Slot) {
   void selectSlot(day, meal)
 }
 
+function cloneTray(items: TrayItem[]) {
+  return items.map(item => ({
+    key: item.key,
+    dish: { ...item.dish },
+    rolled: item.rolled,
+  }))
+}
+
+function parkTray() {
+  parkedTray = cloneTray(tray.value.filter(item => chipPhase.value[item.key] !== 'out'))
+  clearTray()
+}
+
+function unparkTray() {
+  const saved = parkedTray
+  parkedTray = null
+  if (!saved?.length)
+    return
+  tray.value = cloneTray(saved)
+}
+
 async function selectSlot(day: string, meal: Slot) {
+  const token = ++slotToken
   const changed = date.value !== day || slot.value !== meal
   if (changed && pillReady.value)
     animateNext = true
   if (changed)
     endRound()
+  const fromOpen = !!date.value && !busyOf(date.value, slot.value)
+  const busy = busyOf(day, meal)
+  if (changed && fromOpen && busy)
+    parkTray()
   date.value = day
   slot.value = meal
-  const busy = busyOf(day, meal)
   if (!busy) {
     activeOrder.value = null
+    if (changed && !fromOpen)
+      unparkTray()
     return
   }
-  clearTray()
+  if (!(changed && fromOpen))
+    clearTray()
   endRound()
   try {
-    activeOrder.value = await getOrder(busy.orderId)
+    const order = await getOrder(busy.orderId)
+    if (token !== slotToken)
+      return
+    activeOrder.value = order
   }
   catch (err) {
-    showError(err)
+    if (token === slotToken)
+      showError(err)
   }
 }
 
