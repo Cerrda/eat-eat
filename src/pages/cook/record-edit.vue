@@ -33,6 +33,7 @@ const pending = ref(false)
 const ready = ref(false)
 const hydrated = ref(false)
 const sheetOpen = ref(false)
+const photoOpen = ref(false)
 const mealOpen = ref(false)
 const mealMatchDate = ref('')
 const mealMatchSlot = ref<Slot>('noon')
@@ -235,12 +236,12 @@ function addPhoto() {
     showHint('照片最多 9 张')
     return
   }
-  uni.showActionSheet({
-    itemList: ['从相册选', '拍一张'],
-    success(result) {
-      void storePhoto(result.tapIndex === 0 ? 'album' : 'camera')
-    },
-  })
+  photoOpen.value = true
+}
+
+function pickPhoto(source: 'album' | 'camera') {
+  photoOpen.value = false
+  void storePhoto(source)
 }
 
 async function storePhoto(source: 'album' | 'camera') {
@@ -505,6 +506,11 @@ async function submit() {
         :today="today"
         @select="chooseDate"
         @close="sheetOpen = false"
+      />
+      <photo-sheet
+        :open="photoOpen"
+        @pick="pickPhoto"
+        @close="photoOpen = false"
       />
     </template>
   </paper-page>
