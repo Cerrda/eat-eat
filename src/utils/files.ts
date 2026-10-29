@@ -120,7 +120,8 @@ export async function primeFileUrls(ids: string[]) {
   }
 }
 
-export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'thumb') {
+/** prefetch 为 false 时只在本地缓存命中时返回本地路径，不会顺手把远端图下载下来。 */
+export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'thumb', prefetch = true) {
   if (!fileId)
     return ''
   if (/^https?:\/\//.test(fileId)) {
@@ -128,7 +129,8 @@ export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'th
     const local = await readCachedImage(fileId, ext)
     if (local)
       return local
-    cacheRemoteImage(fileId, fileId, ext)
+    if (prefetch)
+      cacheRemoteImage(fileId, fileId, ext)
     return fileId
   }
   if (fileId.startsWith('wxfile://') || fileId.startsWith('blob:') || fileId.startsWith('/'))
@@ -156,8 +158,22 @@ export async function resolveFileUrl(fileId?: string, size: CloudImageSize = 'th
     if (local)
       return local
   }
-  cacheRemoteImage(key, url, fileExt)
+  if (prefetch)
+    cacheRemoteImage(key, url, fileExt)
   return url
+}
+
+/** 图片真正显示出来之后再补进本地缓存；传入的 src 不是远端地址就不用处理。 */
+export function cacheDisplayedImage(fileId: string | undefined, size: CloudImageSize, src: string) {
+  if (!fileId || !src || !/^https?:\/\//.test(src))
+    return
+  if (/^https?:\/\//.test(fileId)) {
+    cacheRemoteImage(fileId, src, imageFileExt(fileId))
+    return
+  }
+  if (!fileId.startsWith('cloud://'))
+    return
+  cacheRemoteImage(`${fileId}\n${size}`, src, size === 'raw' ? imageFileExt(src) : 'avif')
 }
 
 function rejectChoose(error: unknown, reject: (reason: Error) => void) {

@@ -59,6 +59,8 @@ const dim = ref(0)
 const src = ref('')
 const sharp = ref('')
 const sharpOn = ref(false)
+const keepSrc = ref<(() => void) | null>(null)
+const keepSharp = ref<(() => void) | null>(null)
 const screen = ref({ width: 1, height: 1 })
 const frame = ref<Frame>({ left: 0, top: 0, width: 1, height: 1, radius: 0 })
 const photo = ref<Box>({ left: 0, top: 0, width: 1, height: 1 })
@@ -417,8 +419,17 @@ function onTouchCancel(event: TouchBundle) {
   resetGesture()
 }
 
-async function open(payload: { src: string, sharp: string, aspect: number, origin: CoverZoomOrigin }) {
+async function open(payload: {
+  src: string
+  sharp: string
+  aspect: number
+  origin: CoverZoomOrigin
+  keepSrc?: () => void
+  keepSharp?: () => void
+}) {
   const ticket = ++generation
+  keepSrc.value = payload.keepSrc || null
+  keepSharp.value = payload.keepSharp || null
   cancelWaits()
   resetGesture()
   clearPinch()
@@ -495,7 +506,12 @@ function shut() {
   emit('idle')
 }
 
+function onSrcLoad() {
+  keepSrc.value?.()
+}
+
 function onSharpLoad() {
+  keepSharp.value?.()
   sharpOn.value = true
 }
 
@@ -523,6 +539,7 @@ defineExpose({ open, shut })
             :src="src"
             mode="aspectFit"
             :style="{ opacity: sharpOn ? 0 : 1 }"
+            @load="onSrcLoad"
           />
           <image
             v-if="sharp"

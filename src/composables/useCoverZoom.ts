@@ -1,6 +1,6 @@
 import type { CoverZoomOrigin } from '@/components/cover-zoom/cover-zoom.vue'
 import type { CloudImageSize } from '@/utils/files'
-import { resolveFileUrl } from '@/utils/files'
+import { cacheDisplayedImage, resolveFileUrl } from '@/utils/files'
 
 export interface CoverZoomRequest {
   id: string
@@ -16,7 +16,14 @@ export interface CoverZoomRequest {
 export function useCoverZoom(active?: () => boolean) {
   const instance = getCurrentInstance()
   const coverZoom = ref<{
-    open: (payload: { src: string, sharp: string, aspect: number, origin: CoverZoomOrigin }) => void
+    open: (payload: {
+      src: string
+      sharp: string
+      aspect: number
+      origin: CoverZoomOrigin
+      keepSrc?: () => void
+      keepSharp?: () => void
+    }) => void
     shut: () => void
   } | null>(null)
   const heldId = ref('')
@@ -90,8 +97,8 @@ export function useCoverZoom(active?: () => boolean) {
     if (!origin || current !== token || (active && !active()))
       return
     const [src, sharp] = await Promise.all([
-      resolveFileUrl(request.fileId, from),
-      resolveFileUrl(request.fileId, sharpSize),
+      resolveFileUrl(request.fileId, from, false),
+      resolveFileUrl(request.fileId, sharpSize, false),
     ])
     if (!src || current !== token || (active && !active()))
       return
@@ -106,6 +113,8 @@ export function useCoverZoom(active?: () => boolean) {
       sharp: sharp && sharp !== src ? sharp : '',
       aspect: aspect > 0 ? aspect : 1,
       origin,
+      keepSrc: () => cacheDisplayedImage(request.fileId, from, src),
+      keepSharp: () => cacheDisplayedImage(request.fileId, sharpSize, sharp),
     })
   }
 
