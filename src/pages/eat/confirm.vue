@@ -5,6 +5,7 @@ import { ensureAccount } from '@/utils/account'
 import { orderDraft } from '@/utils/draft'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
+import { askEaterRemind } from '@/utils/subscribe'
 import { pageStyle } from '@/utils/theme'
 import { ask, showError, tell } from '@/utils/ui'
 
@@ -48,6 +49,8 @@ async function submit() {
     return
   pending.value = true
   try {
+    // 先拿订阅额度再下单，避免做饭端抢先接单时消息发不出去。
+    await askEaterRemind()
     const order = await createOrder({
       date: orderDraft.date,
       slot: orderDraft.slot,

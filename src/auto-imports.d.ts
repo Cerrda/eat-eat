@@ -14,6 +14,7 @@ declare global {
   const art: typeof import('./utils/theme')['art']
   const ask: typeof import('./utils/ui')['ask']
   const askCookRemind: typeof import('./utils/subscribe')['askCookRemind']
+  const askEaterRemind: typeof import('./utils/subscribe')['askEaterRemind']
   const askText: typeof import('./utils/ui')['askText']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -460,6 +461,7 @@ declare module 'vue' {
     readonly art: UnwrapRef<typeof import('./utils/theme')['art']>
     readonly ask: UnwrapRef<typeof import('./utils/ui')['ask']>
     readonly askCookRemind: UnwrapRef<typeof import('./utils/subscribe')['askCookRemind']>
+    readonly askEaterRemind: UnwrapRef<typeof import('./utils/subscribe')['askEaterRemind']>
     readonly askText: UnwrapRef<typeof import('./utils/ui')['askText']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>

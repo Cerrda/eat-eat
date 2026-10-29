@@ -1,6 +1,6 @@
 const crypto = require('node:crypto')
 const { EatError } = require('./errors')
-const { sendOrderRemind } = require('./wx')
+const { sendEaterMeal, sendOrderRemind } = require('./wx')
 
 const ROLES = ['cooker', 'eater']
 const SLOTS = ['morning', 'noon', 'evening']
@@ -1411,6 +1411,24 @@ function createEatService(deps) {
     }
   }
 
+  async function notifyEater(kitchen, order) {
+    const touser = String(kitchen.eaterOpenid || '')
+    if (!touser)
+      return
+    try {
+      await sendEaterMeal({
+        touser,
+        page: `pages/eat/order?id=${order._id}`,
+        time: mealTime(order.date, order.slot),
+        tip: '已接单，记得回家吃饭',
+      })
+    }
+    catch (err) {
+      const message = err && err.message ? err.message : String(err)
+      console.error('[eat] accept remind failed', message)
+    }
+  }
+
   async function listTodo(params) {
     const user = await requireUser()
     const kitchen = await requireActive(user)
@@ -1479,8 +1497,10 @@ function createEatService(deps) {
     })
     if (changed !== 1)
       throw new EatError('VALIDATION', '这餐已经不能改了')
+    const accepted = await ownOrder(kitchen, order._id)
     const recorded = await recordedAmong(kitchen, [order._id])
-    return mapOrder(await ownOrder(kitchen, order._id), recorded.has(order._id))
+    await notifyEater(kitchen, accepted)
+    return mapOrder(accepted, recorded.has(order._id))
   }
 
   async function rejectOrder(params) {
