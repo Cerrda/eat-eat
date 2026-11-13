@@ -262,6 +262,7 @@ async function refresh() {
       return
     categories.value = data.categories
     board.value = data.board
+    boardFresh = true
     ensureSelection()
     markTabFresh('menu')
     if (!keyword.value.trim() && !categoryId.value) {
@@ -297,6 +298,10 @@ function busyOf(day: string, meal: Slot) {
 }
 
 let holdSelection = false
+// 首屏可能先画缓存里的日期板。用户在这块旧板上点了日期时，先记住点的是第几列，
+// 等真实数据回来再落到同一列（今天/明天/后天），否则选中的会是缓存里的旧日期。
+let boardFresh = false
+let pendingDay = -1
 
 function ensureSelection() {
   if (!board.value)
@@ -307,10 +312,19 @@ function ensureSelection() {
     menuIntent.date = ''
     menuIntent.slot = ''
     holdSelection = true
+    pendingDay = -1
     void selectSlot(nextDate, nextSlot)
     return
   }
-  if (holdSelection && date.value) {
+  if (pendingDay >= 0) {
+    const target = board.value.dates[Math.min(pendingDay, board.value.dates.length - 1)]
+    pendingDay = -1
+    if (target && holdSelection) {
+      void selectSlot(target.date, slot.value)
+      return
+    }
+  }
+  if (holdSelection && date.value && board.value.dates.some(item => item.date === date.value)) {
     void selectSlot(date.value, slot.value)
     return
   }
@@ -341,6 +355,7 @@ function openSlot() {
 
 function chooseSlot(day: string, meal: Slot) {
   holdSelection = true
+  pendingDay = boardFresh ? -1 : (board.value?.dates.findIndex(item => item.date === day) ?? -1)
   void selectSlot(day, meal)
 }
 
@@ -1126,6 +1141,8 @@ const farSlide = ref(false)
 const pose = ref<MealPose>({ left: 0, width: 0 })
 const pillReady = ref(false)
 const shownDay = ref(-1)
+const placedTarget: MealPose = { left: 0, width: 0 }
+let placedReady = false
 let animateNext = false
 let slideToken = 0
 let frame: ReturnType<typeof setTimeout> | undefined
@@ -1167,6 +1184,13 @@ watch([date, slot], () => {
   animateNext = false
   placePill(animate)
 })
+
+// 日期板刷新后（例如跨过零点），同一格的序号会变。date 没变时也要重新落位，否则胶囊会停在前一天的位置。
+watch(board, () => {
+  if (!date.value)
+    return
+  placePill(false)
+}, { flush: 'post' })
 
 onUnmounted(() => {
   leftPage = true
@@ -1225,18 +1249,28 @@ function placePill(animate: boolean) {
     return
   const metrics = mealMetrics(days.length)
   const target = mealPose(nextDay, nextMeal, metrics)
+  const moved = !placedReady
+    || Math.abs(placedTarget.left - target.left) >= 0.5
+    || Math.abs(placedTarget.width - target.width) >= 0.5
+  placedTarget.left = target.left
+  placedTarget.width = target.width
+  placedReady = true
   const far = shownDay.value >= 0 && shownDay.value !== nextDay
   shownDay.value = nextDay
-  if (!pillReady.value || !animate) {
-    slideToken += 1
-    stopFrame()
-    flowing.value = false
+  if (!pillReady.value) {
     pose.value = target
     pillReady.value = true
     return
   }
-  if (Math.abs(pose.value.left - target.left) < 0.5 && Math.abs(pose.value.width - target.width) < 0.5)
+  if (!moved)
     return
+  if (!animate) {
+    slideToken += 1
+    stopFrame()
+    flowing.value = false
+    pose.value = target
+    return
+  }
   slidePill({ ...pose.value }, target, far, metrics.inner)
 }
 
