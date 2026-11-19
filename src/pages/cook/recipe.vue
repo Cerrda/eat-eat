@@ -60,6 +60,12 @@ function copyLink() {
     return
   copyHint(sourceUrl, sourceCopyMessage(sourceUrl))
 }
+
+function editDish() {
+  if (!dishId.value)
+    return
+  uni.navigateTo({ url: `/pages/cook/dish-edit?id=${dishId.value}` })
+}
 </script>
 
 <template>
@@ -74,9 +80,15 @@ function copyLink() {
           </text>
           <ink-underline class="mt-8rpx" :width="176" />
         </view>
-        <text v-if="categoryName" class="text-30rpx text-muted leading-[1.3]" :class="faceOf(categoryName, 'sans')">
-          {{ categoryName }}
-        </text>
+        <view class="flex items-center gap-24rpx">
+          <text v-if="categoryName" class="min-w-0 flex-1 text-30rpx text-muted leading-[1.3]" :class="faceOf(categoryName, 'sans')">
+            {{ categoryName }}
+          </text>
+          <view v-else class="flex-1" />
+          <text class="shrink-0 text-28rpx text-accent leading-none" :class="faceOf('修改', 'mono')" @tap="editDish">
+            修改
+          </text>
+        </view>
         <dish-cover class="h-336rpx w-full rounded-36rpx" :file-id="dish.coverFileId" :name="dish.name" size="cover" />
         <view v-if="dish.ingredients.length" class="flex flex-col gap-8rpx border-0 border-t-4rpx border-line border-solid py-24rpx">
           <text class="text-28rpx text-accent" :class="faceOf('食材', 'mono')">
