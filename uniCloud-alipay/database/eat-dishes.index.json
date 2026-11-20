@@ -1,0 +1,46 @@
+[
+  {
+    "IndexName": "kitchen_deleted_published",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "deleted",
+          "Direction": "1"
+        },
+        {
+          "Name": "publishedAt",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_deleted_category_published",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "deleted",
+          "Direction": "1"
+        },
+        {
+          "Name": "categoryId",
+          "Direction": "1"
+        },
+        {
+          "Name": "publishedAt",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

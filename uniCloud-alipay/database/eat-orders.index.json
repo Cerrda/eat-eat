@@ -1,0 +1,62 @@
+[
+  {
+    "IndexName": "kitchen_date_slot",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "date",
+          "Direction": "1"
+        },
+        {
+          "Name": "slot",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_status_date_slot",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "status",
+          "Direction": "1"
+        },
+        {
+          "Name": "date",
+          "Direction": "1"
+        },
+        {
+          "Name": "slot",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_eater_unread",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "eaterUnread",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

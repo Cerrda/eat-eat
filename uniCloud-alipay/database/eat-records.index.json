@@ -1,0 +1,82 @@
+[
+  {
+    "IndexName": "kitchen_deleted_date_slot",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "deleted",
+          "Direction": "1"
+        },
+        {
+          "Name": "date",
+          "Direction": "1"
+        },
+        {
+          "Name": "slot",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_order",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "orderId",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_deleted_unread_cooker",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "deleted",
+          "Direction": "1"
+        },
+        {
+          "Name": "unreadCooker",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  },
+  {
+    "IndexName": "kitchen_deleted_unread_eater",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "deleted",
+          "Direction": "1"
+        },
+        {
+          "Name": "unreadEater",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

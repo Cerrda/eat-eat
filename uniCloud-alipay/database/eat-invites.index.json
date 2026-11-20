@@ -10,5 +10,21 @@
       ],
       "MgoIsUnique": true
     }
+  },
+  {
+    "IndexName": "kitchen_status",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        },
+        {
+          "Name": "status",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
   }
 ]

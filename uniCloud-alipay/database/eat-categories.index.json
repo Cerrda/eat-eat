@@ -1,0 +1,14 @@
+[
+  {
+    "IndexName": "kitchen_id",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "kitchenId",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

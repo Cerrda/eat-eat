@@ -1,0 +1,22 @@
+[
+  {
+    "IndexName": "status_cooker_eater",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "status",
+          "Direction": "1"
+        },
+        {
+          "Name": "cookerOpenid",
+          "Direction": "1"
+        },
+        {
+          "Name": "eaterOpenid",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]
