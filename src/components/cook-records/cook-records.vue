@@ -4,12 +4,13 @@ import type { CloudImageSize } from '@/utils/files'
 import { dateLabel, listRecords, SLOT_LABEL } from '@/api/eat'
 import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
-import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
-import { art } from '@/utils/theme'
+import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
+import { ensureAccount, patchBadges, peekAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
+import { readRecordsScreen, writeRecordsScreen } from '@/utils/recordsCache'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
+import { art } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 const props = defineProps<{
@@ -26,7 +27,7 @@ const {
 } = useCoverZoom(() => props.active !== false)
 
 const account = ref<AccountView | null>(null)
-const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+const { shown, total, finished, loading, seed, reset, more } = usePaged(async (page) => {
   const listed = await listRecords({ page })
   await primeFileUrls(listed.records.flatMap(record => [
     ...record.photoFileIds,
@@ -38,8 +39,23 @@ const pulling = ref(false)
 let spin = 0
 
 onMounted(() => {
+  hydrateRecords()
   void refresh()
 })
+
+function hydrateRecords() {
+  const saved = readRecordsScreen()
+  if (!saved)
+    return
+  const view = peekAccount()
+  if (view)
+    account.value = view
+  void primeFileUrls(saved.records.flatMap(record => [
+    ...record.photoFileIds,
+    ...record.dishes.map(dish => dish.coverFileId),
+  ]))
+  seed(saved.records, saved.total)
+}
 
 async function refresh() {
   const id = ++spin
@@ -55,6 +71,10 @@ async function refresh() {
     rememberAccount(account.value)
     noteBadges(nextBadges)
     markTabFresh('records')
+    writeRecordsScreen({
+      records: shown.value.slice(0, LIST_PAGE_SIZE),
+      total: total.value,
+    })
   }
   catch (err) {
     if (id === spin)

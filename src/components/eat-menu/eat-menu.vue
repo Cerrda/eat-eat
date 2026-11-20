@@ -262,7 +262,6 @@ async function refresh() {
       return
     categories.value = data.categories
     board.value = data.board
-    boardFresh = true
     ensureSelection()
     markTabFresh('menu')
     if (!keyword.value.trim() && !categoryId.value) {
@@ -298,35 +297,45 @@ function busyOf(day: string, meal: Slot) {
 }
 
 let holdSelection = false
-// 首屏可能先画缓存里的日期板。用户在这块旧板上点了日期时，先记住点的是第几列，
-// 等真实数据回来再落到同一列（今天/明天/后天），否则选中的会是缓存里的旧日期。
-let boardFresh = false
-let pendingDay = -1
+// 首屏可能先画缓存里的日期板。点选时记住这一列：真实数据回来后，点到的日期还在就沿用，
+// 日期已经不在了，再落到同一列（今天/明天/后天）。
+let pendingColumn = -1
+
+function dayAt(column: number) {
+  const days = board.value?.dates
+  if (!days?.length)
+    return ''
+  return days[Math.min(Math.max(column, 0), days.length - 1)]?.date || ''
+}
 
 function ensureSelection() {
   if (!board.value)
     return
+  const days = board.value.dates
   if (menuIntent.date && menuIntent.slot) {
     const nextDate = menuIntent.date
     const nextSlot = menuIntent.slot
     menuIntent.date = ''
     menuIntent.slot = ''
     holdSelection = true
-    pendingDay = -1
+    pendingColumn = -1
     void selectSlot(nextDate, nextSlot)
     return
   }
-  if (pendingDay >= 0) {
-    const target = board.value.dates[Math.min(pendingDay, board.value.dates.length - 1)]
-    pendingDay = -1
-    if (target && holdSelection) {
-      void selectSlot(target.date, slot.value)
+  if (holdSelection) {
+    if (date.value && days.some(item => item.date === date.value)) {
+      pendingColumn = -1
+      void selectSlot(date.value, slot.value)
       return
     }
-  }
-  if (holdSelection && date.value && board.value.dates.some(item => item.date === date.value)) {
-    void selectSlot(date.value, slot.value)
-    return
+    if (pendingColumn >= 0) {
+      const target = dayAt(pendingColumn)
+      pendingColumn = -1
+      if (target) {
+        void selectSlot(target, slot.value)
+        return
+      }
+    }
   }
   const pick = openSlot()
   if (pick)
@@ -353,10 +362,12 @@ function openSlot() {
   return pool.find(item => !busyOf(item.date, item.meal)) || pool[0] || null
 }
 
-function chooseSlot(day: string, meal: Slot) {
+function chooseSlot(day: string, meal: Slot, column: number) {
   holdSelection = true
-  pendingDay = boardFresh ? -1 : (board.value?.dates.findIndex(item => item.date === day) ?? -1)
-  void selectSlot(day, meal)
+  pendingColumn = column
+  // 界面可能还停在换掉的旧板上：点到的日期不在当前板上时，按点到的列落位。
+  const target = board.value?.dates.some(item => item.date === day) ? day : (dayAt(column) || day)
+  void selectSlot(target, meal)
 }
 
 function cloneTray(items: TrayItem[]) {
@@ -1447,7 +1458,7 @@ export default {
                 :style="washStyle"
               />
               <view
-                v-for="day in board.dates"
+                v-for="(day, column) in board.dates"
                 :key="day.date"
                 class="relative z-1 min-w-0 flex flex-1 flex-col items-center gap-16rpx overflow-hidden rounded-28rpx px-8rpx py-20rpx"
               >
@@ -1462,7 +1473,7 @@ export default {
                     v-for="meal in slots"
                     :key="meal"
                     class="h-80rpx min-w-0 flex flex-1 flex-col items-center justify-center gap-2rpx overflow-hidden rounded-24rpx"
-                    @tap="chooseSlot(day.date, meal)"
+                    @tap="chooseSlot(day.date, meal, column)"
                   >
                     <text class="text-32rpx leading-none font-display" :class="mealTone(day.date, meal)">
                       {{ slotShort[meal] }}

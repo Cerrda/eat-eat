@@ -43,6 +43,7 @@ declare global {
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createRef: typeof import('@vueuse/core')['createRef']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
+  const createScreenCache: typeof import('./utils/screenCache')['createScreenCache']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
@@ -160,7 +161,10 @@ declare global {
   const reactiveOmit: typeof import('@vueuse/core')['reactiveOmit']
   const reactivePick: typeof import('@vueuse/core')['reactivePick']
   const readCachedImage: typeof import('./utils/imageCache')['readCachedImage']
+  const readDishesScreen: typeof import('./utils/dishesCache')['readDishesScreen']
   const readMenuScreen: typeof import('./utils/menuCache')['readMenuScreen']
+  const readOrdersScreen: typeof import('./utils/ordersCache')['readOrdersScreen']
+  const readRecordsScreen: typeof import('./utils/recordsCache')['readRecordsScreen']
   const readTodoScreen: typeof import('./utils/todoCache')['readTodoScreen']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
@@ -409,7 +413,10 @@ declare global {
   const whenPageFontsReady: typeof import('./utils/fonts')['whenPageFontsReady']
   const whenever: typeof import('@vueuse/core')['whenever']
   const withinMenu: typeof import('./utils/format')['withinMenu']
+  const writeDishesScreen: typeof import('./utils/dishesCache')['writeDishesScreen']
   const writeMenuScreen: typeof import('./utils/menuCache')['writeMenuScreen']
+  const writeOrdersScreen: typeof import('./utils/ordersCache')['writeOrdersScreen']
+  const writeRecordsScreen: typeof import('./utils/recordsCache')['writeRecordsScreen']
   const writeTodoScreen: typeof import('./utils/todoCache')['writeTodoScreen']
 }
 // for type re-export
@@ -424,6 +431,9 @@ declare global {
   export type { PageResult } from './composables/usePaged'
   import('./composables/usePaged')
   // @ts-ignore
+  export type { DishesScreen } from './utils/dishesCache'
+  import('./utils/dishesCache')
+  // @ts-ignore
   export type { FaceRole } from './utils/face'
   import('./utils/face')
   // @ts-ignore
@@ -432,6 +442,12 @@ declare global {
   // @ts-ignore
   export type { MenuScreen } from './utils/menuCache'
   import('./utils/menuCache')
+  // @ts-ignore
+  export type { OrdersScreen } from './utils/ordersCache'
+  import('./utils/ordersCache')
+  // @ts-ignore
+  export type { RecordsScreen } from './utils/recordsCache'
+  import('./utils/recordsCache')
   // @ts-ignore
   export type { SubscribeChoice } from './utils/subscribe'
   import('./utils/subscribe')
@@ -491,6 +507,7 @@ declare module 'vue' {
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createRef: UnwrapRef<typeof import('@vueuse/core')['createRef']>
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
+    readonly createScreenCache: UnwrapRef<typeof import('./utils/screenCache')['createScreenCache']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
@@ -607,7 +624,10 @@ declare module 'vue' {
     readonly reactiveOmit: UnwrapRef<typeof import('@vueuse/core')['reactiveOmit']>
     readonly reactivePick: UnwrapRef<typeof import('@vueuse/core')['reactivePick']>
     readonly readCachedImage: UnwrapRef<typeof import('./utils/imageCache')['readCachedImage']>
+    readonly readDishesScreen: UnwrapRef<typeof import('./utils/dishesCache')['readDishesScreen']>
     readonly readMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['readMenuScreen']>
+    readonly readOrdersScreen: UnwrapRef<typeof import('./utils/ordersCache')['readOrdersScreen']>
+    readonly readRecordsScreen: UnwrapRef<typeof import('./utils/recordsCache')['readRecordsScreen']>
     readonly readTodoScreen: UnwrapRef<typeof import('./utils/todoCache')['readTodoScreen']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
@@ -851,7 +871,10 @@ declare module 'vue' {
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
     readonly withinMenu: UnwrapRef<typeof import('./utils/format')['withinMenu']>
+    readonly writeDishesScreen: UnwrapRef<typeof import('./utils/dishesCache')['writeDishesScreen']>
     readonly writeMenuScreen: UnwrapRef<typeof import('./utils/menuCache')['writeMenuScreen']>
+    readonly writeOrdersScreen: UnwrapRef<typeof import('./utils/ordersCache')['writeOrdersScreen']>
+    readonly writeRecordsScreen: UnwrapRef<typeof import('./utils/recordsCache')['writeRecordsScreen']>
     readonly writeTodoScreen: UnwrapRef<typeof import('./utils/todoCache')['writeTodoScreen']>
   }
 }

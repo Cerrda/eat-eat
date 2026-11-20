@@ -3,12 +3,13 @@ import type { AccountView, OrderDetail, OrderItem } from '@/api/eat'
 import { dateLabel, listOrders, SLOT_LABEL, STATUS_LABEL } from '@/api/eat'
 import CoverZoom from '@/components/cover-zoom/cover-zoom.vue'
 import { useCoverZoom } from '@/composables/useCoverZoom'
-import { usePaged } from '@/composables/usePaged'
-import { ensureAccount, patchBadges, rememberAccount } from '@/utils/account'
-import { art } from '@/utils/theme'
+import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
+import { ensureAccount, patchBadges, peekAccount, rememberAccount } from '@/utils/account'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
+import { readOrdersScreen, writeOrdersScreen } from '@/utils/ordersCache'
 import { markTabFresh, noteBadges, openTab } from '@/utils/tabs'
+import { art } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 const props = defineProps<{
@@ -25,7 +26,7 @@ const {
 } = useCoverZoom(() => props.active !== false)
 
 const account = ref<AccountView | null>(null)
-const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+const { shown, total, finished, loading, seed, reset, more } = usePaged(async (page) => {
   const listed = await listOrders({ page })
   await primeFileUrls(listed.orders.flatMap(order => order.items.map(item => item.coverFileId)))
   return { rows: listed.orders, total: listed.total }
@@ -33,8 +34,20 @@ const { shown, total, finished, loading, reset, more } = usePaged(async (page) =
 const pulling = ref(false)
 
 onMounted(() => {
+  hydrateOrders()
   void refresh()
 })
+
+function hydrateOrders() {
+  const saved = readOrdersScreen()
+  if (!saved)
+    return
+  const view = peekAccount()
+  if (view)
+    account.value = view
+  void primeFileUrls(saved.orders.flatMap(order => order.items.map(item => item.coverFileId)))
+  seed(saved.orders, saved.total)
+}
 
 async function refresh() {
   try {
@@ -47,6 +60,10 @@ async function refresh() {
     rememberAccount(account.value)
     noteBadges(nextBadges)
     markTabFresh('orders')
+    writeOrdersScreen({
+      orders: shown.value.slice(0, LIST_PAGE_SIZE),
+      total: total.value,
+    })
   }
   catch (err) {
     showError(err)

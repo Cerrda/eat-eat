@@ -2,13 +2,14 @@
 import type { Category } from '@/api/eat'
 import type { DishCard } from '@/api/types'
 import { listCategories, listDishes } from '@/api/eat'
-import { usePaged } from '@/composables/usePaged'
+import { LIST_PAGE_SIZE, usePaged } from '@/composables/usePaged'
 import { ensureAccount } from '@/utils/account'
-import { art } from '@/utils/theme'
+import { readDishesScreen, writeDishesScreen } from '@/utils/dishesCache'
 import { faceOf } from '@/utils/face'
 import { primeFileUrls } from '@/utils/files'
 import { keepOneLine } from '@/utils/format'
 import { markTabFresh, noteBadges } from '@/utils/tabs'
+import { art } from '@/utils/theme'
 import { showError } from '@/utils/ui'
 
 const ready = ref(false)
@@ -19,7 +20,7 @@ const categoryId = ref('')
 const pulling = ref(false)
 let spin = 0
 
-const { shown, total, finished, loading, reset, more } = usePaged(async (page) => {
+const { shown, total, finished, loading, seed, reset, more } = usePaged(async (page) => {
   const listed = await listDishes({
     page,
     keyword: keyword.value.trim(),
@@ -38,8 +39,19 @@ const emptyCopy = computed(() => {
 })
 
 onMounted(() => {
+  hydrateDishes()
   void refresh()
 })
+
+function hydrateDishes() {
+  const saved = readDishesScreen()
+  if (!saved)
+    return
+  categories.value = saved.categories
+  void primeFileUrls(saved.dishes.map(dish => dish.coverFileId))
+  seed(saved.dishes, saved.total)
+  ready.value = true
+}
 
 let filterTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -80,6 +92,13 @@ async function refresh() {
     categories.value = cats.categories
     ready.value = true
     markTabFresh('dishes')
+    if (!keyword.value.trim() && !categoryId.value) {
+      writeDishesScreen({
+        categories: cats.categories,
+        dishes: shown.value.slice(0, LIST_PAGE_SIZE),
+        total: total.value,
+      })
+    }
   }
   catch (err) {
     if (id === spin)
